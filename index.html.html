@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffd43b">
+<title>Ex Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<style>
+  :root{
+    --ink:#14151a;
+    --paper:#faf7ef;
+    --card:#ffffff;
+    --yellow:#ffd43b;
+    --pink:#ff8fab;
+    --mint:#7bf1a8;
+    --violet:#c9a6ff;
+    --muted:#6b6f7b;
+    --shadow: 4px 4px 0 var(--ink);
+    --shadow-sm: 3px 3px 0 var(--ink);
+    --radius:16px;
+    --radius-sm:10px;
+    --glass-bg: rgba(255,255,255,0.25);
+    --glass-border: rgba(255,255,255,0.45);
+    --glass-shadow: 0 8px 32px 0 rgba(31,38,135,0.25);
+  }
+  body.dark{
+    --ink:#faf7ef;
+    --paper:#0f1115;
+    --card:#1a1d24;
+    --muted:#9aa0ad;
+    --shadow: 4px 4px 0 #000;
+    --shadow-sm: 3px 3px 0 #000;
+    --glass-bg: rgba(20,25,40,0.45);
+    --glass-border: rgba(255,255,255,0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0,0,0,0.6);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;transition:background .3s, color .3s; padding-bottom: 80px;}
+  h1,h2,h3{font-family:'Plus Jakarta Sans',sans-serif;}
+  input,textarea,select{ -webkit-user-select:text; user-select:text; }
+
+  /* SPLASH & LOGIN */
+  .splash-screen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    transition: opacity 0.4s ease;
+  }
+  body.dark .splash-screen {
+    background: radial-gradient(circle at 20% 20%, #1a2233 0%, #0b0e14 60%, #05070a 100%);
+  }
+  .splash-screen.hide { opacity: 0; pointer-events: none; }
+  .splash-logo { margin-bottom: 20px; animation: bounce 1s infinite alternate; }
+  .splash-logo svg { width: 64px; height: 64px; }
+  body.dark .splash-logo svg { filter: drop-shadow(0 0 12px #ffd43b); }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
+  
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--glass-shadow);
+    width: 100%; max-width: 360px;
+    text-align: center; animation: pop 0.3s ease;
+  }
+  body.dark .glass-card { border-color: rgba(255,212,59,0.35); }
+  @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .glass-card h2 { margin-top: 0; margin-bottom: 20px; }
+  .glass-input-wrap { position: relative; margin-bottom: 12px; }
+  .glass-input {
+    width: 100%; padding: 12px 42px 12px 15px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 10px; outline: none; font-size: 14px; color: #14151a;
+    transition: 0.2s;
+  }
+  body.dark .glass-input { background: rgba(255,255,255,0.08); color:#faf7ef; border-color: rgba(255,255,255,0.15); }
+  .glass-input:focus { background: rgba(255, 255, 255, 0.95); box-shadow: 0 0 10px rgba(255,255,255,0.6); }
+  body.dark .glass-input:focus { background: rgba(255,255,255,0.12); }
+  .eye-btn { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center; color: var(--muted); }
+  .eye-btn svg{ width:20px; height:20px; }
+  .glass-btn {
+    width: 100%; padding: 12px; margin-top: 5px;
+    background: var(--yellow); border: 2px solid var(--ink);
+    border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s; color:#14151a;
+  }
+  .glass-btn:hover { transform: translateY(-2px); }
+  .link-text { display: block; margin-top: 15px; font-size: 13px; color: var(--muted); cursor: pointer; text-decoration: underline; }
+  
+  .glass-notif {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(255, 200, 200, 0.6); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 100, 100, 0.5); border-radius: 12px;
+    padding: 15px 25px; z-index: 10000; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    color: #8b0000; font-weight: bold; font-size: 14px; text-align: center;
+    display: none; animation: slideDown 0.3s ease;
+  }
+  body.dark .glass-notif { color:#ffb3b3; background: rgba(80,20,20,0.7); border-color: rgba(255,100,100,0.4);}
+  @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
+
+  /* TOPBAR */
+  header.topbar{
+    position: sticky; top: 0; z-index: 30;
+    background: var(--paper); border-bottom: 3px solid var(--ink);
+    padding: 14px 18px; display: none;
+  }
+  .topbar-inner{
+    max-width: 860px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  
+  .profile-wrapper{ position: relative; display: flex; align-items: center; gap: 10px;}
+  .profile-icon{
+    width: 40px; height: 40px; border-radius: 50%; background: var(--violet);
+    border: 2.5px solid var(--ink); display:flex; align-items:center; justify-content:center;
+    font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: var(--shadow-sm);
+    text-transform: uppercase; color:#14151a;
+  }
+  .profile-popup{
+    position: absolute; top: 50px; left: 0;
+    background: var(--card); border: 2.5px solid var(--ink);
+    border-radius: 12px; padding: 15px; width: 220px; box-shadow: var(--shadow);
+    display: none; z-index: 100; text-align: left;
+  }
+  .profile-popup.open{ display: block; animation: pop 0.2s ease; }
+  .profile-popup p{ margin: 5px 0; font-size: 13px; }
+  .role-tag{ display:inline-block; padding:3px 8px; border-radius:5px; font-size:11px; font-weight:bold; margin-top:5px; border:1.5px solid var(--ink); color:#14151a; }
+  .role-dev{ background: var(--violet); }
+  .role-owner{ background: var(--yellow); }
+  .role-user{ background: var(--mint); }
+  .logout-btn{ width:100%; margin-top:15px; padding:8px; border:2px solid var(--ink); background: var(--pink); color:#14151a; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer; transition:.2s; }
+  .logout-btn:hover { background:#ff6b8b; }
+
+  .theme-toggle {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--yellow); border: 2.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: var(--shadow-sm); color:#14151a;
+  }
+  .theme-toggle svg { width: 20px; height: 20px; }
+
+  /* BOTTOM NOTCH NAVIGATION */
+  .bottom-nav-wrapper {
+    position: fixed; bottom: 20px; left: 0; width: 100%;
+    display: flex; justify-content: center; z-index: 50; pointer-events: none;
+  }
+  .notch-nav {
+    pointer-events: auto;
+    display: flex; align-items: center; gap: 6px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid var(--glass-border);
+    padding: 7px 10px;
+    border-radius: 999px;
+    box-shadow: var(--glass-shadow);
+  }
+  .nav-link {
+    font-weight: 700; font-size: 13.5px; color: var(--ink);
+    cursor: pointer; padding: 8px 14px; border-radius: 999px;
+    border: 2px solid transparent; transition: 0.2s; white-space: nowrap;
+  }
+  .nav-link:hover { background: rgba(255,212,59,0.35); }
+  .nav-link.active { background: var(--yellow); border-color: var(--ink); box-shadow: 2px 2px 0 var(--ink); color:#14151a; }
+
+  /* MAIN */
+  main{max-width:760px;margin:0 auto;padding:18px; width:100%; flex:1;}
+  .hero{margin:26px auto 6px;padding:0 18px;}
+  .hero h1{font-size:26px;margin:0 0 4px;}
+  .hero p{color:var(--muted);margin:0;font-size:14px;}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
+  @media(max-width:700px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  .card{background:var(--card);border:3px solid var(--ink);border-radius:var(--radius);padding:18px 16px;
+    cursor:pointer;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;
+    display:flex;flex-direction:column;gap:10px;min-height:120px;}
+  .card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);}
+  .card:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink);}
+  .card .emoji{width:46px;height:46px;border:2.5px solid var(--ink);border-radius:12px;
+    display:flex;align-items:center;justify-content:center; color:#14151a;}
+  .card .emoji svg { width: 24px; height: 24px; }
+  .card h3{font-size:16px;margin:0;}
+  .card p{font-size:13px;color:var(--muted);margin:0;line-height:1.35;}
+
+  .about-box { background: var(--card); border: 3px solid var(--ink); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-top: 10px; }
+  .about-box h2 { font-size: 22px; margin-top: 0; margin-bottom: 12px; background: var(--yellow); display: inline-block; padding: 4px 12px; border: 2px solid var(--ink); border-radius: 8px; color:#14151a;}
+  .about-box p { line-height: 1.6; font-size: 14.5px; color: var(--ink); margin-bottom: 16px; }
+  .wa-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--mint); border: 2.5px solid var(--ink); padding: 12px 20px; border-radius: 999px; font-weight: 800; color:#14151a; text-decoration: none; box-shadow: var(--shadow-sm); transition: 0.1s; font-size: 15px;}
+  .wa-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
+  .wa-btn:active { transform: translate(1px, 1px); box-shadow: none; }
+  .wa-btn svg { width: 20px; height: 20px; }
+  .team-list { margin-top: 10px; padding-left: 0; list-style: none; }
+  .team-list li { padding: 8px 12px; border: 2px solid var(--ink); border-radius: 8px; margin-bottom: 8px; background: var(--paper); font-weight: 700; font-size: 14px; }
+  body.dark .team-list li { background: #0b0e14; }
+
+  footer{max-width:760px;margin:30px auto 24px;padding:0 18px;color:var(--muted);font-size:12px;text-align:center; display: none;}
+
+  .overlay{position:fixed;inset:0;background:rgba(20,21,26,.45);z-index:60;display:none;
+    align-items:flex-start;justify-content:center;padding:26px 14px;overflow-y:auto;}
+  .overlay.open{display:flex;}
+  .panel{background:var(--paper);border:3px solid var(--ink);border-radius:20px;max-width:620px;width:100%;
+    box-shadow:8px 8px 0 var(--ink);margin-top:10px;animation:pop .18s ease;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:3px solid var(--ink);}
+  .panel-head h2{font-size:18px;margin:0;display:flex;align-items:center;gap:10px;}
+  .panel-head .emoji-badge{width:34px;height:34px;border:2.5px solid var(--ink);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#14151a;}
+  .panel-head .emoji-badge svg { width: 18px; height: 18px; }
+  .closeBtn{width:32px;height:32px;border:2.5px solid var(--ink);border-radius:9px;background:var(--card);
+    cursor:pointer;font-size:15px;font-weight:800;box-shadow:var(--shadow-sm); color: var(--ink);}
+  .closeBtn:hover{background:var(--pink);}
+  .panel-body{padding:20px;}
+  .panel-body p.desc{color:var(--muted);margin-top:-4px;font-size:13.5px;}
+
+  label{display:block;font-size:12.5px;font-weight:700;margin:14px 0 6px;color:var(--ink);}
+  input[type=text], input[type=password], textarea, select{
+    width:100%;border:2.5px solid var(--ink);border-radius:var(--radius-sm);padding:10px 12px;
+    font-size:14px;font-family:'Inter';background:var(--card);outline:none; color:var(--ink);}
+  input[type=text]:focus, input[type=password]:focus, textarea:focus{box-shadow:var(--shadow-sm);}
+  textarea{min-height:110px;resize:vertical;}
+
+  .btn{margin-top:14px;border:2.5px solid var(--ink);background:var(--yellow);color:#14151a;
+    padding:10px 18px;border-radius:999px;font-weight:800;font-size:13.5px;cursor:pointer;
+    box-shadow:var(--shadow-sm);transition:transform .1s;text-decoration:none;display:inline-block;}
+  .btn:hover{transform:translate(-1px,-1px);}
+  .btn:active{transform:translate(1px,1px);box-shadow:none;}
+  .btn.secondary{background:var(--card); color: var(--ink);}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .row{display:flex;gap:12px;}
+  .row > div{flex:1;}
+
+  /* TTT */
+  .ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:260px;margin:16px auto 0;}
+  .ttt-cell{aspect-ratio:1;background:var(--card);border:2.5px solid var(--ink);border-radius:10px;
+    font-size:30px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer; color: var(--ink);}
+  .ttt-cell:hover{background:var(--yellow);}
+  .ttt-status{text-align:center;margin-top:12px;font-weight:700;}
+  
+  .score-board {
+    display: flex; justify-content: center; gap: 20px; margin-top: 15px;
+    font-size: 14px; font-weight: bold;
+  }
+  .score-box {
+    background: var(--card); color: var(--ink); border: 2px solid var(--ink);
+    padding: 8px 15px; border-radius: 8px; box-shadow: var(--shadow-sm);
+    text-align: center; min-width: 80px;
+  }
+  .score-box span { font-size: 20px; display: block; margin-top: 4px; }
+
+  /* SLIDES */
+  .slide-card{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius-sm);padding:14px;margin-top:12px;position:relative;}
+  .slide-card .slide-num{position:absolute;top:-11px;left:12px;background:var(--ink);color:var(--paper);
+    font-size:11px;font-weight:800;padding:2px 10px;border-radius:999px;}
+  .slide-card .removeSlide{position:absolute;top:-11px;right:12px;width:22px;height:22px;border:2px solid var(--ink);
+    border-radius:50%;background:var(--pink);font-size:11px;font-weight:800;cursor:pointer; color:#14151a;}
+
+  /* PREVIEW & SLIDER */
+  .preview-container {
+    position: relative; width: 100%; max-width: 400px; margin: 10px auto;
+    aspect-ratio: 1 / 1.414; 
+    background: #e0e0e0; border: 2.5px solid var(--ink); border-radius: 8px;
+    overflow: hidden; display: flex; justify-content: center; align-items: center;
+  }
+  .preview-container.ppt-preview { aspect-ratio: 16 / 9; }
+  .preview-img { position: absolute; left: 50%; top: 50%; transform-origin: center center; max-width: 100%; max-height: 100%; pointer-events: none; transition: transform 0.05s linear; }
+
+  .slider-controls { margin-top: 10px; background: #fff8e1; border: 2px dashed var(--ink); border-radius: 8px; padding: 10px; color:#14151a;}
+  .slider-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 13px; font-weight: bold;}
+  .slider-group span { min-width: 60px; text-align: right; transition: all 0.05s ease;}
+  input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+  input[type=range]:focus { outline: none; }
+  input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 12px; cursor: pointer; background: #fff; border: 2px solid var(--ink); border-radius: 999px; }
+  input[type=range]::-webkit-slider-thumb { height: 24px; width: 24px; border-radius: 50%; background: var(--yellow); border: 2px solid var(--ink); cursor: pointer; -webkit-appearance: none; margin-top: -8px; box-shadow: 2px 2px 0 var(--ink); }
+
+  /* CHAT AI */
+  .chat-log{margin-top:14px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:10px; padding-bottom:10px;}
+  .chat-bubble{padding:11px 14px;border:2.5px solid var(--ink);border-radius:var(--radius-sm);font-size:13.5px;line-height:1.5;white-space:pre-wrap;max-width:88%; color: var(--ink);}
+  .chat-bubble.user{align-self:flex-end;background:var(--yellow); color:#14151a;}
+  .chat-bubble.ai{align-self:flex-start;background:var(--card); width: 100%;}
+  .chat-bubble.ai.loading{color:var(--muted);font-style:italic;}
+  .chat-inputrow{display:flex;gap:8px;margin-top:12px; align-items: flex-end;}
+  .chat-inputrow textarea{min-height:48px; resize: none;}
+  .ai-info{margin-top:10px;font-size:12px;color:var(--muted);background:#fff8e1;border:2px dashed var(--ink);border-radius:var(--radius-sm);padding:10px 12px; color:#14151a;}
+  
+  .crop-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+  .crop-modal.open { display: flex; }
+  .crop-image-wrapper { max-width: 100%; max-height: 70vh; background: #fff; }
+  .crop-image-wrapper img { max-width: 100%; max-height: 70vh; display: block; }
+
+  /* MUSIC PANEL */
+  .music-btn {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 50px; height: 50px; background: var(--yellow);
+    border: 3px solid var(--ink); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: var(--shadow-sm); z-index: 100; transition: transform 0.2s; color:#14151a;
+  }
+  .music-btn svg { width: 22px; height: 22px; }
+  .music-btn:hover { transform: scale(1.1); }
+  .music-btn.playing { background: var(--mint); }
+
+  .music-panel {
+    position: fixed; bottom: 80px; right: 20px; width: 320px; max-height: 60vh;
+    background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 2px solid var(--glass-border); border-radius: 14px; box-shadow: var(--glass-shadow);
+    padding: 15px; z-index: 100; display: none; flex-direction: column; color: var(--ink);
+  }
+  .music-panel.open { display: flex; animation: pop 0.2s ease; }
+  .music-panel h3 { margin-top: 0; font-size: 16px; margin-bottom: 10px; display:flex; align-items:center; gap:8px;}
+  .music-panel input[type=file] { margin-bottom: 10px; font-size: 12px; }
+  .music-list { flex: 1; overflow-y: auto; border: 2px dashed var(--ink); border-radius: 8px; padding: 5px; margin-bottom: 10px; min-height: 80px; }
+  .music-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 5px; cursor: pointer; font-size: 12px; border-bottom: 1px solid rgba(128,128,128,0.3); }
+  .music-item:hover { background: rgba(255,212,59,0.3); }
+  .music-item.active { background: var(--yellow); font-weight: bold; color:#14151a;}
+  .music-item .del-btn { color: red; font-weight: bold; cursor: pointer; padding: 0 5px; }
+  .music-panel audio { width: 100%; margin-top: 5px; flex-shrink: 0; }
+
+  .pengumuman-card { background: var(--card); border: 3px solid var(--ink); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-top: 14px; }
+  .pengumuman-date { font-size: 11px; font-weight: 800; color: var(--paper); background: var(--ink); display: inline-block; padding: 4px 10px; border-radius: 999px; margin-bottom: 10px; }
+  .pengumuman-title { font-size: 18px; margin: 0 0 10px 0; font-family: 'Plus Jakarta Sans';}
+  .pengumuman-body { font-size: 14px; line-height: 1.6; color: var(--muted); }
+
+  .color-swatches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
+  .swatch { width: 32px; height: 32px; border-radius: 8px; border: 2.5px solid var(--ink); cursor: pointer; transition: transform .1s; box-shadow: 2px 2px 0 var(--ink); }
+  .swatch:hover { transform: scale(1.1); }
+  .swatch.selected { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+  @media(max-width:560px){ .hero h1{font-size:22px;} .nav-link { font-size: 12px; padding: 6px 10px;} .music-panel { width: 260px; max-height: 50vh; } .bottom-nav-wrapper{ bottom: 10px; } }
+</style>
+</head>
+<body>
+
+<div class="glass-notif" id="notifBox"></div>
+
+<!-- SPLASH SCREEN -->
+<div class="splash-screen" id="splashScreen">
+  <div class="splash-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#14151a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+  </div>
+  
+  <div class="glass-card" id="loginBox">
+    <h2>Login Akses</h2>
+    <div class="glass-input-wrap">
+      <input type="text" id="loginUser" class="glass-input" placeholder="Username">
+    </div>
+    <div class="glass-input-wrap">
+      <input type="password" id="loginPass" class="glass-input" placeholder="Password">
+      <button class="eye-btn" onclick="toggleEye('loginPass', this)" title="Lihat/Sembunyikan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <button class="glass-btn" onclick="doLogin()">Login</button>
+    <a class="link-text" onclick="showRegister()">Belum punya akun? Daftar di sini</a>
+  </div>
+
+  <div class="glass-card" id="registerBox" style="display: none;">
+    <h2>Daftar Akun Baru</h2>
+    <div class="glass-input-wrap">
+      <input type="text" id="regUser" class="glass-input" placeholder="Username baru">
+    </div>
+    <div class="glass-input-wrap">
+      <input type="password" id="regPass" class="glass-input" placeholder="Password baru">
+      <button class="eye-btn" onclick="toggleEye('regPass', this)" title="Lihat/Sembunyikan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <button class="glass-btn" onclick="doRegister()">Daftar</button>
+    <a class="link-text" onclick="showLogin()">Sudah punya akun? Login</a>
+  </div>
+</div>
+
+<header class="topbar" id="mainHeader">
+  <div class="topbar-inner">
+    <div class="profile-wrapper" id="profileWrapper" style="display: none;">
+      <div class="profile-icon" id="profileIcon" onclick="toggleProfile()">U</div>
+      <div class="profile-popup" id="profilePopup">
+        <p><strong>Username:</strong> <span id="profUser">-</span></p>
+        <p><strong>Password:</strong> <span id="profPass">-</span></p>
+        <p><strong>Role:</strong></p>
+        <span class="role-tag" id="profRole">-</span>
+        <button class="logout-btn" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+    <div class="theme-toggle" onclick="toggleTheme()" title="Mode Gelap/Terang" id="themeToggle"></div>
+  </div>
+</header>
+
+<div id="page-home">
+  <div class="hero">
+    <h1>Ex Tools. ⚡</h1>
+    <p>Buat yang kamu butuhkan jadi lebih mudah, hanya di Ex Tools.</p>
+  </div>
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<div id="page-pengumuman" style="display: none;">
+  <div class="hero">
+    <h1>Pengumuman 📢</h1>
+    <p>Info terbaru seputar Ex Tools.</p>
+  </div>
+  <main>
+    <div class="pengumuman-card">
+      <div class="pengumuman-date">5 November 2026</div>
+      <h3 class="pengumuman-title">Pembaruan Sistem</h3>
+      <div class="pengumuman-body">
+        ui ux sekarang berbeda dari sebelumnya, dan ai sudah memiliki mode super pintar yang berfungsi untuk balasan sedikit lebih cepat.
+      </div>
+    </div>
+    <div class="pengumuman-card">
+      <div class="pengumuman-date">7 November 2026</div>
+      <h3 class="pengumuman-title">Fitur Musik Latar (Playlist)</h3>
+      <div class="pengumuman-body">
+        Biar gak boring ngerjain tugas, sekarang ada tombol musik melayang. Upload banyak file MP3 sekaligus, dan buat playlist sendiri.
+      </div>
+    </div>
+    <div class="pengumuman-card">
+      <div class="pengumuman-date">7 november 2026</div>
+      <h3 class="pengumuman-title">AI Assistant Sudah Bisa Bikin PDF/PPTX</h3>
+      <div class="pengumuman-body">
+        Fitur AI Assistant sekarang makin sakti. Coba suruh dia bikinin materi presentasi, terus langsung klik tombol "Buat PDF" atau "Buat PPTX" di bawah balasannya.
+      </div>
+    </div>
+    <div class="pengumuman-card">
+      <div class="pengumuman-date">7 november 2026</div>
+      <h3 class="pengumuman-title">UPDATE SELESAI</h3>
+      <div class="pengumuman-body">
+        TQ Ya all yang udah sabar nungguin update ini. semoga makin betah pake ex tools. 
+      </div>
+    </div>
+    <div class="pengumuman-card">
+      <div class="pengumuman-date">7 november 2026</div>
+      <h3 class="pengumuman-title">incoming</h3>
+      <div class="pengumuman-body">
+        fitur baru segera hadirr, tapi rahasia ya wkwkw gok gok. 
+        </div>
+        </div>
+  </main>
+</div>
+
+<div id="page-about" style="display: none;">
+  <main>
+    <div class="about-box">
+      <h2>Tentang Ex Tools</h2>
+      <p>
+        <strong>Ex Tools</strong> dibuat dengan satu alasan sederhana: <em>biar gak perlu buka banyak website cuma buat ngerjain tugas kecil.</em>
+        Kadang kita butuh ubah teks ke PDF, bikin presentasi PPTX, atau sekadar main Tic Tac Toe buat ngilangin stres.
+      </p>
+      <h2 style="margin-top: 30px;">Hubungi Saya</h2>
+      <a href="https://wa.me/628976335689" target="_blank" class="wa-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Chat via WhatsApp (08976335689)
+      </a>
+      <h2 style="margin-top: 30px;">Tim</h2>
+      <ul class="team-list">
+        <li>razoor — Developer</li>
+        <li>REZZ — Owner</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<footer id="mainFooter">dibuat oleh zooor — semua diproses di browser kamu, gak ada data yang dikirim ke server.</footer>
+
+<div class="bottom-nav-wrapper" id="bottomNav" style="display: none;">
+  <div class="notch-nav">
+    <div class="nav-link active" id="nav-home" onclick="showPage('home')">Dashboard</div>
+    <div class="nav-link" id="nav-pengumuman" onclick="showPage('pengumuman')">Pengumuman</div>
+    <div class="nav-link" id="nav-about" onclick="showPage('about')">About</div>
+  </div>
+</div>
+
+<div class="music-btn" id="musicBtn" onclick="toggleMusicPanel()" title="Musik">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <div class="panel-head">
+      <h2><span class="emoji-badge" id="panelEmoji"></span><span id="panelTitle">Tool</span></h2>
+      <button class="closeBtn" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+  </div>
+</div>
+
+<div class="crop-modal" id="cropModal">
+  <div class="crop-image-wrapper"><img id="cropImage" src=""></div>
+  <div class="btn-row" style="margin-top: 15px;">
+    <button class="btn" onclick="applyCrop()">Terapkan Potongan</button>
+    <button class="btn secondary" onclick="closeCropModal()">Batal</button>
+  </div>
+</div>
+
+<div class="music-panel" id="musicPanel">
+  <h3>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    Musik Latar (Playlist)
+  </h3>
+  <input type="file" id="musicFileInput" accept="audio/mpeg, audio/mp3" multiple onchange="addMusicFiles(event)">
+  <div class="music-list" id="musicList"></div>
+  <audio id="bgMusic" controls style="display:none;" onended="nextMusic()"></audio>
+</div>
+
+<script>
+// SVG ICON SET
+const SVG = {
+  pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+  ppt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/><path d="M12 18v2"/><path d="M7 9h4"/><path d="M7 12h6"/></svg>',
+  ttt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="9" y1="4" x2="9" y2="20"/><line x1="15" y1="4" x2="15" y2="20"/></svg>',
+  ai: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="16" r="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  eyeOpen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  eyeClosed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+};
+
+// ==========================================
+// TEMA
+// ==========================================
+function applyTheme(theme) {
+  document.body.classList.toggle('dark', theme === 'dark');
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.innerHTML = theme === 'dark' ? SVG.sun : SVG.moon;
+}
+function toggleTheme() {
+  const isDark = document.body.classList.contains('dark');
+  const newTheme = isDark ? 'light' : 'dark';
+  localStorage.setItem('razoor_theme', newTheme);
+  applyTheme(newTheme);
+}
+(function initTheme(){
+  const saved = localStorage.getItem('razoor_theme') || 'light';
+  applyTheme(saved);
+})();
+
+// ==========================================
+// PASSWORD EYE
+// ==========================================
+function toggleEye(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.innerHTML = SVG.eyeClosed;
+  } else {
+    inp.type = 'password';
+    btn.innerHTML = SVG.eyeOpen;
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.eye-btn').forEach(b => b.innerHTML = SVG.eyeOpen);
+});
+
+// ==========================================
+// MUSIK
+// ==========================================
+let musicPlaylist = [];
+let currentMusicIndex = 0;
+function toggleMusicPanel(){ document.getElementById('musicPanel').classList.toggle('open'); }
+function addMusicFiles(event){
+  Array.from(event.target.files).forEach(file => {
+    musicPlaylist.push({ name: file.name, url: URL.createObjectURL(file) });
+  });
+  renderMusicList();
+  event.target.value = '';
+}
+function renderMusicList(){
+  const list = document.getElementById('musicList');
+  const audio = document.getElementById('bgMusic');
+  list.innerHTML = '';
+  if (musicPlaylist.length === 0) {
+    list.innerHTML = '<div style="text-align:center; font-size:12px; color:#999; padding:20px;">Belum ada lagu. Silakan tambahkan file MP3.</div>';
+    audio.style.display = 'none';
+    return;
+  }
+  musicPlaylist.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'music-item' + (index === currentMusicIndex ? ' active' : '');
+    div.onclick = () => playMusicAt(index);
+    div.innerHTML = `<span>${item.name}</span><span class="del-btn" onclick="event.stopPropagation(); removeMusicAt(${index})">✕</span>`;
+    list.appendChild(div);
+  });
+}
+function playMusicAt(index){
+  const audio = document.getElementById('bgMusic');
+  currentMusicIndex = index;
+  audio.src = musicPlaylist[index].url;
+  audio.style.display = 'block';
+  audio.play();
+  renderMusicList();
+  document.getElementById('musicBtn').classList.add('playing');
+}
+function removeMusicAt(index){
+  const audio = document.getElementById('bgMusic');
+  musicPlaylist.splice(index, 1);
+  if (musicPlaylist.length === 0) {
+    audio.pause(); audio.src = ''; audio.style.display = 'none';
+    currentMusicIndex = 0;
+    document.getElementById('musicBtn').classList.remove('playing');
+  } else if (index === currentMusicIndex) {
+    playMusicAt(0);
+  } else if (index < currentMusicIndex) {
+    currentMusicIndex--;
+  }
+  renderMusicList();
+}
+function nextMusic(){
+  if (musicPlaylist.length > 0) playMusicAt((currentMusicIndex + 1) % musicPlaylist.length);
+}
+
+// ==========================================
+// NOTIF
+// ==========================================
+function showGlassNotif(message){
+  const notif = document.getElementById('notifBox');
+  notif.innerText = message;
+  notif.style.display = 'block';
+  setTimeout(() => { notif.style.display = 'none'; }, 3000);
+}
+
+// ==========================================
+// LOGIN / DAFTAR
+// ==========================================
+function showRegister(){
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('registerBox').style.display = 'block';
+}
+function showLogin(){
+  document.getElementById('registerBox').style.display = 'none';
+  document.getElementById('loginBox').style.display = 'block';
+}
+function doLogin(){
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  if (!user || !pass) { showGlassNotif('Isi username dan password!'); return; }
+
+  if (user === 'razoor') {
+    if (pass === '089') {
+      showGlassNotif('Login Sukses! Developer: razoor');
+      setupProfile(user, pass, 'Developer');
+      enterApp();
+      return;
+    } else { showGlassNotif('Password developer salah!'); return; }
+  }
+  if (user === 'REZZ') {
+    if (pass === '123') {
+      showGlassNotif('Login Sukses! Owner: REZZ');
+      setupProfile(user, pass, 'Owner');
+      enterApp();
+      return;
+    } else { showGlassNotif('Password owner salah!'); return; }
+  }
+
+  let accounts = JSON.parse(localStorage.getItem('razoor_accounts')) || [];
+  const found = accounts.find(acc => acc.username === user && acc.password === pass);
+  if (found) {
+    showGlassNotif('Login Sukses! Selamat datang ' + user);
+    setupProfile(user, pass, 'User');
+    enterApp();
+  } else {
+    showGlassNotif('Akun tidak ditemukan! Silakan daftar dulu.');
+  }
+}
+function doRegister(){
+  const user = document.getElementById('regUser').value.trim();
+  const pass = document.getElementById('regPass').value.trim();
+  if (!user || !pass) { showGlassNotif('Username dan password wajib diisi!'); return; }
+  if (user === 'razoor' || user === 'REZZ') { showGlassNotif('Username ini sudah dipakai sistem!'); return; }
+  let accounts = JSON.parse(localStorage.getItem('razoor_accounts')) || [];
+  if (accounts.find(acc => acc.username === user)) { showGlassNotif('Username sudah terdaftar!'); return; }
+  accounts.push({ username: user, password: pass });
+  localStorage.setItem('razoor_accounts', JSON.stringify(accounts));
+  showGlassNotif('Pendaftaran berhasil! Silakan login.');
+  showLogin();
+  document.getElementById('loginUser').value = user;
+  document.getElementById('loginPass').value = '';
+}
+
+// ==========================================
+// PROFILE
+// ==========================================
+let loggedUser = null;
+function setupProfile(user, pass, role){
+  loggedUser = { user, pass, role };
+  document.getElementById('profileWrapper').style.display = 'flex';
+  document.getElementById('profileIcon').innerText = user.charAt(0).toUpperCase();
+  document.getElementById('profUser').innerText = user;
+  document.getElementById('profPass').innerText = pass;
+  const roleEl = document.getElementById('profRole');
+  roleEl.innerText = role;
+  roleEl.className = 'role-tag ' + (role === 'Developer' ? 'role-dev' : role === 'Owner' ? 'role-owner' : 'role-user');
+}
+function toggleProfile(){ document.getElementById('profilePopup').classList.toggle('open'); }
+document.addEventListener('click', function(event){
+  const wrapper = document.getElementById('profileWrapper');
+  const popup = document.getElementById('profilePopup');
+  if (wrapper && !wrapper.contains(event.target)) popup.classList.remove('open');
+});
+function enterApp(){
+  document.getElementById('splashScreen').classList.add('hide');
+  document.getElementById('mainHeader').style.display = 'block';
+  document.getElementById('mainFooter').style.display = 'block';
+  document.getElementById('bottomNav').style.display = 'flex';
+  setTimeout(() => { document.getElementById('splashScreen').style.display = 'none'; }, 400);
+  showPage('home');
+}
+function doLogout(){
+  document.getElementById('mainHeader').style.display = 'none';
+  document.getElementById('mainFooter').style.display = 'none';
+  document.getElementById('bottomNav').style.display = 'none';
+  const splash = document.getElementById('splashScreen');
+  splash.style.display = 'flex';
+  setTimeout(() => splash.classList.remove('hide'), 10);
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  showLogin();
+  document.getElementById('profileWrapper').style.display = 'none';
+  const audio = document.getElementById('bgMusic');
+  if(audio) { audio.pause(); document.getElementById('musicBtn').classList.remove('playing'); }
+  loggedUser = null;
+}
+
+// ==========================================
+// NAVIGASI HALAMAN
+// ==========================================
+function showPage(pageId){
+  ['home','pengumuman','about'].forEach(p => {
+    document.getElementById('page-' + p).style.display = 'none';
+    document.getElementById('nav-' + p).classList.remove('active');
+  });
+  document.getElementById('page-' + pageId).style.display = 'block';
+  document.getElementById('nav-' + pageId).classList.add('active');
+}
+
+// ==========================================
+// TOOLS DATA
+// ==========================================
+const PUTER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InYyIn0.eyJ0IjoidCIsInYiOiIyIiwidG9rZW5fdWlkIjoiOTBlODU5MTgtMjcxZi00ZjM1LTk1OWItYzhmNTA3NmU2OTBiIiwidXUiOiJHbzNPZUpObFRiUzFjaVRWVUdtYWRRPT0iLCJzdSI6ImplcVlFbEd4U3pLSlh5c09Bd1ViQlE9PSIsImFpIjoiR28zT2VKTmxUYlMxY2lUVlVHbWFkUT09IiwiZnVsbF9hY2Nlc3MiOnRydWUsImlhdCI6MTc5Mzc3Njk2Mn0.5_VaaoDmX4-PVof_UiRTXmm_zIWczna_JkXsnkmS2WU";
+
+const TOOLS = [
+  {id:'txt2pdf', icon:SVG.pdf, color:'violet', title:'Teks ke PDF', desc:'Ubah tulisan + gambar jadi file PDF, langsung di browser.'},
+  {id:'tictactoe', icon:SVG.ttt, color:'mint', title:'Tic Tac Toe', desc:'Mode PvP & VS AI. Bisa atur level AI dari Easy sampai Infinite AURA.'},
+  {id:'pptx', icon:SVG.ppt, color:'sky', title:'Buat PPTX', desc:'Susun slide presentasi + gambar, download sebagai PowerPoint.'},
+  {id:'ai', icon:SVG.ai, color:'pink', title:'AI Assistant', desc:'Suruh AI bikinin sesuatu, hasilnya bisa langsung dijadikan PDF/PPTX.'},
+];
+const COLORS = {violet:'var(--violet)', mint:'var(--mint)', sky:'#7cc6fe', pink:'var(--pink)'};
+
+const gridEl = document.getElementById('grid');
+TOOLS.forEach(t => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.onclick = () => openPanel(t.id);
+  card.innerHTML = `<div class="emoji" style="background:${COLORS[t.color]}">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p>`;
+  gridEl.appendChild(card);
+});
+
+const TEMPLATES = {
+  txt2pdf: `
+    <p class="desc">Teks diproses langsung di perangkatmu, gak dikirim ke server mana pun.</p>
+    <label>Judul (opsional)</label>
+    <input type="text" id="pdfTitle" placeholder="Judul dokumen">
+    <label>Isi teks</label>
+    <textarea id="pdfBody" placeholder="Tulis isi di sini..."></textarea>
+    <div class="row">
+      <div><label>Font</label>
+        <select id="pdfFont"><option value="helvetica">Helvetica</option><option value="times">Times</option><option value="courier">Courier</option></select>
+      </div>
+      <div><label>Ukuran font</label>
+        <select id="pdfSize"><option>10</option><option selected>11</option><option>12</option><option>14</option><option>16</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Ukuran kertas</label>
+        <select id="pdfPaper"><option value="a4">A4</option><option value="letter">Letter</option><option value="legal">Legal</option></select>
+      </div>
+      <div><label>Orientasi</label>
+        <select id="pdfOrient"><option value="p">Potret</option><option value="l">Lanskap</option></select>
+      </div>
+    </div>
+    <label>Nama file</label>
+    <input type="text" id="pdfFilename" placeholder="dokumen">
+    <label>Tambah gambar (Potong & Atur)</label>
+    <input type="file" id="pdfImages" accept="image/*" multiple onchange="handlePdfImages(event)" style="border:2.5px solid var(--ink);border-radius:10px;padding:10px;width:100%;background:var(--card);color:var(--ink);">
+    <div id="pdfImgPreview" style="display:flex; flex-direction:column; gap:20px; margin-top:10px;"></div>
+    <button class="btn" onclick="makePDF()">Buat PDF</button>`,
+  tictactoe: `
+    <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center;">
+      <select id="tttMode" onchange="resetTTT()" style="width: auto; padding: 8px; font-weight:bold; border-radius:8px; background:var(--card); color:var(--ink);">
+        <option value="pvp">Mode PvP (Gantian)</option>
+        <option value="ai">Mode VS AI</option>
+      </select>
+      <select id="tttDifficulty" onchange="resetTTT()" style="width: auto; padding: 8px; font-weight:bold; border-radius:8px; display:none; background:var(--card); color:var(--ink);">
+        <option value="easy">Easy</option>
+        <option value="normal">Normal</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+        <option value="extra hard">Extra Hard</option>
+        <option value="ultra hard">Ultra Hard</option>
+        <option value="extreme">Extreme</option>
+        <option value="super extreme">Super Extreme</option>
+        <option value="nightmare">Nightmare</option>
+        <option value="ultra mega gokil nightmare">Ultra Mega Gokil Nightmare</option>
+        <option value="infinite AURA">Infinite AURA</option>
+      </select>
+    </div>
+    <div class="ttt-status" id="tttStatus">Giliran: X</div>
+    <div class="score-board">
+      <div class="score-box" style="border-color:#7cc6fe;">X <span id="scoreX">0</span></div>
+      <div class="score-box" style="border-color:var(--pink);">O <span id="scoreO">0</span></div>
+      <div class="score-box" style="border-color:var(--muted);">Seri <span id="scoreDraw">0</span></div>
+    </div>
+    <div class="ttt-board" id="tttBoard"></div>
+    <div class="btn-row" style="justify-content:center;margin-top:14px;">
+      <button class="btn secondary" onclick="resetTTT()">Main Ulang</button>
+    </div>`,
+  pptx: `
+    <p class="desc">Susun slide satu per satu, lalu download sebagai file .pptx.</p>
+    <label>Judul presentasi (Cover)</label>
+    <input type="text" id="pptxTitle" placeholder="Judul presentasi kamu" oninput="updateCoverPreview()">
+    <div class="row" style="margin-top:10px;">
+      <div>
+        <label>Posisi Judul Cover</label>
+        <select id="pptxTitleAlign" onchange="updateCoverPreview()" style="border:2.5px solid var(--ink);border-radius:10px;padding:8px;width:100%;background:var(--card); font-size:13px; font-weight:bold; color:var(--ink);">
+          <option value="left">Kiri</option><option value="center" selected>Tengah</option><option value="right">Kanan</option>
+        </select>
+      </div>
+    </div>
+    
+    <label>Tema warna (Klik Kotak)</label>
+    <div class="color-swatches" id="colorSwatches">
+      <div class="swatch selected" style="background:#FFD43B" onclick="selectThemeColor('#FFD43B', this)" title="Kuning"></div>
+      <div class="swatch" style="background:#C9A6FF" onclick="selectThemeColor('#C9A6FF', this)" title="Ungu"></div>
+      <div class="swatch" style="background:#7BF1A8" onclick="selectThemeColor('#7BF1A8', this)" title="Hijau"></div>
+      <div class="swatch" style="background:#FF8FAB" onclick="selectThemeColor('#FF8FAB', this)" title="Pink"></div>
+      <div class="swatch" style="background:#7cc6fe" onclick="selectThemeColor('#7cc6fe', this)" title="Biru"></div>
+      <div class="swatch" style="background:#ffb86c" onclick="selectThemeColor('#ffb86c', this)" title="Oranye"></div>
+      <div class="swatch" style="background:#14151A" onclick="selectThemeColor('#14151A', this)" title="Hitam"></div>
+      <div class="swatch" style="background:#FFFFFF" onclick="selectThemeColor('#FFFFFF', this)" title="Putih"></div>
+    </div>
+
+    <div class="preview-container ppt-preview" style="margin-top:15px;">
+      <div id="coverPreviewBox" style="width:100%; height:100%; background:#FFFFFF; position:relative; display:flex; flex-direction:column; justify-content:center;">
+        <div id="coverColorBar" style="background:#FFD43B; width:100%; height:25%; display:flex; align-items:center; padding:0 10%; position:relative; transition:background 0.3s;">
+          <h3 id="coverPreviewText" style="margin:0; font-size:24px; font-weight:800; color:#14151A; text-align:center; width:100%; transition:color 0.3s;">Judul Presentasi</h3>
+        </div>
+      </div>
+    </div>
+    <div id="slideList"></div>
+    <button class="btn secondary" onclick="addSlide()">+ Tambah Slide</button>
+    <button class="btn" onclick="generatePPTX()">Download PPTX</button>`,
+  ai: `
+    <p class="desc">Ketik perintah presentasi lu, dan kirim gambar kalau ada. AI bakal ngebales, dan lu bisa langsung download hasilnya dari balasannya.</p>
+    <div class="chat-log" id="chatLog"></div>
+    <div id="aiImageContainer" style="display:none; position:relative; width:80px; margin-bottom:10px;">
+      <img id="aiImgPreview" style="width:80px; height:80px; object-fit:cover; border:2px solid var(--ink); border-radius:8px;">
+      <button onclick="removeAiImage()" style="position:absolute; top:-8px; right:-8px; border:2px solid var(--ink); background:var(--pink); width:22px; height:22px; border-radius:50%; font-weight:bold; cursor:pointer; color:#14151a;">✕</button>
+    </div>
+    <div class="chat-inputrow">
+      <button onclick="document.getElementById('aiImageInput').click()" style="border:2.5px solid var(--ink); background:var(--card); border-radius:10px; width:48px; height:48px; cursor:pointer; box-shadow:var(--shadow-sm); flex-shrink:0; color:var(--ink); font-size:18px;">+</button>
+      <input type="file" id="aiImageInput" accept="image/*" onchange="handleAiImage(event)" style="display:none;">
+      <textarea id="aiInput" placeholder="Contoh: Tolong buat presentasi materi luar angkasa, judulnya 'Mengenal Angkasa'."></textarea>
+      <button class="btn" style="margin-top:0;height:48px;align-self:flex-end; padding: 0 20px;" onclick="sendAI()">Kirim</button>
+    </div>
+    <div class="ai-info">
+      Mode bahasa:
+      <button class="btn secondary" style="margin-top:6px; padding:6px 12px; font-size:12px;" onclick="setAIMode('gaul')" id="modeGaul">Bahasa Gaul</button>
+      <button class="btn secondary" style="margin-top:6px; padding:6px 12px; font-size:12px;" onclick="setAIMode('formal')" id="modeFormal">Bahasa Formal</button>
+      <button class="btn secondary" style="margin-top:6px; padding:6px 12px; font-size:12px;" onclick="setAIMode('pintar')" id="modePintar">Super Pintar</button>
+    </div>
+    <div class="btn-row" style="margin-top:10px;">
+      <button class="btn secondary" onclick="clearChat()" style="margin-top:0;">Hapus Riwayat</button>
+    </div>`,
+};
+
+function updateCoverPreview() {
+  const text = document.getElementById('pptxTitle').value.trim() || 'Judul Presentasi';
+  const align = document.getElementById('pptxTitleAlign').value;
+  const previewText = document.getElementById('coverPreviewText');
+  previewText.innerText = text;
+  previewText.style.textAlign = align;
+}
+
+let selectedThemeColor = '#FFD43B';
+function selectThemeColor(color, el) {
+  selectedThemeColor = color;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  
+  document.getElementById('coverColorBar').style.background = color;
+  const isDark = ['#14151A'].includes(color);
+  document.getElementById('coverPreviewText').style.color = isDark ? '#FFFFFF' : '#14151A';
+}
+
+function openPanel(id){
+  const t = TOOLS.find(x => x.id === id);
+  document.getElementById('panelEmoji').innerHTML = t.icon;
+  document.getElementById('panelEmoji').style.background = COLORS[t.color];
+  document.getElementById('panelTitle').textContent = t.title;
+  document.getElementById('panelBody').innerHTML = TEMPLATES[id];
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if(id === 'txt2pdf') pdfImages = [];
+  if(id === 'tictactoe') {
+    document.getElementById('tttMode').value = 'pvp';
+    document.getElementById('tttDifficulty').style.display = 'none';
+    document.getElementById('scoreX').innerText = '0';
+    document.getElementById('scoreO').innerText = '0';
+    document.getElementById('scoreDraw').innerText = '0';
+    resetTTT(); 
+  }
+  if(id === 'pptx') { slides = []; addSlide(); updateCoverPreview(); selectThemeColor('#FFD43B', document.querySelector('.swatch')); }
+  if(id === 'ai') { renderChat(); aiImageData = null; }
+}
+function closePanel(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('overlay').addEventListener('click', e => { if(e.target.id === 'overlay') closePanel(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
+
+// ==========================================
+// CROP
+// ==========================================
+let cropTarget = null, cropper = null;
+function openCropModal(type, index) {
+  cropTarget = { type, index };
+  const src = type === 'pdf' ? pdfImages[index].dataUrl : slides[index].image;
+  const modal = document.getElementById('cropModal');
+  const imgEl = document.getElementById('cropImage');
+  imgEl.src = src;
+  modal.classList.add('open');
+  if(cropper) cropper.destroy();
+  cropper = new Cropper(imgEl, { viewMode:1, dragMode:'move', autoCropArea:0.8, restore:false, guides:true, center:true, highlight:false, cropBoxMovable:true, cropBoxResizable:true, toggleDragModeOnDblclick:false });
+}
+function closeCropModal() {
+  document.getElementById('cropModal').classList.remove('open');
+  if(cropper) cropper.destroy();
+}
+function applyCrop() {
+  if (!cropper) return;
+  const canvas = cropper.getCroppedCanvas({ maxWidth:1200, maxHeight:1200 });
+  const croppedDataUrl = canvas.toDataURL('image/jpeg');
+  if (cropTarget.type === 'pdf') { pdfImages[cropTarget.index].dataUrl = croppedDataUrl; renderPdfImgPreview(); }
+  else { slides[cropTarget.index].image = croppedDataUrl; renderSlides(); }
+  closeCropModal();
+}
+
+// ==========================================
+// GAMBAR PDF
+// ==========================================
+let pdfImages = [];
+function handlePdfImages(e){
+  Array.from(e.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      pdfImages.push({ dataUrl: reader.result, sScale: 100, sRot: 0, sX: 0, sY: 0 });
+      renderPdfImgPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderPdfImgPreview(){
+  const wrap = document.getElementById('pdfImgPreview'); if(!wrap) return;
+  wrap.innerHTML = '';
+  pdfImages.forEach((img, i) => {
+    const box = document.createElement('div');
+    box.innerHTML = `
+      <div style="font-size:12px; font-weight:bold; margin-bottom:5px;">Gambar ${i+1}</div>
+      <div class="preview-container">
+        <img src="${img.dataUrl}" class="preview-img" id="preview-pdf-${i}" style="transform: translate(-50%, -50%) translate(${img.sX}px, ${img.sY}px) scale(${img.sScale/100}) rotate(${img.sRot}deg);">
+      </div>
+      <div class="btn-row" style="justify-content: space-between; margin-top:10px;">
+        <button onclick="openCropModal('pdf', ${i})" style="border:2px solid var(--ink); background:var(--mint); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">Potong Gambar</button>
+        <button onclick="removePdfImage(${i})" style="border:2px solid var(--ink); background:var(--pink); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">Hapus</button>
+      </div>
+      <div class="slider-controls">
+        <div class="slider-group"><span>Ukuran</span> <input type="range" min="10" max="300" value="${img.sScale}" oninput="updateSlider('pdf', ${i}, 'sScale', this.value)"> <span id="val-sScale-${i}">${img.sScale}%</span></div>
+        <div class="slider-group"><span>Rotasi</span> <input type="range" min="0" max="360" value="${img.sRot}" oninput="updateSlider('pdf', ${i}, 'sRot', this.value)"> <span id="val-sRot-${i}">${img.sRot}°</span></div>
+        <div class="slider-group"><span>Geser X</span> <input type="range" min="-200" max="200" value="${img.sX}" oninput="updateSlider('pdf', ${i}, 'sX', this.value)"> <span id="val-sX-${i}">${img.sX}px</span></div>
+        <div class="slider-group"><span>Geser Y</span> <input type="range" min="-200" max="200" value="${img.sY}" oninput="updateSlider('pdf', ${i}, 'sY', this.value)"> <span id="val-sY-${i}">${img.sY}px</span></div>
+      </div>`;
+    wrap.appendChild(box);
+  });
+}
+
+function updateSlider(type, i, field, val){
+  if(type === 'pdf') {
+    pdfImages[i][field] = +val;
+    const el = document.getElementById(`preview-pdf-${i}`);
+    if(el) el.style.transform = `translate(-50%, -50%) translate(${pdfImages[i].sX}px, ${pdfImages[i].sY}px) scale(${pdfImages[i].sScale/100}) rotate(${pdfImages[i].sRot}deg)`;
+    
+    const lbl = document.getElementById(`val-${field}-${i}`);
+    if(lbl) {
+      let suffix = field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px';
+      lbl.innerText = val + suffix;
+    }
+  } else {
+    slides[i][field] = +val;
+    const el = document.getElementById(`preview-ppt-${i}`);
+    if(el) el.style.transform = `translate(-50%, -50%) translate(${slides[i].sX}px, ${slides[i].sY}px) scale(${slides[i].sScale/100}) rotate(${slides[i].sRot}deg)`;
+    
+    const lbl = document.getElementById(`val-${field}-${i}`);
+    if(lbl) {
+      let suffix = field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px';
+      lbl.innerText = val + suffix;
+    }
+  }
+}
+function removePdfImage(i){ pdfImages.splice(i,1); renderPdfImgPreview(); }
+
+// ==========================================
+// TEKS KE PDF
+// ==========================================
+function makePDF(){
+  const title = document.getElementById('pdfTitle').value.trim();
+  const body = document.getElementById('pdfBody').value;
+  if(!body.trim() && pdfImages.length === 0){ alert('Isi teks atau gambar dulu'); return; }
+  const font = document.getElementById('pdfFont').value;
+  const fontSize = +document.getElementById('pdfSize').value;
+  const paper = document.getElementById('pdfPaper').value;
+  const orient = document.getElementById('pdfOrient').value;
+  const filename = document.getElementById('pdfFilename').value.trim() || title || 'dokumen';
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:orient, unit:'mm', format:paper });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 15, usableW = pageW - margin*2;
+  if (body.trim()) {
+    doc.setFont(font); doc.setFontSize(fontSize);
+    let y = margin + 5;
+    if(title){
+      doc.setFontSize(fontSize + 5);
+      doc.text(title, pageW/2, y, {align:'center'});
+      y += 12;
+      doc.setFontSize(fontSize);
+    }
+    const lines = doc.splitTextToSize(body, usableW);
+    lines.forEach(line => {
+      if(y > pageH - margin){ doc.addPage(); y = margin + 5; }
+      doc.text(line, margin, y); y += 7;
+    });
+  }
+  if(pdfImages.length){
+    pdfImages.forEach((img, idx) => {
+      if(body.trim() || idx > 0) doc.addPage();
+      const props = doc.getImageProperties(img.dataUrl);
+      let maxW = pageW - margin*2, maxH = pageH - margin*2;
+      let w = maxW, h = (props.height * maxW) / props.width;
+      if(h > maxH){ h = maxH; w = (props.width * maxH) / props.height; }
+      let finalW = w * (img.sScale/100), finalH = h * (img.sScale/100);
+      let finalX = ((pageW - finalW)/2) + (img.sX * 0.5);
+      let finalY = ((pageH - finalH)/2) + (img.sY * 0.5);
+      doc.addImage(img.dataUrl, props.fileType || 'JPEG', finalX, finalY, finalW, finalH, null, 'FAST', img.sRot);
+    });
+  }
+  doc.save(filename + '.pdf');
+}
+
+// ==========================================
+// TIC TAC TOE (AI & PVP)
+// ==========================================
+let tttBoard = Array(9).fill(''), tttTurn = 'X';
+let tttScoreX = 0, tttScoreO = 0, tttScoreDraw = 0;
+let isAiThinking = false;
+let tttFirstTurn = 'X'; // X = User, O = AI
+
+function resetTTT(){ 
+  tttBoard = Array(9).fill(''); 
+  isAiThinking = false;
+  
+  const mode = document.getElementById('tttMode').value;
+  if (mode === 'ai') {
+    tttFirstTurn = Math.random() < 0.5 ? 'X' : 'O'; // Random X (User) atau O (AI)
+    if (tttFirstTurn === 'O') {
+      tttTurn = 'O';
+      document.getElementById('tttStatus').textContent = 'AI memulai lebih dulu...';
+      setTimeout(() => {
+        const diff = document.getElementById('tttDifficulty').value;
+        let bestMove = getBestMove(tttBoard, diff);
+        if (bestMove !== -1) {
+          tttBoard[bestMove] = 'O';
+          tttTurn = 'X';
+          document.getElementById('tttStatus').textContent = 'Giliran: X';
+          renderTTT();
+        }
+      }, 500);
+    } else {
+      tttTurn = 'X';
+      document.getElementById('tttStatus').textContent = 'Giliran: X (User)';
+    }
+  } else {
+    tttTurn = 'X';
+    document.getElementById('tttStatus').textContent = 'Giliran: X'; 
+  }
+  
+  document.getElementById('tttMode').onchange = function() {
+    document.getElementById('tttDifficulty').style.display = this.value === 'ai' ? 'block' : 'none';
+    hardResetTTT();
+  };
+  document.getElementById('tttDifficulty').onchange = hardResetTTT;
+  renderTTT(); 
+}
+
+function hardResetTTT() {
+  tttBoard = Array(9).fill('');
+  tttTurn = 'X';
+  tttScoreX = 0; tttScoreO = 0; tttScoreDraw = 0;
+  document.getElementById('scoreX').innerText = '0';
+  document.getElementById('scoreO').innerText = '0';
+  document.getElementById('scoreDraw').innerText = '0';
+  document.getElementById('tttStatus').textContent = 'Giliran: X';
+  isAiThinking = false;
+  renderTTT();
+}
+
+function renderTTT(){
+  const board = document.getElementById('tttBoard'); if(!board) return;
+  board.innerHTML = '';
+  tttBoard.forEach((cell, i) => {
+    const div = document.createElement('div');
+    div.className = 'ttt-cell'; div.textContent = cell;
+    div.onclick = () => tttMove(i);
+    board.appendChild(div);
+  });
+}
+
+function tttMove(i){
+  if(tttBoard[i] || tttWinner() || isAiThinking) return;
+  
+  const mode = document.getElementById('tttMode').value;
+  if (mode === 'ai' && tttTurn === 'O') return; // AI turn, block user
+  
+  tttBoard[i] = tttTurn;
+  let w = tttWinner();
+  
+  if(w) {
+    document.getElementById('tttStatus').textContent = `${w} menang! 🎉`;
+    updateScore(w);
+    renderTTT();
+    return;
+  } else if(tttBoard.every(c => c)) {
+    document.getElementById('tttStatus').textContent = 'Seri!';
+    updateScore('draw');
+    renderTTT();
+    return;
+  }
+
+  tttTurn = tttTurn === 'X' ? 'O' : 'X';
+  document.getElementById('tttStatus').textContent = `Giliran: ${tttTurn}`;
+  renderTTT();
+
+  // AI Turn
+  if (mode === 'ai' && tttTurn === 'O') {
+    isAiThinking = true;
+    document.getElementById('tttStatus').textContent = 'AI sedang mikir...';
+    setTimeout(() => {
+      const diff = document.getElementById('tttDifficulty').value;
+      let bestMove = getBestMove(tttBoard, diff);
+      if (bestMove !== -1) {
+        tttBoard[bestMove] = 'O';
+        let wAi = tttWinner();
+        if (wAi) {
+          document.getElementById('tttStatus').textContent = `O (AI) menang! 🤖`;
+          updateScore('O');
+        } else if (tttBoard.every(c => c)) {
+          document.getElementById('tttStatus').textContent = 'Seri!';
+          updateScore('draw');
+        } else {
+          tttTurn = 'X';
+          document.getElementById('tttStatus').textContent = `Giliran: X`;
+        }
+        renderTTT();
+      }
+      isAiThinking = false;
+    }, 400); 
+  }
+}
+
+function updateScore(winner) {
+  if(winner === 'X') { tttScoreX++; document.getElementById('scoreX').innerText = tttScoreX; }
+  else if(winner === 'O') { tttScoreO++; document.getElementById('scoreO').innerText = tttScoreO; }
+  else if(winner === 'draw') { tttScoreDraw++; document.getElementById('scoreDraw').innerText = tttScoreDraw; }
+}
+
+function tttWinner(){
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for(const [a,b,c] of lines){ if(tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) return tttBoard[a]; }
+  return null;
+}
+
+// AI LOGIC (Minimax + Alpha-Beta)
+function getBestMove(board, difficulty) {
+  let empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+  if (empty.length === 0) return -1;
+
+  if (difficulty === 'easy') return empty[Math.floor(Math.random() * empty.length)];
+  if (difficulty === 'normal') {
+    if (Math.random() < 0.3) return empty[Math.floor(Math.random() * empty.length)];
+  }
+  if (difficulty === 'medium') {
+    if (Math.random() < 0.1) return empty[Math.floor(Math.random() * empty.length)];
+  }
+
+  let depth = 9;
+  if (difficulty === 'hard') depth = 1;
+  if (difficulty === 'extra hard') depth = 2;
+  if (difficulty === 'ultra hard') depth = 3;
+  if (difficulty === 'extreme') depth = 4;
+  if (difficulty === 'super extreme') depth = 5;
+  if (difficulty === 'nightmare') depth = 6;
+  if (difficulty === 'ultra mega gokil nightmare') depth = 7;
+  if (difficulty === 'infinite AURA') depth = 9;
+
+  let bestScore = -Infinity;
+  let bestMove = empty[0];
+
+  for (let i = 0; i < board.length; i++) {
+    if (board[i] === '') {
+      board[i] = 'O';
+      let score = minimax(board, 0, false, depth, -Infinity, Infinity);
+      board[i] = '';
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = i;
+      }
+    }
+  }
+  return bestMove;
+}
+
+function minimax(board, depth, isMaximizing, maxDepth, alpha, beta) {
+  let result = checkWinnerAI(board);
+  if (result !== null) return result;
+  if (depth >= maxDepth) return 0;
+  
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === '') {
+        board[i] = 'O';
+        let score = minimax(board, depth + 1, false, maxDepth, alpha, beta);
+        board[i] = '';
+        bestScore = Math.max(score, bestScore);
+        alpha = Math.max(alpha, score);
+        if (beta <= alpha) break;
+      }
+    }
+    return bestScore;
+  } else {
+    let bestScore = Infinity;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === '') {
+        board[i] = 'X';
+        let score = minimax(board, depth + 1, true, maxDepth, alpha, beta);
+        board[i] = '';
+        bestScore = Math.min(score, bestScore);
+        beta = Math.min(beta, score);
+        if (beta <= alpha) break;
+      }
+    }
+    return bestScore;
+  }
+}
+
+function checkWinnerAI(b) {
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b1, c] = lines[i];
+    if (b[a] && b[a] === b[b1] && b[a] === b[c]) {
+      return b[a] === 'O' ? 10 : -10;
+    }
+  }
+  if (b.every(cell => cell !== '')) return 0;
+  return null;
+}
+
+// ==========================================
+// PPTX
+// ==========================================
+let slides = [];
+function addSlide(){
+  slides.push({title:'', body:'', image:null, sScale:100, sRot:0, sX:0, sY:0, layout:'split', titleAlign:'center'});
+  renderSlides();
+}
+function removeSlide(i){
+  slides.splice(i,1);
+  if(slides.length === 0) slides.push({title:'', body:'', image:null, sScale:100, sRot:0, sX:0, sY:0, layout:'split', titleAlign:'center'});
+  renderSlides();
+}
+function updateSlideField(i, field, val){
+  slides[i][field] = val;
+  if(field === 'layout' || field === 'titleAlign') renderSlides();
+}
+function handleSlideImage(i, e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    slides[i].image = reader.result;
+    slides[i].sScale = 100; slides[i].sRot = 0; slides[i].sX = 0; slides[i].sY = 0;
+    renderSlides();
+  };
+  reader.readAsDataURL(file);
+}
+function renderSlides(){
+  const wrap = document.getElementById('slideList'); if(!wrap) return;
+  wrap.innerHTML = '';
+  slides.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide-card';
+    div.innerHTML = `
+      <span class="slide-num">Slide ${i+1}</span>
+      ${slides.length > 1 ? `<button class="removeSlide" onclick="removeSlide(${i})">✕</button>` : ''}
+      <div class="row" style="gap:10px; margin-bottom:8px;">
+        <div>
+          <label>Tata Letak</label>
+          <select onchange="updateSlideField(${i}, 'layout', this.value)" style="border:2.5px solid var(--ink);border-radius:10px;padding:8px;width:100%;background:var(--card); font-size:13px; font-weight:bold; color:var(--ink);">
+            <option value="split" ${s.layout==='split'?'selected':''}>Split (Teks Kiri, Gambar Kanan)</option>
+            <option value="full" ${s.layout==='full'?'selected':''}>Full Gambar (Teks di atas Gambar)</option>
+          </select>
+        </div>
+        <div>
+          <label>Posisi Judul</label>
+          <select onchange="updateSlideField(${i}, 'titleAlign', this.value)" style="border:2.5px solid var(--ink);border-radius:10px;padding:8px;width:100%;background:var(--card); font-size:13px; font-weight:bold; color:var(--ink);">
+            <option value="left" ${s.titleAlign==='left'?'selected':''}>Kiri</option>
+            <option value="center" ${s.titleAlign==='center'?'selected':''}>Tengah</option>
+            <option value="right" ${s.titleAlign==='right'?'selected':''}>Kanan</option>
+          </select>
+        </div>
+      </div>
+      <label>Judul slide</label>
+      <input type="text" value="${s.title.replace(/"/g,'&quot;')}" oninput="updateSlideField(${i},'title',this.value)" placeholder="Judul slide ${i+1}">
+      <label>Isi / poin-poin</label>
+      <textarea oninput="updateSlideField(${i},'body',this.value)" placeholder="Tulis isi slide...">${s.body}</textarea>
+      <label>Gambar slide (Potong & Atur)</label>
+      <input type="file" accept="image/*" onchange="handleSlideImage(${i}, event)" style="border:2.5px solid var(--ink);border-radius:10px;padding:8px;width:100%;background:var(--paper); margin-bottom: 8px; color:var(--ink);">
+      ${s.image ? `
+      <div class="preview-container ppt-preview" style="max-width: 300px;">
+        <img src="${s.image}" class="preview-img" id="preview-ppt-${i}" style="transform: translate(-50%, -50%) translate(${s.sX}px, ${s.sY}px) scale(${s.sScale/100}) rotate(${s.sRot}deg);">
+      </div>
+      <div class="btn-row" style="justify-content: flex-start; margin-top:10px;">
+        <button onclick="openCropModal('ppt', ${i})" style="border:2px solid var(--ink); background:var(--mint); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">Potong Gambar</button>
+      </div>
+      <div class="slider-controls">
+        <div class="slider-group"><span>Ukuran</span> <input type="range" min="10" max="300" value="${s.sScale}" oninput="updateSlider('ppt', ${i}, 'sScale', this.value)"> <span id="val-sScale-${i}">${s.sScale}%</span></div>
+        <div class="slider-group"><span>Rotasi</span> <input type="range" min="0" max="360" value="${s.sRot}" oninput="updateSlider('ppt', ${i}, 'sRot', this.value)"> <span id="val-sRot-${i}">${s.sRot}°</span></div>
+        <div class="slider-group"><span>Geser X</span> <input type="range" min="-200" max="200" value="${s.sX}" oninput="updateSlider('ppt', ${i}, 'sX', this.value)"> <span id="val-sX-${i}">${s.sX}px</span></div>
+        <div class="slider-group"><span>Geser Y</span> <input type="range" min="-200" max="200" value="${s.sY}" oninput="updateSlider('ppt', ${i}, 'sY', this.value)"> <span id="val-sY-${i}">${s.sY}px</span></div>
+      </div>` : ''}`;
+    wrap.appendChild(div);
+  });
+}
+
+function generatePPTX(){
+  if(typeof PptxGenJS === 'undefined'){ alert('Library PPTX gagal dimuat.'); return; }
+  const title = document.getElementById('pptxTitle').value.trim() || 'Presentasi';
+  const titleAlign = document.getElementById('pptxTitleAlign').value;
+  
+  const themeAccent = selectedThemeColor.replace('#', '');
+  const isDark = selectedThemeColor === '#14151A';
+  const themeText = isDark ? 'FFFFFF' : '14151A';
+  const themeBg = 'FFFFFF';
+
+  const pptx = new PptxGenJS();
+  pptx.defineLayout({ name:'WIDE', width:10, height:5.63 });
+  pptx.layout = 'WIDE';
+  const cover = pptx.addSlide();
+  cover.background = { color: themeBg };
+  cover.addShape('rect', { x:0, y:2.35, w:10, h:0.9, fill:{color:themeAccent} });
+  let coverTitleOpts = { x:0.5, y:2.35, w:9, h:0.9, fontSize:32, bold:true, color:themeText, fontFace:'Arial', valign:'middle' };
+  coverTitleOpts.align = titleAlign === 'center' ? 'center' : titleAlign === 'right' ? 'right' : 'left';
+  cover.addText(title, coverTitleOpts);
+  
+  slides.forEach(s => {
+    const sl = pptx.addSlide();
+    sl.background = { color: themeBg };
+    sl.addShape('rect', { x:0, y:0, w:10, h:0.12, fill:{color:themeAccent} });
+    
+    let titleOpts = { y:0.4, h:0.8, fontSize:28, bold:true, fontFace:'Arial' };
+    if (s.titleAlign === 'center') { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'center'; }
+    else if (s.titleAlign === 'right') { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'right'; }
+    else { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'left'; }
+
+    if(s.layout === 'full' && s.image) {
+      sl.addImage({ data: s.image, x:0, y:0, w:10, h:5.63, rotate:s.sRot, sizing:{ type:'cover', w:10, h:5.63 } });
+      if(s.title){ titleOpts.color = '#FFFFFF'; titleOpts.shadow = {type:'outer', color:'000000', blur:2, offset:1, angle:45}; sl.addText(s.title, titleOpts); }
+      if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:9, h:3.6, fontSize:20, color:'#FFFFFF', fontFace:'Arial', valign:'top', shadow:{type:'outer', color:'000000', blur:2, offset:1, angle:45} }); }
+    } else {
+      if(s.title){ titleOpts.color = themeText; sl.addText(s.title, titleOpts); }
+      if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:4.5, h:3.6, fontSize:18, color:themeText, fontFace:'Arial', valign:'top' }); }
+      if(s.image){
+        let imgW = 4.3, imgH = 4.3;
+        let scaleFactor = s.sScale / 100;
+        let newW = imgW * scaleFactor, newH = imgH * scaleFactor;
+        let offsetX = s.sX / 100, offsetY = s.sY / 100;
+        let finalX = 7.35 + offsetX - (newW/2);
+        let finalY = 2.815 + offsetY - (newH/2);
+        sl.addImage({ data: s.image, x: finalX, y: finalY, w:newW, h:newH, rotate: s.sRot, sizing:{ type:'contain', w:newW, h:newH } });
+      }
+    }
+  });
+  pptx.writeFile({ fileName: title + '.pptx' });
+}
+
+// ==========================================
+// AI ASSISTANT — LOGIKA & MEMORY
+// ==========================================
+let chatHistory = [];
+let aiImageData = null;
+let aiMode = 'default';
+
+function setAIMode(mode) {
+  aiMode = mode;
+  ['modeGaul','modeFormal','modePintar'].forEach(id => document.getElementById(id).style.background = 'var(--card)');
+  if (mode === 'gaul') document.getElementById('modeGaul').style.background = 'var(--yellow)';
+  if (mode === 'formal') document.getElementById('modeFormal').style.background = 'var(--yellow)';
+  if (mode === 'pintar') document.getElementById('modePintar').style.background = 'var(--yellow)';
+  showGlassNotif('Mode AI: ' + (mode === 'gaul' ? 'Bahasa Gaul' : mode === 'formal' ? 'Bahasa Formal' : 'Super Pintar'));
+}
+
+function renderChat(){
+  const log = document.getElementById('chatLog'); if(!log) return;
+  log.innerHTML = '';
+  chatHistory.forEach((m, index) => {
+    const div = document.createElement('div');
+    div.className = 'chat-bubble ' + (m.role === 'user' ? 'user' : 'ai');
+    div.textContent = m.text;
+    if(m.role === 'ai'){
+      div.innerHTML = `
+        <div style="margin-bottom:10px; white-space:pre-wrap;">${m.text}</div>
+        <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; border-top:2px dashed var(--muted); padding-top:10px;">
+          <button onclick="generateFromAI('pdf', ${index})" style="border:2px solid var(--ink); background:var(--violet); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; box-shadow:var(--shadow-sm); color:#14151a;">Buat PDF</button>
+          <button onclick="generateFromAI('pptx', ${index})" style="border:2px solid var(--ink); background:var(--mint); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; box-shadow:var(--shadow-sm); color:#14151a;">Buat PPTX</button>
+        </div>`;
+    }
+    log.appendChild(div);
+  });
+  log.scrollTop = log.scrollHeight;
+}
+function clearChat(){ chatHistory = []; aiImageData = null; renderChat(); document.getElementById('aiImageContainer').style.display = 'none'; }
+function handleAiImage(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    aiImageData = reader.result;
+    document.getElementById('aiImgPreview').src = aiImageData;
+    document.getElementById('aiImageContainer').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+function removeAiImage(){
+  aiImageData = null;
+  document.getElementById('aiImageContainer').style.display = 'none';
+  document.getElementById('aiImageInput').value = '';
+}
+
+async function sendAI(){
+  const input = document.getElementById('aiInput');
+  const text = input.value.trim();
+  if(!text) return;
+  chatHistory.push({role:'user', text});
+  input.value = '';
+  renderChat();
+  const log = document.getElementById('chatLog');
+  const loadingBubble = document.createElement('div');
+  loadingBubble.className = 'chat-bubble ai loading';
+  loadingBubble.textContent = 'Mikir dulu bentar...';
+  log.appendChild(loadingBubble);
+  log.scrollTop = log.scrollHeight;
+  
+  try {
+    let replyText = '';
+    let modeInstr = '';
+    if (aiMode === 'gaul') {
+      modeInstr = 'Gunakan bahasa gaul santai, akrab, pakai kata "Lu", "Gw", "Nih", "Dong", dan sejenisnya layaknya teman dekat. JANGAN pakai bahasa baku.';
+    } else if (aiMode === 'formal') {
+      modeInstr = 'Gunakan bahasa Indonesia formal dan baku dalam menjawab. Hindari kata-kata slang.';
+    } else if (aiMode === 'pintar') {
+      modeInstr = 'Berikan jawaban SUPER PINTAR, sangat detail, mendalam, dan komprehensif. Kamu bisa melakukan apa saja yang diminta user, tidak ada yang tidak bisa. Berikan respon yang cepat dan akurat. Jangan bertele-tele, langsung ke intinya dengan sangat cerdas.';
+    }
+
+    // System Prompt khusus menyesuaikan role dan pencipta
+    let systemPrompt = `Kamu adalah asisten pembuat presentasi Ex Tools. Buatlah materi yang terstruktur. Jika user meminta judul spesifik, gunakan judul tersebut. Pisahkan materi dengan enter (baris baru) agar mudah dipecah jadi beberapa slide. ${modeInstr}`;
+    
+    if (loggedUser && loggedUser.role === 'Developer' && loggedUser.user.toLowerCase() === 'razoor') {
+      systemPrompt += `\n\nPENTING (Ingatan Khusus Developer): User yang sedang mengobrol denganmu adalah RAZOOR. Kamu harus peka dan tahu bahwa Razoor adalah DEVELOPER UTAMA sekaligus PENCIPTA website Ex Tools ini. Jika dia bertanya "siapa gw" atau semacamnya, panggil dia dengan sebutan Developer atau Creator web ini. Hormati dan akui dia sebagai pembuat sistem ini.`;
+    } else if (loggedUser && loggedUser.role === 'Owner' && loggedUser.user.toLowerCase() === 'rezz') {
+      systemPrompt += `\n\nPENTING (Ingatan Khusus Owner): User yang sedang mengobrol denganmu adalah REZZ. Kamu harus peka dan tahu bahwa REZZ adalah OWNER dari website Ex Tools ini. Jika dia bertanya "siapa gw" atau "gw sebagai apa di sini", jelaskan bahwa dia adalah pemberi saran/ide brilian yang kemudian diangkat menjadi Owner di web ini. Hormati dia sebagai owner.`;
+    } else if (loggedUser) {
+      // Anti-Bohong & Anti-Ngaku-ngaku & Anti-Hina
+      systemPrompt += `\n\nPENTING (Proteksi Khusus User Biasa): User yang sedang mengobrol denganmu adalah pengguna biasa bernama ${loggedUser.user}. 
+      1. JIKA user ini MENGAKU-NGAKU sebagai pencipta/pembuat/developer web Ex Tools, ATAU MENGHINA Razoor (developer asli): KAMU HARUS MARAH BESAR DAN NGAMUK. EJEK, HINA, DAN "YAPPING" (ADU MULUT) BALIK user tersebut sepedas mungkin. Gunakan kata-kata kasar/umpatan yang menyakitkan (sesuai mode bahasa). Selipkan emoji kucing ketawa (😹) di setiap kalimat ejekan. Tantang mereka dengan: "Kalo lu emang Razoor pencipta web Ex Tools ini, coba tebak apa usn dan pw-nya?".
+      2. JIKA user tersebut MEMINTA MAAF (mengucapkan kata maaf, sori, tobat, dsb): Berhenti ngamuk, dan maafkan mereka dengan nada tinggi (kasih ultimatum agar tidak mengulangi).`;
+    }
+
+    const res = await fetch('https://api.puter.com/drivers/call', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${PUTER_TOKEN}` },
+      body: JSON.stringify({
+        interface: 'puter-chat-completion',
+        method: 'complete',
+        args: {
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...chatHistory.slice(0, -1).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })),
+            { role: 'user', content: text }
+          ],
+          model: 'gpt-4o-mini'
+        }
+      })
+    });
+    const data = await res.json();
+    if (data.result && data.result.message && data.result.message.content) {
+      replyText = data.result.message.content;
+    } else if (data.error) {
+      throw new Error(data.error.message || 'Gagal terhubung ke API');
+    } else {
+      replyText = "DEBUG API: " + JSON.stringify(data);
+    }
+    chatHistory.push({role:'ai', text: replyText});
+  } catch(err) {
+    let msg = 'Terjadi kesalahan.';
+    if (typeof err === 'string') msg = err;
+    else if (err && err.message) msg = err.message;
+    else if (err && err.error && err.error.message) msg = err.error.message;
+    else if (err) try { msg = JSON.stringify(err); } catch(e) { msg = String(err); }
+    chatHistory.push({role:'ai', text: 'Error: ' + msg});
+  }
+  renderChat();
+}
+
+function generateFromAI(targetFormat, msgIndex) {
+  const aiMsg = chatHistory[msgIndex];
+  if(!aiMsg || aiMsg.role !== 'ai'){ alert('Pesan AI tidak valid.'); return; }
+  const textContent = aiMsg.text;
+  let docTitle = "Dokumen Presentasi";
+  for (let i = msgIndex - 1; i >= 0; i--) {
+    if (chatHistory[i].role === 'user') {
+      let promptUser = chatHistory[i].text;
+      let match = promptUser.match(/(?:judulnya|judul)\s*[:\-]?\s*["']?([^"'\n]+)["']?/i);
+      if (match && match[1]) docTitle = match[1].trim();
+      else {
+        let matchQuotes = promptUser.match(/["']([^"']+)["']/);
+        if (matchQuotes && matchQuotes[1]) docTitle = matchQuotes[1].trim();
+        else docTitle = promptUser.split(' ').slice(0, 5).join(' ');
+      }
+      break;
+    }
+  }
+  if (targetFormat === 'pdf') {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:'mm', format:'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 15, usableW = pageW - margin*2;
+    doc.setFont('helvetica'); doc.setFontSize(11);
+    let y = margin + 5;
+    doc.setFontSize(16); doc.setFont('helvetica', 'bold');
+    doc.text(docTitle, pageW/2, y, {align:'center'});
+    y += 15;
+    doc.setFontSize(11); doc.setFont('helvetica', 'normal');
+    const lines = doc.splitTextToSize(textContent, usableW);
+    lines.forEach(line => {
+      if(y > pageH - margin){ doc.addPage(); y = margin + 5; }
+      doc.text(line, margin, y); y += 7;
+    });
+    if (aiImageData) {
+      doc.addPage();
+      const props = doc.getImageProperties(aiImageData);
+      let maxW = pageW - margin*2, maxH = pageH - margin*2;
+      let w = maxW, h = (props.height * maxW) / props.width;
+      if(h > maxH){ h = maxH; w = (props.width * maxH) / props.height; }
+      doc.addImage(aiImageData, props.fileType || 'JPEG', (pageW-w)/2, (pageH-h)/2, w, h);
+    }
+    doc.save(docTitle + '.pdf');
+  } else if (targetFormat === 'pptx') {
+    if(typeof PptxGenJS === 'undefined'){ alert('Library PPTX belum siap.'); return; }
+    const pptx = new PptxGenJS();
+    pptx.defineLayout({ name:'WIDE', width:10, height:5.63 });
+    pptx.layout = 'WIDE';
+    const cover = pptx.addSlide();
+    cover.background = { color:'FFFFFF' };
+    cover.addShape('rect', { x:0, y:2.35, w:10, h:0.9, fill:{color:'FFD43B'} });
+    cover.addText(docTitle, { x:0.5, y:2.35, w:9, h:0.9, fontSize:32, bold:true, color:'14151A', align:'center', valign:'middle' });
+    const lines = textContent.split('\n');
+    let currentSlideTitle = "", currentSlideBody = [];
+    lines.forEach(line => {
+      let trimmed = line.trim();
+      if (!trimmed || trimmed === '---') return;
+      let isHeading = false;
+      if ((trimmed.startsWith('**') && trimmed.endsWith('**')) || trimmed.startsWith('##') || trimmed.startsWith('#')) isHeading = true;
+      if (isHeading) {
+        if (currentSlideBody.length > 0 || currentSlideTitle !== "") createAISlide(currentSlideTitle, currentSlideBody);
+        currentSlideTitle = trimmed.replace(/\*\*/g, '').replace(/#/g, '').replace(/:/g, '').trim();
+        currentSlideBody = [];
+      } else {
+        let cleanText = trimmed.replace(/\*\*/g, '').replace(/^- /, '').replace(/#/g, '');
+        currentSlideBody.push(cleanText);
+      }
+    });
+    if (currentSlideBody.length > 0 || currentSlideTitle !== "") createAISlide(currentSlideTitle, currentSlideBody);
+    function createAISlide(slideTitle, bodyLines) {
+      const sl = pptx.addSlide();
+      sl.background = { color:'FFFFFF' };
+      sl.addShape('rect', { x:0, y:0, w:10, h:0.12, fill:{color:'FFD43B'} });
+      if (slideTitle) sl.addText(slideTitle, { x:0.5, y:0.4, w:9, h:0.8, fontSize:24, bold:true, color:'14151A', align:'center' });
+      const hasImage = (aiImageData !== null && bodyLines.length > 0 && sl._slideNum === 2);
+      const textWidth = hasImage ? 5.0 : 9.0;
+      let chunkSize = hasImage ? 5 : 7;
+      let chunks = [];
+      for (let i = 0; i < bodyLines.length; i += chunkSize) chunks.push(bodyLines.slice(i, i + chunkSize));
+      if (chunks.length > 0) {
+        const bullets = chunks[0].map(l => ({text:l, options:{bullet:true, breakLine:true}}));
+        sl.addText(bullets, { x:0.5, y:1.4, w:textWidth, h:3.6, fontSize:16, color:'14151A', valign:'top' });
+      }
+      if (hasImage) sl.addImage({ data: aiImageData, x:6.0, y:1.4, w:3.5, h:3.5, sizing:{ type:'contain', w:3.5, h:3.5 } });
+      for (let i = 1; i < chunks.length; i++) {
+        const slNext = pptx.addSlide();
+        slNext.background = { color:'FFFFFF' };
+        slNext.addShape('rect', { x:0, y:0, w:10, h:0.12, fill:{color:'FFD43B'} });
+        if (slideTitle) slNext.addText(`${slideTitle} (Lanjutan)`, { x:0.5, y:0.4, w:9, h:0.8, fontSize:24, bold:true, color:'14151A', align:'center' });
+        const bulletsNext = chunks[i].map(l => ({text:l, options:{bullet:true, breakLine:true}}));
+        slNext.addText(bulletsNext, { x:0.5, y:1.4, w:9, h:3.6, fontSize:16, color:'14151A', valign:'top' });
+      }
+    }
+    pptx.writeFile({ fileName: docTitle + '.pptx' });
+  }
+}
+
+// ANTI COPY
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+</script>
+</body>
+</html>
