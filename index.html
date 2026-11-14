@@ -345,11 +345,37 @@
   .role-moderator { background: #ffb86c; }
   .role-partner { background: #7cc6fe; }
   .role-user { background: var(--mint); }
+
+  /* ====== DOWNLOAD TOAST ====== */
+  #downloadToastContainer { position: fixed; top: 20px; right: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; max-width: 90vw; width: 360px; pointer-events: none; }
+  .download-toast { pointer-events: auto; background: var(--card); border: 2.5px solid var(--ink); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+  body.dark .download-toast { background: #1a1d24; }
+  @keyframes slideInRight { from { transform: translateX(120%); } to { transform: translateX(0); } }
+  @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
+  .download-toast.hide { animation: slideOutRight 0.3s ease forwards; }
+  .dl-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--mint); border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .dl-icon svg { width: 22px; height: 22px; }
+  .dl-icon.loading { background: var(--yellow); }
+  .dl-icon.loading svg { animation: spinLoader 1s linear infinite; }
+  @keyframes spinLoader { to { transform: rotate(360deg); } }
+  .dl-icon.success { background: var(--mint); }
+  .dl-content { flex: 1; min-width: 0; }
+  .dl-title { font-size: 13px; font-weight: 800; color: var(--ink); margin: 0 0 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dl-subtitle { font-size: 11px; color: var(--muted); margin: 0; }
+  .dl-progress-track { width: 100%; height: 6px; background: rgba(128,128,128,0.2); border-radius: 999px; overflow: hidden; margin-top: 8px; }
+  .dl-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--yellow), var(--mint)); border-radius: 999px; transition: width 0.3s ease; }
+  .dl-open-btn { display: none; padding: 6px 10px; background: var(--mint); border: 2px solid var(--ink); border-radius: 8px; font-size: 11px; font-weight: 800; color: #14151a; cursor: pointer; text-decoration: none; flex-shrink: 0; }
+  .dl-open-btn.show { display: inline-block; }
+  .dl-close-btn { position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; background: transparent; border: none; color: var(--muted); font-weight: bold; cursor: pointer; font-size: 14px; line-height: 1; }
+  .dl-close-btn:hover { background: var(--pink); color: #14151a; }
 </style>
 </head>
 <body>
 
 <div class="glass-notif" id="notifBox"></div>
+
+<!-- CONTAINER DOWNLOAD TOAST -->
+<div id="downloadToastContainer"></div>
 
 <!-- UI MAINTENANCE (FULLSCREEN) -->
 <div id="maintenanceUI">
@@ -787,6 +813,76 @@ window.addEventListener('load', () => {
     }, 600);
   }, 1500);
 });
+// ============================================================
+// SISTEM NOTIFIKASI DOWNLOAD
+// ============================================================
+window.showDownloadToast = function(filename, blobUrl) {
+  const container = document.getElementById('downloadToastContainer');
+  if(!container) return;
+
+  const toastId = 'toast-' + Date.now();
+  const toast = document.createElement('div');
+  toast.className = 'download-toast';
+  toast.id = toastId;
+
+  toast.innerHTML = `
+    <div class="dl-icon loading" id="${toastId}-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </div>
+    <div class="dl-content">
+      <p class="dl-title" id="${toastId}-title">Menyiapkan file...</p>
+      <p class="dl-subtitle" id="${toastId}-subtitle">${filename || 'File'}</p>
+      <div class="dl-progress-track" id="${toastId}-track">
+        <div class="dl-progress-fill" id="${toastId}-fill"></div>
+      </div>
+    </div>
+    <button class="dl-close-btn" onclick="document.getElementById('${toastId}').remove()">✕</button>
+  `;
+  container.appendChild(toast);
+
+  // Simulasi Progress Download
+  setTimeout(() => {
+    const fill = document.getElementById(`${toastId}-fill`);
+    if(fill) fill.style.width = '100%';
+    const title = document.getElementById(`${toastId}-title`);
+    if(title) title.innerText = 'Mengunduh file...';
+  }, 100);
+
+  // Setelah 1.5 detik, tampilkan "Berhasil" + tombol buka
+  setTimeout(() => {
+    const icon = document.getElementById(`${toastId}-icon`);
+    const title = document.getElementById(`${toastId}-title`);
+    const subtitle = document.getElementById(`${toastId}-subtitle`);
+    const track = document.getElementById(`${toastId}-track`);
+    
+    if(icon) {
+      icon.className = 'dl-icon success';
+      icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    }
+    if(title) title.innerText = 'Berhasil di-download!';
+    if(subtitle) subtitle.innerText = filename || 'File';
+    if(track) track.style.display = 'none';
+
+    // Tambahin tombol "Buka File" kalo ada blobUrl
+    if(blobUrl) {
+      const btn = document.createElement('a');
+      btn.href = blobUrl;
+      btn.target = '_blank';
+      btn.className = 'dl-open-btn show';
+      btn.innerHTML = '📂 Buka File';
+      toast.querySelector('.dl-content').appendChild(btn);
+    }
+
+    // Auto-close setelah 8 detik
+    setTimeout(() => {
+      const t = document.getElementById(toastId);
+      if(t) {
+        t.classList.add('hide');
+        setTimeout(() => t.remove(), 300);
+      }
+    }, 8000);
+  }, 1500);
+};
 function toggleProfile(){ 
   document.getElementById('profileOverlay').classList.add('open'); 
 }
@@ -1143,11 +1239,18 @@ window.downloadEnhancer = function() {
   const canvas = document.getElementById('enhancerCanvas');
   if (!canvas.width) return showGlassNotif('Belum ada foto yang diproses!');
   
-  const link = document.createElement('a');
-  link.download = 'foto-jernih-ex-tools.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-  showGlassNotif('Foto jernih berhasil di-download!');
+  const filename = 'foto-jernih-' + Date.now() + '.png';
+  const dataUrl = canvas.toDataURL('image/png');
+  
+  // Convert ke Blob biar bisa dibuka
+  fetch(dataUrl).then(res => res.blob()).then(blob => {
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = dataUrl;
+    link.click();
+    window.showDownloadToast(filename, blobUrl);
+  });
 };
 
 // CROP
@@ -1376,7 +1479,11 @@ function makePDF(){
     }
   });
 
-  doc.save('gambar-ke-pdf-' + Date.now() + '.pdf');
+  const pdfFilename = 'gambar-ke-pdf-' + Date.now() + '.pdf';
+  const blob = doc.output('blob');
+  const blobUrl = URL.createObjectURL(blob);
+  doc.save(pdfFilename);
+  window.showDownloadToast(pdfFilename, blobUrl);
 }
 
 // TTT LOGIC
@@ -1458,7 +1565,10 @@ function generatePPTX(){
     if(s.layout === 'full' && s.image) { sl.addImage({ data: s.image, x:0, y:0, w:10, h:5.63, rotate:s.sRot, sizing:{ type:'cover', w:10, h:5.63 } }); if(s.title){ titleOpts.color = '#FFFFFF'; titleOpts.shadow = {type:'outer', color:'000000', blur:2, offset:1, angle:45}; sl.addText(s.title, titleOpts); } if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:9, h:3.6, fontSize:20, color:'#FFFFFF', fontFace:'Arial', valign:'top', shadow:{type:'outer', color:'000000', blur:2, offset:1, angle:45} }); } }
     else { if(s.title){ titleOpts.color = themeText; sl.addText(s.title, titleOpts); } if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:4.5, h:3.6, fontSize:18, color:themeText, fontFace:'Arial', valign:'top' }); } if(s.image){ let imgW = 4.3, imgH = 4.3; let scaleFactor = s.sScale / 100; let newW = imgW * scaleFactor, newH = imgH * scaleFactor; let offsetX = s.sX / 100, offsetY = s.sY / 100; let finalX = 7.35 + offsetX - (newW/2); let finalY = 2.815 + offsetY - (newH/2); sl.addImage({ data: s.image, x: finalX, y: finalY, w:newW, h:newH, rotate: s.sRot, sizing:{ type:'contain', w:newW, h:newH } }); } }
   });
-  pptx.writeFile({ fileName: title + '.pptx' });
+  pptx.writeFile({ fileName: title + '.pptx' }).then(filename => {
+    // PptxGenJS gak ngasih blob url, tapi kita bisa "Buka File" dari nama filenya di folder Download
+    window.showDownloadToast(title + '.pptx', null);
+  });
 }
 
 // AI LOGIC
@@ -1620,12 +1730,18 @@ async function generateFromAI(targetFormat, msgIndex) {
                      <div style="margin-top:60px; font-size:14px; color:#6b6f7b; text-align:right;">Generated by Ex Tools AI</div>`;
     document.body.appendChild(div);
     html2canvas(div, { scale: 2, useCORS: true }).then(canvas => {
-      const link = document.createElement('a');
-      link.download = docTitle + '.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      div.remove();
-      showGlassNotif('Gambar PNG berhasil di-download!');
+      const filename = docTitle + '.png';
+      const dataUrl = canvas.toDataURL('image/png');
+      
+      fetch(dataUrl).then(res => res.blob()).then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        link.click();
+        div.remove();
+        window.showDownloadToast(filename, blobUrl);
+      });
     });
   }
   
@@ -1687,8 +1803,11 @@ async function generateFromAI(targetFormat, msgIndex) {
         doc.text(line, margin, y); y += 7; 
       }); 
     }
-    doc.save(docTitle + '.pdf'); 
-    showGlassNotif('PDF berhasil di-download!');
+    const filename = docTitle + '.pdf';
+    const blob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(blob);
+    doc.save(filename); 
+    window.showDownloadToast(filename, blobUrl);
   }
   
   else if (targetFormat === 'pptx') { 
@@ -1763,8 +1882,9 @@ async function generateFromAI(targetFormat, msgIndex) {
         slNext.addText(bulletsNext.length?bulletsNext:[{text:' '}], { x:0.5, y:1.5, w:9, h:3.6, fontSize:14, color:'14151A', valign:'top' }); 
       } 
     } 
-    pptx.writeFile({ fileName: docTitle + '.pptx' }); 
-    showGlassNotif('PPTX berhasil di-download!');
+    pptx.writeFile({ fileName: docTitle + '.pptx' }).then(() => {
+      window.showDownloadToast(docTitle + '.pptx', null);
+    });
   }
 }
 // ============================================================
