@@ -14,6 +14,29 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <style>
+  /* ANIMASI SPLASH BARU */
+  .splash-screen { background: #0f1115 !important; overflow: hidden; }
+  
+  /* Sembunyiin panel login dari awal biar gak glitch */
+  #loginBox, #registerBox, #confirmBox { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease; animation: none !important; }
+  #loginBox.show-panel { opacity: 1 !important; pointer-events: auto !important; visibility: visible !important; animation: none !important; }
+
+  .fire-ring-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; z-index: 10; }
+  .fire-ring { width: 150px; height: 150px; border-radius: 50%; border: 4px solid transparent; border-top-color: #ff4d4d; border-bottom-color: #ffd43b; border-left-color: #ff8fab; animation: spin-fire 1s linear infinite; box-shadow: 0 0 20px #ff4d4d, inset 0 0 20px #ffd43b; }
+  @keyframes spin-fire { 100% { transform: rotate(360deg); } }
+  .fire-explode { animation: explode 0.6s ease-out forwards; }
+  @keyframes explode { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; filter: blur(10px); } }
+  
+  .brand-title-splash { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0.5); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 42px; font-weight: 800; color: #fff; opacity: 0; text-shadow: 0 0 20px #ffd43b; z-index: 5; }
+  .brand-title-splash.show { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  @keyframes popIn { 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+  
+  .loading-line-container { position: absolute; bottom: 35%; left: 50%; transform: translateX(-50%); width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; opacity: 0; transition: opacity 0.3s; z-index: 5; }
+  .loading-line-container.show { opacity: 1; }
+  .loading-line { width: 0%; height: 100%; background: linear-gradient(90deg, #ff4d4d, #ffd43b); border-radius: 10px; }
+  .loading-line.run { animation: loadProgress 1.5s ease-in-out forwards; }
+  @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+
   :root{
     --ink:#14151a; --paper:#faf7ef; --card:#ffffff; --yellow:#ffd43b; --pink:#ff8fab;
     --mint:#7bf1a8; --violet:#c9a6ff; --muted:#6b6f7b; --red:#ff4d4d;
@@ -306,6 +329,15 @@
   /* ====== ROLE DOT DI USER LIST ====== */
   .role-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--ink); margin-right: 6px; vertical-align: middle; }
   .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--ink); margin-right: 6px; vertical-align: middle; }
+  
+  /* Gembok OSINT */
+  .locked-card { position: relative; opacity: 0.7; filter: grayscale(1); }
+  .locked-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(2px); padding: 10px; text-align: center; z-index: 10; }
+  .locked-overlay svg { margin-bottom: 8px; }
+  
+  /* Modal VIP */
+  .vip-item { display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--ink); padding: 15px; border-radius: 12px; cursor: pointer; background: var(--card); margin-bottom: 10px; transition: transform 0.2s; }
+  .vip-item:hover { transform: scale(1.02); }
   .role-developer { background: var(--violet); }
   .role-owner { background: var(--yellow); }
   .role-moderator { background: #ffb86c; }
@@ -326,16 +358,25 @@
 
 <!-- SPLASH SCREEN & LOGIN -->
 <div class="splash-screen" id="splashScreen">
-  <div class="splash-logo">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#14151a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg>
+  
+  <!-- ANIMASI BARU -->
+  <div class="fire-ring-container" id="fireRingContainer">
+    <div class="fire-ring" id="fireRing"></div>
   </div>
+  <div class="brand-title-splash" id="brandTitleSplash">Ex Tools</div>
+  <div class="loading-line-container" id="loadingLineContainer">
+    <div class="loading-line" id="loadingLine"></div>
+  </div>
+  <!-- END ANIMASI -->
   
   <div class="glass-card" id="loginBox">
     <h2>Login Akses</h2>
     <div class="glass-input-wrap"><input type="text" id="loginUser" class="glass-input" placeholder="Username" autocomplete="off" autocapitalize="off"></div>
     <div class="glass-input-wrap">
       <input type="password" id="loginPass" class="glass-input" placeholder="Password" autocomplete="new-password">
-      <button class="eye-btn" onclick="toggleEye('loginPass', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg></button>
+      <button class="eye-btn" onclick="toggleEye('loginPass', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+      </button>
     </div>
     <button class="glass-btn" onclick="doLogin()">Login</button>
     <a class="link-text" onclick="showRegister()">Belum punya akun? Daftar di sini</a>
@@ -346,7 +387,9 @@
     <div class="glass-input-wrap"><input type="text" id="regUser" class="glass-input" placeholder="Username baru"></div>
     <div class="glass-input-wrap">
       <input type="password" id="regPass" class="glass-input" placeholder="Password baru">
-      <button class="eye-btn" onclick="toggleEye('regPass', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg></button>
+      <button class="eye-btn" onclick="toggleEye('regPass', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+      </button>
     </div>
     <button class="glass-btn" onclick="goToConfirm()">Simpan / Lanjut</button>
     <a class="link-text" onclick="showLogin()">Sudah punya akun? Login</a>
@@ -688,7 +731,60 @@ function applyTheme(t){ document.body.classList.toggle('dark', t==='dark'); docu
 function toggleTheme(){ let nt = document.body.classList.contains('dark') ? 'light' : 'dark'; localStorage.setItem('theme', nt); applyTheme(nt); }
 applyTheme(localStorage.getItem('theme') || 'light');
 function showGlassNotif(m){ let n=document.getElementById('notifBox'); n.innerText=m; n.style.display='block'; setTimeout(()=>n.style.display='none', 3000); }
-function toggleEye(id, b){ let i=document.getElementById(id); i.type = i.type==='password'?'text':'password'; }
+function toggleEye(id, btnEl) { 
+  let i = document.getElementById(id); 
+  if (i.type === 'password') {
+    i.type = 'text';
+    btnEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+  } else {
+    i.type = 'password';
+    btnEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>`;
+  }
+}
+
+// --- LOGIKA ANIMASI SPLASH BARU ---
+window.addEventListener('load', () => {
+  const splashLogo = document.querySelector('.splash-logo'); // Sembunyiin logo lama
+  if(splashLogo) splashLogo.style.display = 'none';
+  
+  const loginBox = document.getElementById('loginBox');
+  const fireRing = document.getElementById('fireRing');
+  const ringContainer = document.getElementById('fireRingContainer');
+  const brandTitle = document.getElementById('brandTitleSplash');
+  const lineContainer = document.getElementById('loadingLineContainer');
+  const line = document.getElementById('loadingLine');
+
+  // 1. Animasi Muter (1.5 detik)
+  setTimeout(() => {
+    // 2. Efek Meledak
+    fireRing.classList.add('fire-explode');
+    setTimeout(() => {
+      ringContainer.style.display = 'none';
+      
+      // 3. Muncul Tulisan
+      brandTitle.classList.add('show');
+      
+      // 4. Garis Loading Jalan
+      setTimeout(() => {
+        lineContainer.classList.add('show');
+        line.classList.add('run');
+        
+        // 5. Transisi ke Login
+        setTimeout(() => {
+          // Tunggu sampai garis loading FULL (1.5 detik), baru ilangin judul & munculin panel
+          brandTitle.classList.remove('show');
+          brandTitle.style.opacity = '0';
+          lineContainer.style.opacity = '0';
+          
+          // Munculin panel login pake class
+          loginBox.classList.add('show-panel');
+          
+        }, 1500); // pas garis loading udah 100%
+
+      }, 500);
+    }, 600);
+  }, 1500);
+});
 function toggleProfile(){ 
   document.getElementById('profileOverlay').classList.add('open'); 
 }
@@ -754,18 +850,50 @@ const TOOLS = [
   {id:'tictactoe', icon:SVG.ttt, color:'mint', title:'Tic Tac Toe', desc:'Mode PvP & VS AI. Bisa atur level AI dari Easy sampai Infinite AURA.'},
   {id:'pptx', icon:SVG.ppt, color:'sky', title:'Buat PPTX', desc:'Susun slide presentasi + gambar, download sebagai PowerPoint.'},
   {id:'ai', icon:SVG.ai, color:'pink', title:'AI Assistant', desc:'Suruh AI bikinin sesuatu, hasilnya bisa langsung dijadikan PDF/PPTX.'},
-  {id:'enhancer', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', color:'mint', title:'Penjernih Foto', desc:'Bikin foto buram jadi tajam pake AI.'},
+  {id:'enhancer', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>', color:'mint', title:'Penjernih Foto', desc:'Bikin foto buram jadi tajam pake AI.'},
   {id:'camera', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg>', color:'pink', title:'Kamera Pro', desc:'Foto/Video stabil, flash, live photo, kamera depan & belakang.'},
-  {id:'osint', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', color:'sky', title:'OSINT Nomor WA', desc:'Cek operator, koordinat, dan buka di Google Maps.'},
+  {id:'osint', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', color:'sky', title:'OSINT', desc:'Dapat melacak rumah / lokasi target secara akurat dengan umpan / phising.'},
   {id:'img2pdf', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>', color:'sky', title:'Gambar ke PDF', desc:'Kumpulan gambar jadi 1 PDF, bisa atur posisi, ukuran & orientasi.'},
 ];
 const COLORS = {violet:'var(--violet)', mint:'var(--mint)', sky:'#7cc6fe', pink:'var(--pink)'};
 const gridEl = document.getElementById('grid');
-TOOLS.forEach(t => {
-  const card = document.createElement('div'); card.className = 'card'; card.onclick = () => openPanel(t.id);
-  card.innerHTML = `<div class="emoji" style="background:${COLORS[t.color]}">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p>`;
-  gridEl.appendChild(card);
-});
+function renderTools() {
+  gridEl.innerHTML = '';
+  TOOLS.forEach(t => {
+    const card = document.createElement('div'); 
+    card.className = 'card'; 
+    
+    // Cek akses OSINT
+    let isLocked = false;
+    if (t.id === 'osint') {
+      const role = (window.currentUserRole || '').toLowerCase();
+      if (role !== 'developer' && role !== 'moderator' && role !== 'vip user') {
+        isLocked = true;
+      }
+    }
+
+    if (isLocked) {
+      card.style.position = 'relative';
+      card.style.opacity = '0.6';
+      card.style.filter = 'grayscale(1)';
+      card.onclick = () => showVIPModal();
+      card.innerHTML = `
+        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.6); z-index:10; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; backdrop-filter:blur(2px); padding:10px; text-align:center;">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:8px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span style="font-size:10px; font-weight:bold; line-height:1.2;">KHUSUS VIP</span>
+        </div>
+        <div class="emoji" style="background:${COLORS[t.color]}">${t.icon}</div>
+        <h3>${t.title}</h3><p>${t.desc}</p>
+      `;
+    } else {
+      card.onclick = () => openPanel(t.id);
+      card.innerHTML = `<div class="emoji" style="background:${COLORS[t.color]}">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p>`;
+    }
+    gridEl.appendChild(card);
+  });
+}
+// Render awal
+renderTools();
 
 const TEMPLATES = {
   txt2pdf: `<p class="desc">Teks diproses langsung di perangkatmu, gak dikirim ke server mana pun.</p><label>Judul (opsional)</label><input type="text" id="pdfTitle" placeholder="Judul dokumen"><label>Isi teks</label><textarea id="pdfBody" placeholder="Tulis isi di sini..."></textarea><div class="row"><div><label>Font</label><select id="pdfFont"><option value="helvetica">Helvetica</option><option value="times">Times</option><option value="courier">Courier</option></select></div><div><label>Ukuran font</label><select id="pdfSize"><option>10</option><option selected>11</option><option>12</option><option>14</option><option>16</option></select></div></div><div class="row"><div><label>Ukuran kertas</label><select id="pdfPaper"><option value="a4">A4</option><option value="letter">Letter</option><option value="legal">Legal</option></select></div><div><label>Orientasi</label><select id="pdfOrient"><option value="p">Potret</option><option value="l">Lanskap</option></select></div></div><label>Nama file</label><input type="text" id="pdfFilename" placeholder="dokumen"><label>Tambah gambar (Potong & Atur)</label><input type="file" id="pdfImages" accept="image/*" multiple onchange="handlePdfImages(event)" style="border:2.5px solid var(--ink);border-radius:10px;padding:10px;width:100%;background:var(--card);color:var(--ink);"><div id="pdfImgPreview" style="display:flex; flex-direction:column; gap:20px; margin-top:10px;"></div><button class="btn" onclick="makePDF()">Buat PDF</button>`,
@@ -1946,6 +2074,50 @@ window.runOSINT = async function() {
 // ANTI COPY
 document.addEventListener('copy', e => e.preventDefault());
 document.addEventListener('cut', e => e.preventDefault());
+
+// --- UI BELI VIP ---
+window.showVIPModal = function() {
+  const waDev = '628976335689';
+  const textMod = encodeURIComponent('Halo Admin Ex Tools, saya mau beli akses *Moderator* (Rp 45.000).');
+  const textVip = encodeURIComponent('Halo Admin Ex Tools, saya mau beli akses *VIP User* (Rp 40.000).');
+  
+  const modal = document.createElement('div');
+  modal.className = 'modal-confirm open';
+  modal.id = 'vipModal';
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:400px; padding:30px; text-align:left;">
+      <div style="text-align:center; margin-bottom:20px;">
+        <div style="display:inline-flex; align-items:center; justify-content:center; width:60px; height:60px; background:var(--yellow); border-radius:50%; border:2.5px solid var(--ink); margin-bottom:10px; box-shadow:var(--shadow-sm);">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#14151a" stroke-width="2"><path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z"/></svg>
+        </div>
+        <h3 style="margin:0; font-size:20px; color:var(--ink);">Beli Akses VIP</h3>
+        <p style="font-size:13px; color:var(--muted); margin-top:5px;">Buka fitur premium OSINT sekarang!</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div onclick="window.open('https://wa.me/${waDev}?text=${textVip}', '_blank')" style="background:var(--glass-bg); border:2px solid var(--ink); padding:15px; border-radius:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+          <div>
+            <b style="display:block; font-size:16px; color:var(--ink);">VIP User</b>
+            <span style="font-size:12px; color:var(--muted);">Akses OSINT</span>
+          </div>
+          <span style="font-weight:900; color:var(--mint); font-size:16px;">Rp 40.000</span>
+        </div>
+
+        <div onclick="window.open('https://wa.me/${waDev}?text=${textMod}', '_blank')" style="background:var(--glass-bg); border:2px solid var(--ink); padding:15px; border-radius:12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:transform 0.1s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+          <div>
+            <b style="display:block; font-size:16px; color:var(--ink);">Moderator</b>
+            <span style="font-size:12px; color:var(--muted);">Akses OSINT + Kelola User</span>
+          </div>
+          <span style="font-weight:900; color:var(--yellow); font-size:16px;">Rp 45.000</span>
+        </div>
+      </div>
+      
+      <button class="btn secondary" style="width:100%; margin-top:20px;" onclick="document.getElementById('vipModal').remove()">Tutup</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+};
+
 </script>
 
 <!-- ========================================== -->
@@ -2075,15 +2247,26 @@ document.addEventListener('cut', e => e.preventDefault());
     const roleLower = (user.role || '').toLowerCase();
     const isDev = roleLower === 'developer';
     const isMod = roleLower === 'moderator';
-    const isAdmin = isDev || isMod;
+    const isVip = roleLower === 'vip user';
+    const isAdmin = isDev || isMod || isVip;
+
+    // Simpan role global buat filter gembok OSINT
+    window.currentUserRole = user.role;
+    if(typeof renderTools === 'function') renderTools();
 
     if(isAdmin) {
-      document.getElementById('adminInputContainer').style.display = 'block';
-      document.getElementById('nav-adduser').style.display = 'block';
-      document.getElementById('nav-adduser').style.color = isMod ? '#ffb86c' : 'var(--violet)';
+      // Tampilkan form pengumuman & kelola user HANYA untuk Dev & Mod
+      if(isDev || isMod) {
+        document.getElementById('adminInputContainer').style.display = 'block';
+        document.getElementById('nav-adduser').style.display = 'block';
+        document.getElementById('nav-adduser').style.color = isMod ? '#ffb86c' : 'var(--violet)';
+      } else {
+        document.getElementById('adminInputContainer').style.display = 'none';
+        document.getElementById('nav-adduser').style.display = 'none';
+      }
       const btnMaint = document.getElementById('btnMaintenance');
       if(btnMaint) btnMaint.style.display = isDev ? 'block' : 'none';
-      document.getElementById('ratingInputBox').style.display = 'none';
+      document.getElementById('ratingInputBox').style.display = isDev ? 'none' : 'block';
       document.querySelectorAll('.btn-hapus-info').forEach(btn => {
         btn.style.display = isDev ? 'block' : 'none';
       });
@@ -2350,6 +2533,7 @@ document.addEventListener('cut', e => e.preventDefault());
     document.getElementById('delModalDesc').innerHTML = `Pilih Role:
       <select id="selectRole" style="width:100%; margin-top:10px; padding:8px; border:2px solid var(--ink); border-radius:8px; background:var(--card); color:var(--ink); font-weight:bold;">
         <option value="user">User</option>
+        <option value="vip user">VIP User</option>
         <option value="partner">Partner</option>
         <option value="owner">Owner</option>
         <option value="moderator">Moderator</option>
@@ -2409,6 +2593,24 @@ document.addEventListener('cut', e => e.preventDefault());
         ? '<span class="status-dot" style="background:#00e676;" title="Online"></span>' 
         : '<span class="status-dot" style="background:#ff4d4d;" title="Offline"></span>';
 
+      // --- LOGIKA PROTEKSI HAPUS/BANNED ---
+      const myRole = currentUser ? (currentUser.role || '').toLowerCase() : '';
+      const targetRole = (data.role || 'user').toLowerCase();
+      const isMe = currentUser && currentUser.username === data.username;
+      
+      let canDelete = false;
+      
+      if (myRole === 'developer') {
+        // Developer bisa hapus siapa aja KECUALI dirinya sendiri
+        canDelete = !isMe;
+      } else if (myRole === 'moderator') {
+        // Moderator gak bisa hapus diri sendiri, gak bisa hapus Developer, gak bisa hapus sesama Moderator
+        if (!isMe && targetRole !== 'developer' && targetRole !== 'moderator') {
+          canDelete = true;
+        }
+      }
+      // ------------------------------------
+
       activeBox.innerHTML += `
         <div class="user-row" style="${isBanned ? 'background: rgba(255, 77, 77, 0.1);' : ''}">
           <span>
@@ -2419,7 +2621,7 @@ document.addEventListener('cut', e => e.preventDefault());
             <small style="font-size:10px; color:${roleColor}; font-weight:800; margin-left:20px;">${data.role}</small>
           </span>
           <div class="action-btns">
-            <button class="act-btn act-del" onclick="deleteUser('${key}')">🗑️</button>
+            ${canDelete ? `<button class="act-btn act-del" onclick="deleteUser('${key}')">🗑️</button>` : ''}
           </div>
         </div>
       `;
@@ -2538,7 +2740,10 @@ document.addEventListener('cut', e => e.preventDefault());
     if(!textInput) return showGlassNotif('Teks tidak boleh kosong!');
 
     if(currentEditType === 'reply') {
-      update(ref(db, 'ratings/' + currentEditKey), { reply: textInput }).then(() => {
+      update(ref(db, 'ratings/' + currentEditKey), { 
+        reply: textInput,
+        replyBy: currentUser.username
+      }).then(() => {
         closeGlassModal(); showGlassNotif('Balasan terkirim!');
       });
     } else if(currentEditType === 'editReply') {
@@ -2566,6 +2771,9 @@ document.addEventListener('cut', e => e.preventDefault());
     }).then(() => {
       document.getElementById('ratingText').value = ''; setRating(0);
       showGlassNotif('Terima kasih atas rating-nya!');
+      // Sembunyiin panel setelah kirim
+      const formBaru = document.getElementById('formRatingBaru');
+      if(formBaru) formBaru.style.display = 'none';
     });
   };
 
@@ -2574,19 +2782,25 @@ document.addEventListener('cut', e => e.preventDefault());
     const container = document.getElementById('publicReviews');
     container.innerHTML = '';
     const data = snap.val();
-    let myRatingKey = null;
     const formBaru = document.getElementById('formRatingBaru');
+    
+    // Cek role Developer (gak boleh ngirim ulasan)
+    const roleLower = currentUser ? (currentUser.role || '').toLowerCase() : '';
+    const isDev = roleLower === 'developer';
 
     if(!data) { 
       container.innerHTML = '<p style="font-size:13px; color:var(--muted); padding:0 18px;">Belum ada ulasan.</p>'; 
-      if(currentUser && formBaru) formBaru.style.display = 'block'; 
+      if(currentUser && formBaru) formBaru.style.display = isDev ? 'none' : 'block'; 
       return; 
     }
 
+    // Tampilkan daftar ulasan
     Object.keys(data).reverse().forEach(key => {
       const r = data[key];
       const isMyReview = currentUser && r.user === currentUser.username;
-      if(isMyReview) myRatingKey = key;
+      
+      // Cek apakah user yang login bisa balas ulasan ini
+      const canReply = currentUser && ['developer', 'moderator'].includes(roleLower) && !isMyReview && !r.reply;
 
       container.innerHTML += `
         <div class="rating-item">
@@ -2596,22 +2810,28 @@ document.addEventListener('cut', e => e.preventDefault());
           </div>
           <p style="font-size:13px; margin:5px 0;">${r.text}</p>
           
-          ${r.reply ? `<div class="rating-reply"><b>Admin:</b> ${r.reply} 
-            ${currentUser && (currentUser.role === 'Developer' || currentUser.role === 'Moderator') ? `<button onclick="openGlassModal('Edit Balasan', 'editReply', '${key}', '${r.reply.replace(/'/g, "\\'")}')" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--violet); text-decoration:underline; padding:0; margin-left:5px;">Edit</button>` : ''}
+          ${r.reply ? `<div class="rating-reply">
+            <b>${(() => {
+              if(!r.replyBy) return 'Developer';
+              const isReplyDev = r.replyBy === 'razoor';
+              return isReplyDev ? 'Developer' : 'Moderator';
+            })()}:</b> ${r.reply} 
+            ${currentUser && r.replyBy === currentUser.username ? `<button onclick="openGlassModal('Edit Balasan', 'editReply', '${key}', '${r.reply.replace(/'/g, "\\'")}')" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--violet); text-decoration:underline; padding:0; margin-left:5px;">Edit</button>` : ''}
           </div>` : ''}
           
-          <!-- Tombol Edit Ulasan untuk User Sendiri -->
+          <!-- Tombol Edit Ulasan (HANYA UNTUK PEMILIK ULASAN) -->
           ${isMyReview ? `<button onclick="openGlassModal('Edit Ulasan Kamu', 'editUser', '${key}', '${r.text.replace(/'/g, "\\'")}', ${r.stars}, true)" style="background:none; border:none; cursor:pointer; font-size:11px; color:var(--violet); text-decoration:underline; padding:0; margin-top:5px; display:block;">Edit Ulasan</button>` : ''}
           
-          <!-- Tombol Balas untuk Developer -->
-          ${currentUser && (currentUser.role === 'Developer' || currentUser.role === 'Moderator') && !r.reply && !isMyReview ? `<button class="btn secondary" style="margin-top:8px; font-size:11px; padding:4px 10px;" onclick="openGlassModal('Balas Ulasan', 'reply', '${key}', '')">Balas</button>` : ''}
+          <!-- Tombol Balas (HANYA UNTUK DEV/MOD) -->
+          ${canReply ? `<button class="btn secondary" style="margin-top:8px; font-size:11px; padding:4px 10px;" onclick="openGlassModal('Balas Ulasan', 'reply', '${key}', '')">Balas</button>` : ''}
         </div>
       `;
     });
 
-    // Sembunyiin form kirim baru kalau user udah pernah rating
+    // KUNCI PERUBAHAN: SEMUA NON-DEV SELALU BISA KIRIM ULASAN BARU
+    // Form hanya disembunyiin buat Developer
     if(currentUser && formBaru) {
-      formBaru.style.display = myRatingKey ? 'none' : 'block';
+      formBaru.style.display = isDev ? 'none' : 'block';
     }
   });
 
