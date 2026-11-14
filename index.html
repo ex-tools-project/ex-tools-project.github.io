@@ -19,7 +19,9 @@
   
   /* Sembunyiin panel login dari awal biar gak glitch */
   #loginBox, #registerBox, #confirmBox { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease; animation: none !important; }
-  #loginBox.show-panel { opacity: 1 !important; pointer-events: auto !important; visibility: visible !important; animation: none !important; }
+  
+  /* Class ini dipake buat munculin panel manapun (Login, Daftar, Konfirmasi) */
+  #loginBox.show-panel, #registerBox.show-panel, #confirmBox.show-panel { opacity: 1 !important; pointer-events: auto !important; visibility: visible !important; animation: none !important; }
 
   .fire-ring-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; z-index: 10; }
   .fire-ring { width: 150px; height: 150px; border-radius: 50%; border: 4px solid transparent; border-top-color: #ff4d4d; border-bottom-color: #ffd43b; border-left-color: #ff8fab; animation: spin-fire 1s linear infinite; box-shadow: 0 0 20px #ff4d4d, inset 0 0 20px #ffd43b; }
@@ -793,13 +795,41 @@ function closeProfileModal(e) {
 }
 
 // NAVIGASI LOGIN
-function showRegister(){ document.getElementById('loginBox').style.display='none'; document.getElementById('registerBox').style.display='block'; document.getElementById('confirmBox').style.display='none'; }
-function showLogin(){ document.getElementById('registerBox').style.display='none'; document.getElementById('confirmBox').style.display='none'; document.getElementById('loginBox').style.display='block'; }
+function showRegister(){ 
+  document.getElementById('loginBox').style.display='none'; 
+  document.getElementById('loginBox').classList.remove('show-panel');
+  
+  const regBox = document.getElementById('registerBox');
+  regBox.style.display='block'; 
+  regBox.classList.add('show-panel');
+  
+  document.getElementById('confirmBox').style.display='none'; 
+  document.getElementById('confirmBox').classList.remove('show-panel');
+}
+
+function showLogin(){ 
+  document.getElementById('registerBox').style.display='none'; 
+  document.getElementById('registerBox').classList.remove('show-panel');
+  
+  const loginBox = document.getElementById('loginBox');
+  loginBox.style.display='block'; 
+  loginBox.classList.add('show-panel');
+  
+  document.getElementById('confirmBox').style.display='none'; 
+  document.getElementById('confirmBox').classList.remove('show-panel');
+}
+
 function goToConfirm(){
   let u=document.getElementById('regUser').value.trim(), p=document.getElementById('regPass').value.trim();
   if(!u||!p) return showGlassNotif('Isi data dulu!');
   document.getElementById('confirmUser').value=u; document.getElementById('confirmPass').value=p;
-  document.getElementById('registerBox').style.display='none'; document.getElementById('confirmBox').style.display='block';
+  
+  document.getElementById('registerBox').style.display='none'; 
+  document.getElementById('registerBox').classList.remove('show-panel');
+  
+  const confBox = document.getElementById('confirmBox');
+  confBox.style.display='block'; 
+  confBox.classList.add('show-panel');
 }
 
 // NAVIGASI HALAMAN
