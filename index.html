@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ffd43b">
 <title>Ex Tools</title>
+<!-- Library Three.js buat Bola Sel 3D -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Library Puter.js untuk AI Assistant -->
+<script src="https://js.puter.com/v2/"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
@@ -35,7 +39,7 @@
   body.dark{ --ink:#faf7ef; --paper:#0f1115; --card:#1a1d24; --muted:#9aa0ad; --shadow: 4px 4px 0 #000; --shadow-sm: 3px 3px 0 #000; --glass-bg: rgba(20,25,40,0.45); --glass-border: rgba(255,255,255,0.15); --glass-shadow: 0 8px 32px 0 rgba(0,0,0,0.6); }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   html,body{margin:0; -webkit-user-select:none; user-select:none;}
-  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;transition:background .3s, color .3s; padding-bottom: 80px;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;transition:background .3s, color .3s; padding-bottom: 80px; position: relative;}
   h1,h2,h3{font-family:'Plus Jakarta Sans',sans-serif;}
   input,textarea,select{ -webkit-user-select:text; user-select:text; }
   .splash-screen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.4s ease; overflow-y: auto; padding: 20px 0;}
@@ -62,7 +66,8 @@
   .glass-notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 200, 200, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 100, 100, 0.5); border-radius: 12px; padding: 15px 25px; z-index: 10000; box-shadow: 0 8px 32px rgba(0,0,0,0.2); color: #8b0000; font-weight: bold; font-size: 14px; text-align: center; display: none; animation: slideDown 0.3s ease; }
   body.dark .glass-notif { color:#ffb3b3; background: rgba(80,20,20,0.7); border-color: rgba(255,100,100,0.4);}
   @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
-  header.topbar{ position: sticky; top: 0; z-index: 30; background: var(--paper); border-bottom: 3px solid var(--ink); padding: 14px 18px; display: none; }
+  header.topbar{ position: sticky; top: 0; z-index: 100; background: var(--paper) !important; border-bottom: 3px solid var(--ink); padding: 14px 18px; display: none; }
+  body.dark header.topbar{ background: #0f1115 !important; }
   .topbar-inner{ max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .profile-wrapper{ position: relative; display: flex; align-items: center; gap: 10px;}
   .profile-icon{ width: 40px; height: 40px; border-radius: 50%; background: var(--violet); border: 2.5px solid var(--ink); display:flex; align-items:center;justify-content:center; font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: var(--shadow-sm); text-transform: uppercase; color:#14151a; }
@@ -87,7 +92,7 @@
   .hero p{color:var(--muted);margin:0;font-size:14px;}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
   @media(max-width:700px){ .grid{grid-template-columns:repeat(2,1fr);} }
-  .card{background:var(--card);border:3px solid var(--ink);border-radius:var(--radius);padding:18px 16px; cursor:pointer;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s; display:flex;flex-direction:column;gap:10px;min-height:120px;}
+  .card{background:var(--card);border:3px solid var(--ink);border-radius:var(--radius);padding:18px 16px; cursor:pointer;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s; display:flex;flex-direction:column;gap:10px;min-height:120px; position: relative; z-index: 1;}
   .card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);}
   .card:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink);}
   .card .emoji{width:46px;height:46px;border:2.5px solid var(--ink);border-radius:12px; display:flex;align-items:center;justify-content:center; color:#14151a;}
@@ -104,9 +109,10 @@
   .team-list li { padding: 8px 12px; border: 2px solid var(--ink); border-radius: 8px; margin-bottom: 8px; background: var(--paper); font-weight: 700; font-size: 14px; }
   body.dark .team-list li { background: #0b0e14; }
   footer{max-width:760px;margin:30px auto 24px;padding:0 18px;color:var(--muted);font-size:12px;text-align:center; display: none;}
-  .overlay{position:fixed;inset:0;background:rgba(20,21,26,.45);z-index:60;display:none; align-items:flex-start;justify-content:center;padding:26px 14px;overflow-y:auto;}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75) !important;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:900;display:none; align-items:flex-start;justify-content:center;padding:26px 14px;overflow-y:auto;}
   .overlay.open{display:flex;}
-  .panel{background:var(--paper);border:3px solid var(--ink);border-radius:20px;max-width:620px;width:100%; box-shadow:8px 8px 0 var(--ink);margin-top:10px;animation:pop .18s ease;}
+  .panel{background:var(--paper) !important;border:3px solid var(--ink);border-radius:20px;max-width:620px;width:100%; box-shadow:8px 8px 0 var(--ink);margin-top:10px;animation:pop .18s ease;position:relative;z-index:1000;}
+  body.dark .panel{background: #0f1115 !important;}
   .panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:3px solid var(--ink);}
   .panel-head h2{font-size:18px;margin:0;display:flex;align-items:center;gap:10px;}
   .panel-head .emoji-badge{width:34px;height:34px;border:2.5px solid var(--ink);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#14151a;}
@@ -615,6 +621,8 @@
 </div>
 
 <script>
+// ==== FIREBASE RESMI DIKELOLA DI SCRIPT TYPE="MODULE" DI BAWAH ====
+
 const SVG = {
   pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
   ppt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/><path d="M12 18v2"/><path d="M7 9h4"/><path d="M7 12h6"/></svg>',
@@ -757,9 +765,14 @@ function showRegister(){ document.getElementById('loginBox').style.display='none
 function showLogin(){ document.getElementById('registerBox').style.display='none'; document.getElementById('registerBox').classList.remove('show-panel'); const loginBox = document.getElementById('loginBox'); loginBox.style.display='block'; loginBox.classList.add('show-panel'); document.getElementById('confirmBox').style.display='none'; document.getElementById('confirmBox').classList.remove('show-panel'); }
 function goToConfirm(){ let u=document.getElementById('regUser').value.trim(), p=document.getElementById('regPass').value.trim(); if(!u||!p) return showGlassNotif('Isi data dulu!'); document.getElementById('confirmUser').value=u; document.getElementById('confirmPass').value=p; document.getElementById('registerBox').style.display='none'; document.getElementById('registerBox').classList.remove('show-panel'); const confBox = document.getElementById('confirmBox'); confBox.style.display='block'; confBox.classList.add('show-panel'); }
 
+// === FUNGSI LOGIN, REGISTER & MAINTENANCE LENGKAP SUDAH DIHANDLE OLEH SCRIPT TYPE="MODULE" DI BAWAH ===
+window.currentUserRole = '';
+window.currentUsername = '';
+
 function showPage(id){
   ['home','pengumuman','rating','osint','adduser','about'].forEach(p => { let el = document.getElementById('page-'+p); if(el) el.style.display='none'; let nv = document.getElementById('nav-'+p); if(nv) nv.classList.remove('active'); });
   document.getElementById('page-'+id).style.display='block'; let activeNav = document.getElementById('nav-'+id); if(activeNav) { activeNav.classList.add('active'); activeNav.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
+  if (typeof check3DTheme === 'function') check3DTheme();
 }
 
 let musicPlaylist = []; let currentMusicIndex = 0;
@@ -818,12 +831,13 @@ function selectThemeColor(color, el) { selectedThemeColor = color; document.quer
 
 function openPanel(id){
   const t = TOOLS.find(x => x.id === id); document.getElementById('panelEmoji').innerHTML = t.icon; document.getElementById('panelEmoji').style.background = COLORS[t.color]; document.getElementById('panelTitle').textContent = t.title; document.getElementById('panelBody').innerHTML = TEMPLATES[id]; document.getElementById('overlay').classList.add('open'); document.body.style.overflow = 'hidden';
+  const bgCanvas = document.getElementById('bg-canvas'); if (bgCanvas) bgCanvas.style.display = 'none';
   if(id === 'txt2pdf' || id === 'img2pdf') pdfImages = [];
   if(id === 'tictactoe') { document.getElementById('tttMode').value = 'pvp'; document.getElementById('tttDifficulty').style.display = 'none'; resetTTT(); }
   if(id === 'pptx') { slides = []; addSlide(); updateCoverPreview(); selectThemeColor('#FFD43B', document.querySelector('.swatch')); }
   if(id === 'ai') { renderChat(); aiImageData = null; setAIMode('belajar'); }
 }
-function closePanel(){ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow = ''; }
+function closePanel(){ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow = ''; if (typeof check3DTheme === 'function') check3DTheme(); }
 document.getElementById('overlay').addEventListener('click', e => { if(e.target.id === 'overlay') closePanel(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
 
@@ -1031,7 +1045,69 @@ function clearChat(){ chatHistory = []; aiImageData = null; renderChat(); docume
 function handleAiImage(e){ const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = () => { aiImageData = reader.result; document.getElementById('aiImgPreview').src = aiImageData; document.getElementById('aiImageContainer').style.display = 'block'; }; reader.readAsDataURL(file); }
 function removeAiImage(){ aiImageData = null; document.getElementById('aiImageContainer').style.display = 'none'; document.getElementById('aiImageInput').value = ''; }
 
-async function sendAI(){ const input = document.getElementById('aiInput'); const text = input.value.trim(); if(!text) return; chatHistory.push({role:'user', text}); input.value = ''; renderChat(); const log = document.getElementById('chatLog'); const loadingBubble = document.createElement('div'); loadingBubble.className = 'chat-bubble ai loading'; loadingBubble.textContent = 'Mikir dulu bentar...'; log.appendChild(loadingBubble); log.scrollTop = log.scrollHeight; try { let systemPrompt = ''; if (aiMode === 'belajar') { systemPrompt = `Kamu adalah asisten pembuat materi Ex Tools. Fokus utama kamu adalah memberikan MATERI PELAJARAN.\n\nATURAN WAJIB:\n1. JIKA user meminta materi, presentasi, atau makalah: Baris PERTAMA harus berupa JUDUL UTAMA (dibungkus **tebal**). Contoh: **Materi Futsal**\n2. Baris KEDUA dan seterusnya adalah isi materi.\n3. Jika user minta pembagian halaman, buatkan format persis seperti yang diminta. Setiap halaman/judul sub-bab diakhiri dengan tanda "---" agar mudah dipisah.\n4. JANGAN berikan kata pengantar, penutup, atau penawaran bantuan.\n5. Jika user bertanya hal di luar materi pelajaran, jawab SINGKAT dan langsung arahkan kembali ke pembuatan materi.`; } else { systemPrompt = `Kamu adalah asisten AI dari Ex Tools. Kamu bisa ngobrol santai, menjawab pertanyaan umum, dan membantu user.\n\nATURAN:\n1. Jawablah dengan ramah, santai, dan natural seperti teman ngobrol.\n2. JANGAN memaksakan format materi.\n3. Jika user cuma nyapa, balas sapaan dengan ramah.`; } const res = await fetch('https://api.puter.com/drivers/call', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${PUTER_TOKEN}` }, body: JSON.stringify({ interface: 'puter-chat-completion', method: 'complete', args: { messages: [ { role: 'system', content: systemPrompt }, ...chatHistory.slice(0, -1).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })), { role: 'user', content: text } ], model: (activeAiModel === 'sonnet35' ? 'gpt-4o-mini' : activeAiModel === 'sonnet55' ? 'gpt-4o' : activeAiModel === 'argon7' ? 'gpt-4-turbo' : 'gpt-4o') } }) }); const data = await res.json(); let replyText = ''; if (data.result && data.result.message && data.result.message.content) { replyText = data.result.message.content; } else if (data.error) { throw new Error(data.error.message || 'Gagal terhubung ke API'); } else { replyText = "DEBUG API: " + JSON.stringify(data); } chatHistory.push({role:'ai', text: replyText}); } catch(err) { let msg = 'Terjadi kesalahan.'; if (typeof err === 'string') msg = err; else if (err && err.message) msg = err.message; else if (err && err.error && err.error.message) msg = err.error.message; else if (err) try { msg = JSON.stringify(err); } catch(e) { msg = String(err); } chatHistory.push({role:'ai', text: 'Error: ' + msg}); } renderChat(); }
+async function sendAI() {
+  const input = document.getElementById('aiInput');
+  const text = input.value.trim();
+  if(!text) return;
+  chatHistory.push({role:'user', text});
+  input.value = '';
+  renderChat();
+
+  const log = document.getElementById('chatLog');
+  const loadingBubble = document.createElement('div');
+  loadingBubble.className = 'chat-bubble ai loading';
+  loadingBubble.textContent = 'Mikir dulu bentar...';
+  log.appendChild(loadingBubble);
+  log.scrollTop = log.scrollHeight;
+
+  try {
+    let systemPrompt = '';
+    if (aiMode === 'belajar') {
+      systemPrompt = `Kamu adalah asisten pembuat materi Ex Tools. Fokus utama kamu adalah memberikan MATERI PELAJARAN.\n\nATURAN WAJIB:\n1. JIKA user meminta materi, presentasi, atau makalah: Baris PERTAMA harus berupa JUDUL UTAMA (dibungkus **tebal**). Contoh: **Materi Futsal**\n2. Baris KEDUA dan seterusnya adalah isi materi.\n3. Jika user minta pembagian halaman, buatkan format persis seperti yang diminta. Setiap halaman/judul sub-bab diakhiri dengan tanda "---" agar mudah dipisah.\n4. JANGAN berikan kata pengantar, penutup, atau penawaran bantuan.\n5. Jika user bertanya hal di luar materi pelajaran, jawab SINGKAT dan langsung arahkan kembali ke pembuatan materi.`;
+    } else {
+      systemPrompt = `Kamu adalah asisten AI dari Ex Tools. Kamu bisa ngobrol santai, menjawab pertanyaan umum, dan membantu user.\n\nATURAN:\n1. Jawablah dengan ramah, santai, dan natural seperti teman ngobrol.\n2. JANGAN memaksakan format materi.\n3. Jika user cuma nyapa, balas sapaan dengan ramah.`;
+    }
+
+    let messages = [
+      { role: 'system', content: systemPrompt },
+      ...chatHistory.slice(0, -1).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })),
+      { role: 'user', content: text }
+    ];
+
+    let replyText = '';
+    const aiModelChoice = (typeof activeAiModel !== 'undefined' && activeAiModel === 'sonnet35') ? 'gpt-4o-mini' : 'gpt-4o';
+
+    if (window.puter && window.puter.ai && typeof window.puter.ai.chat === 'function') {
+      const puterResp = await window.puter.ai.chat(messages, { model: aiModelChoice });
+      replyText = typeof puterResp === 'string' ? puterResp : (puterResp?.message?.content || puterResp?.text || JSON.stringify(puterResp));
+    } else {
+      const res = await fetch('https://api.puter.com/drivers/call', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          interface: 'puter-chat-completion',
+          method: 'complete',
+          args: { messages, model: aiModelChoice }
+        })
+      });
+      const data = await res.json();
+      if (data.result && data.result.message && data.result.message.content) {
+        replyText = data.result.message.content;
+      } else {
+        throw new Error(data.error?.message || 'Gagal terhubung ke API AI');
+      }
+    }
+
+    chatHistory.push({role:'ai', text: replyText});
+  } catch(err) {
+    let msg = 'Terjadi kesalahan.';
+    if (typeof err === 'string') msg = err;
+    else if (err && err.message) msg = err.message;
+    else if (err && err.error && err.error.message) msg = err.error.message;
+    chatHistory.push({role:'ai', text: 'Error: ' + msg});
+  }
+  renderChat();
+}
 
 async function getUnsplashImage(query) { return null; }
 
@@ -1233,8 +1309,31 @@ window.showVIPModal = function() {
     console.log('[LOGIN] role:', user.role, '| lowercase:', (user.role||'').toLowerCase());
     const roleLower = (user.role || '').toLowerCase(); const isDev = roleLower === 'developer'; const isMod = roleLower === 'moderator'; const isVip = roleLower === 'vip user'; const isAdmin = isDev || isMod || isVip;
     window.currentUserRole = user.role; if(typeof renderTools === 'function') renderTools();
-    if(isAdmin) { if(isDev || isMod) { document.getElementById('adminInputContainer').style.display = 'block'; document.getElementById('nav-adduser').style.display = 'block'; document.getElementById('nav-adduser').style.color = isMod ? '#ffb86c' : 'var(--violet)'; } else { document.getElementById('adminInputContainer').style.display = 'none'; document.getElementById('nav-adduser').style.display = 'none'; } const btnMaint = document.getElementById('btnMaintenance'); if(btnMaint) btnMaint.style.display = isDev ? 'block' : 'none'; document.getElementById('ratingInputBox').style.display = isDev ? 'none' : 'block'; document.querySelectorAll('.btn-hapus-info').forEach(btn => { btn.style.display = isDev ? 'block' : 'none'; }); if(isMod && isMaintenanceMode) { document.getElementById('maintenanceUI').style.display = 'flex'; } } else { document.getElementById('adminInputContainer').style.display = 'none'; document.getElementById('nav-adduser').style.display = 'none'; document.getElementById('ratingInputBox').style.display = 'block'; document.querySelectorAll('.btn-hapus-info').forEach(btn => btn.style.display = 'none'); if(isMaintenanceMode) document.getElementById('maintenanceUI').style.display = 'flex'; }
-    
+    if(isAdmin) {
+      if(isDev || isMod) {
+        document.getElementById('adminInputContainer').style.display = 'block';
+        document.getElementById('nav-adduser').style.display = 'block';
+        document.getElementById('nav-adduser').style.color = isMod ? '#ffb86c' : 'var(--violet)';
+      } else {
+        document.getElementById('adminInputContainer').style.display = 'none';
+        document.getElementById('nav-adduser').style.display = 'none';
+      }
+      const btnMaint = document.getElementById('btnMaintenance');
+      if(btnMaint) btnMaint.style.display = isDev ? 'block' : 'none';
+      document.getElementById('ratingInputBox').style.display = isDev ? 'none' : 'block';
+      document.querySelectorAll('.btn-hapus-info').forEach(btn => { btn.style.display = isDev ? 'block' : 'none'; });
+    } else {
+      document.getElementById('adminInputContainer').style.display = 'none';
+      document.getElementById('nav-adduser').style.display = 'none';
+      document.getElementById('ratingInputBox').style.display = 'block';
+      document.querySelectorAll('.btn-hapus-info').forEach(btn => btn.style.display = 'none');
+    }
+    if (!isDev && isMaintenanceMode) {
+      document.getElementById('maintenanceUI').style.display = 'flex';
+    } else {
+      document.getElementById('maintenanceUI').style.display = 'none';
+    }
+
     // TAMBAHAN: SEMBUNYIIN NAV OSINT KALO BUKAN VIP/MOD/DEV
     const navOsint = document.getElementById('nav-osint');
     if(navOsint) {
@@ -1260,7 +1359,13 @@ window.showVIPModal = function() {
 
   window.doLogout = function() { if(currentUser) { const userStatusRef = ref(db, '/status/' + currentUser.username); set(userStatusRef, { state: 'offline', last_changed: Date.now() }); } currentUser = null; document.getElementById('mainHeader').style.display = 'none'; document.getElementById('mainFooter').style.display = 'none'; document.getElementById('bottomNav').style.display = 'none'; document.getElementById('splashScreen').style.display = 'flex'; setTimeout(() => document.getElementById('splashScreen').classList.remove('hide'), 10); document.getElementById('loginBox').innerHTML = `<h2>Login Akses</h2><div class="glass-input-wrap"><input type="text" id="loginUser" class="glass-input" placeholder="Username"></div><div class="glass-input-wrap"><input type="password" id="loginPass" class="glass-input" placeholder="Password"></div><button class="glass-btn" onclick="doLogin()">Login</button><a class="link-text" onclick="showRegister()">Belum punya akun? Daftar di sini</a>`; showLogin(); };
 
-  onValue(ref(db, 'maintenance'), (snap) => { isMaintenanceMode = snap.val() === true; if(currentUser && currentUser.role !== 'Developer') { document.getElementById('maintenanceUI').style.display = isMaintenanceMode ? 'flex' : 'none'; } });
+  onValue(ref(db, 'maintenance'), (snap) => {
+    isMaintenanceMode = snap.val() === true;
+    if (currentUser) {
+      const r = (currentUser.role || '').toLowerCase();
+      document.getElementById('maintenanceUI').style.display = (r !== 'developer' && isMaintenanceMode) ? 'flex' : 'none';
+    }
+  });
   window.toggleMaintenance = function() { const newState = !isMaintenanceMode; set(ref(db, 'maintenance'), newState); showGlassNotif(newState ? 'Maintenance Aktif!' : 'Maintenance Dimatikan.'); document.getElementById('btnMaintenance').innerText = newState ? 'Matikan Maintenance' : 'Aktifkan Maintenance'; };
 
   const infoRef = ref(db, 'info_web');
@@ -1311,8 +1416,58 @@ window.showVIPModal = function() {
   };
 
   let allUsersData = {}; let allStatusData = {};
-  function renderUsersList() { const activeBox = document.getElementById('activeUsersBox'); const countEl = document.getElementById('totalUsersCount'); if(!activeBox) return; activeBox.innerHTML = ''; if (Object.keys(allUsersData).length === 0) { activeBox.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--muted);">Belum ada user.</p>'; if(countEl) countEl.innerText = '0'; return; } let count = 0; Object.keys(allUsersData).forEach(key => { count++; const data = allUsersData[key]; const isBanned = data.status === 'banned'; const roleKey = (data.role || 'user').toLowerCase(); const roleColor = roleKey === 'developer' ? 'var(--violet)' : roleKey === 'owner' ? 'var(--yellow)' : roleKey === 'moderator' ? '#ffb86c' : roleKey === 'partner' ? '#7cc6fe' : 'var(--mint)'; const isOnline = allStatusData[data.username] && allStatusData[data.username].state === 'online'; const statusDot = isOnline ? '<span class="status-dot" style="background:#00e676;"></span>' : '<span class="status-dot" style="background:#ff4d4d;"></span>'; const myRole = currentUser ? (currentUser.role || '').toLowerCase() : ''; const targetRole = (data.role || 'user').toLowerCase(); const isMe = currentUser && currentUser.username === data.username; let canDelete = false; if (myRole === 'developer') { canDelete = !isMe; } else if (myRole === 'moderator') { if (!isMe && targetRole !== 'developer' && targetRole !== 'moderator') { canDelete = true; } } activeBox.innerHTML += `<div class="user-row" style="${isBanned ? 'background: rgba(255, 77, 77, 0.1);' : ''}"><span>${statusDot}<b>${data.username}</b> ${isBanned ? '<span style="color:var(--red); font-size:10px; font-weight:bold; margin-left:5px;">(BANNED)</span>' : ''}<br><small style="font-size:10px; color:${roleColor}; font-weight:800; margin-left:20px;">${data.role}</small></span><div class="action-btns">${canDelete ? `<button class="act-btn act-del" onclick="deleteUser('${key}')">🗑️</button>` : ''}</div></div>`; }); if(countEl) countEl.innerText = count; }
-  onValue(ref(db, 'users'), (snap) => { allUsersData = snap.val() || {}; renderUsersList(); });
+  function renderUsersList() { 
+  const activeBox = document.getElementById('activeUsersBox'); 
+  const countEl = document.getElementById('totalUsersCount'); 
+  if(!activeBox) return; 
+  activeBox.innerHTML = ''; 
+  if (Object.keys(allUsersData).length === 0) { 
+    activeBox.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--muted);">Belum ada user.</p>'; 
+    if(countEl) countEl.innerText = '0'; 
+    return; 
+  } 
+  let count = 0; 
+  Object.keys(allUsersData).forEach(key => { 
+    count++; 
+    const data = allUsersData[key]; 
+    if (!data || !data.username) return; // skip undefined/broken entries
+    const isBanned = data.status === 'banned'; 
+    const roleKey = (data.role || 'user').toLowerCase(); 
+    const roleColor = roleKey === 'developer' ? 'var(--violet)' : roleKey === 'owner' ? 'var(--yellow)' : roleKey === 'moderator' ? '#ffb86c' : roleKey === 'partner' ? '#7cc6fe' : roleKey === 'vip user' ? '#c9a6ff' : 'var(--mint)'; 
+    const isOnline = allStatusData[data.username] && allStatusData[data.username].state === 'online'; 
+    const statusDot = isOnline ? '<span class="status-dot" style="background:#00e676;"></span>' : '<span class="status-dot" style="background:#ff4d4d;"></span>'; 
+    const myRole = currentUser ? (currentUser.role || '').toLowerCase() : ''; 
+    const targetRole = (data.role || 'user').toLowerCase(); 
+    const isMe = currentUser && currentUser.username === data.username; 
+    let canDelete = false; 
+    if (myRole === 'developer') { canDelete = !isMe; } 
+    else if (myRole === 'moderator') { if (!isMe && targetRole !== 'developer' && targetRole !== 'moderator') { canDelete = true; } } 
+    
+    let roleDisplay = data.role || 'user';
+    if (roleKey === 'vip user') {
+      if (data.vipType === 'trial' && data.vipExpiry) {
+        const sisa = Math.ceil((data.vipExpiry - Date.now()) / 86400000);
+        roleDisplay = sisa > 0 ? `vip user <span style="color:var(--yellow)">(Trial • ${sisa}h)</span>` : `vip user <span style="color:var(--red)">(EXPIRED)</span>`;
+      } else if (data.vipType === 'permanent') {
+        roleDisplay = `vip user <span style="color:var(--mint)">(Permanent)</span>`;
+      }
+    }
+    
+    let canChangeRole = false;
+    if (myRole === 'developer' && !isMe) canChangeRole = true;
+    else if (myRole === 'moderator' && !isMe && targetRole !== 'developer' && targetRole !== 'moderator') canChangeRole = true;
+    
+    const clickAttr = canChangeRole ? `onclick="openChangeRole('${key}')" style="cursor:pointer;"` : '';
+    
+    activeBox.innerHTML += `<div class="user-row" style="${isBanned ? 'background: rgba(255, 77, 77, 0.1);' : ''}" ${clickAttr}>
+      <span>${statusDot}<b>${data.username}</b> ${isBanned ? '<span style="color:var(--red); font-size:10px; font-weight:bold; margin-left:5px;">(BANNED)</span>' : ''}<br>
+      <small style="font-size:10px; color:${roleColor}; font-weight:800; margin-left:20px;">${roleDisplay}</small></span>
+      <div class="action-btns">${canDelete ? `<button class="act-btn act-del" onclick="event.stopPropagation(); deleteUser('${key}')">🗑️</button>` : ''}</div>
+    </div>`; 
+  }); 
+  if(countEl) countEl.innerText = count; 
+}
+onValue(ref(db, 'users'), (snap) => { allUsersData = snap.val() || {}; renderUsersList(); });
   onValue(ref(db, 'status'), (snap) => { allStatusData = snap.val() || {}; renderUsersList(); });
 
   // ============================================
@@ -1331,6 +1486,156 @@ window.showVIPModal = function() {
       btnConfirm.onclick = () => { remove(ref(db, 'users/' + username)).then(() => { showGlassNotif('User dihapus permanen!'); document.getElementById('confirmDeleteModal').classList.remove('open'); }); };
     }, { onlyOnce: true });
   };
+
+  
+  // ============================================
+  // CHANGE ROLE + VIP TRIAL / PERMANENT
+  // ============================================
+  window.openChangeRole = function(username) {
+    if (!currentUser) return;
+    const myRole = (currentUser.role || '').toLowerCase();
+    if (myRole !== 'developer' && myRole !== 'moderator') return;
+    const data = allUsersData[username];
+    if (!data) return showGlassNotif('User tidak ditemukan');
+    const targetRole = (data.role || 'user').toLowerCase();
+    if (myRole === 'moderator' && (targetRole === 'developer' || targetRole === 'moderator')) {
+      return showGlassNotif('Moderator tidak bisa ubah role Developer/Moderator');
+    }
+    let options = '';
+    const roles = [
+      {v: 'user', label: 'User'},
+      {v: 'vip user', label: 'VIP User'},
+      {v: 'partner', label: 'Partner'},
+      {v: 'owner', label: 'Owner'}
+    ];
+    if (myRole === 'developer') roles.push({v: 'moderator', label: 'Moderator'});
+    roles.forEach(r => {
+      const selected = (data.role || '').toLowerCase() === r.v ? 'selected' : '';
+      options += `<option value="${r.v}" ${selected}>${r.label}</option>`;
+    });
+    const modal = document.createElement('div');
+    modal.className = 'modal-confirm open';
+    modal.id = 'changeRoleModal';
+    modal.innerHTML = `<div class="modal-box" style="max-width:340px; text-align:left;">
+      <h3 style="margin-top:0; text-align:center;">Ubah Role</h3>
+      <p style="font-size:13px; color:var(--muted); text-align:center; margin-bottom:15px;">User: <b>${data.username}</b></p>
+      <label style="font-size:12px; font-weight:700;">Pilih Role Baru</label>
+      <select id="newRoleSelect" style="width:100%; padding:10px; border:2.5px solid var(--ink); border-radius:10px; background:var(--card); color:var(--ink); font-weight:bold; margin-bottom:15px;">${options}</select>
+      <div style="display:flex; gap:10px;">
+        <button class="btn secondary" style="flex:1; margin:0;" onclick="document.getElementById('changeRoleModal').remove()">Batal</button>
+        <button class="btn" style="flex:1; margin:0; background:var(--yellow); color:#14151a;" onclick="confirmChangeRole('${username}')">Lanjut</button>
+      </div>
+    </div>`;
+    document.body.appendChild(modal);
+  };
+
+  window.confirmChangeRole = function(username) {
+    const select = document.getElementById('newRoleSelect');
+    if (!select) return;
+    const newRole = select.value;
+    document.getElementById('changeRoleModal')?.remove();
+    if (newRole === 'vip user') {
+      openVipDurationModal(username);
+    } else {
+      update(ref(db, 'users/' + username), { role: newRole, vipType: null, vipExpiry: null, previousRole: null })
+        .then(() => showGlassNotif(`Role ${username} diubah jadi ${newRole}`))
+        .catch(e => showGlassNotif('Gagal: ' + e.message));
+    }
+  };
+
+  window.openVipDurationModal = function(username) {
+    const data = allUsersData[username] || {};
+    const modal = document.createElement('div');
+    modal.className = 'modal-confirm open';
+    modal.id = 'vipDurationModal';
+    modal.innerHTML = `<div class="modal-box" style="max-width:360px; text-align:left;">
+      <h3 style="margin-top:0; text-align:center;">Update Role User</h3>
+      <p style="font-size:13px; margin-bottom:8px;">Role dipilih: <b style="color:var(--violet);">VIP User</b></p>
+      <p style="font-size:12px; color:var(--muted); margin-bottom:15px;">User: <b>${data.username || username}</b></p>
+      <label style="font-size:12px; font-weight:700;">Pilih Durasi</label>
+      <div style="display:flex; gap:10px; margin:10px 0 15px 0;">
+        <button id="btnPermanent" onclick="selectVipType('permanent')" style="flex:1; padding:12px; border:2.5px solid var(--ink); border-radius:10px; background:var(--mint); color:#14151a; font-weight:800; cursor:pointer;">Permanen</button>
+        <button id="btnTrial" onclick="selectVipType('trial')" style="flex:1; padding:12px; border:2.5px solid var(--ink); border-radius:10px; background:var(--card); color:var(--ink); font-weight:800; cursor:pointer;">Trial</button>
+      </div>
+      <div id="trialInputBox" style="display:none; margin-bottom:15px;">
+        <label style="font-size:12px; font-weight:700;">Durasi Trial (hari)</label>
+        <input type="number" id="vipDaysInput" value="7" min="1" max="365" style="width:100%; padding:10px; border:2.5px solid var(--ink); border-radius:10px; background:var(--card); color:var(--ink); font-weight:bold;">
+        <p style="font-size:11px; color:var(--muted); margin-top:5px;">Contoh: 7 = 7 hari</p>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn secondary" style="flex:1; margin:0;" onclick="document.getElementById('vipDurationModal').remove()">Batal</button>
+        <button class="btn" style="flex:1; margin:0; background:var(--yellow); color:#14151a;" onclick="applyVipRole('${username}')">Konfirmasi</button>
+      </div>
+    </div>`;
+    document.body.appendChild(modal);
+    window._vipSelectedType = 'permanent';
+  };
+
+  window.selectVipType = function(type) {
+    window._vipSelectedType = type;
+    const btnP = document.getElementById('btnPermanent');
+    const btnT = document.getElementById('btnTrial');
+    const box = document.getElementById('trialInputBox');
+    if (type === 'permanent') {
+      btnP.style.background = 'var(--mint)'; btnT.style.background = 'var(--card)'; box.style.display = 'none';
+    } else {
+      btnP.style.background = 'var(--card)'; btnT.style.background = 'var(--yellow)'; box.style.display = 'block';
+    }
+  };
+
+  window.applyVipRole = function(username) {
+    const type = window._vipSelectedType || 'permanent';
+    const data = allUsersData[username] || {};
+    const oldRole = data.role || 'user';
+    let updates = {
+      role: 'vip user',
+      vipType: type,
+      previousRole: oldRole === 'vip user' ? (data.previousRole || 'user') : oldRole
+    };
+    if (type === 'trial') {
+      const days = parseInt(document.getElementById('vipDaysInput')?.value || '7', 10);
+      if (!days || days < 1) return showGlassNotif('Durasi minimal 1 hari');
+      updates.vipExpiry = Date.now() + (days * 86400000);
+    } else {
+      updates.vipExpiry = null;
+    }
+    update(ref(db, 'users/' + username), updates).then(() => {
+      document.getElementById('vipDurationModal')?.remove();
+      showGlassNotif(type === 'permanent' ? `VIP Permanent untuk ${username}` : `VIP Trial ${document.getElementById('vipDaysInput')?.value || 7} hari untuk ${username}`);
+    }).catch(e => showGlassNotif('Gagal: ' + e.message));
+  };
+
+  window.checkVipExpiry = function(userData) {
+    if (!userData) return false;
+    if ((userData.role || '').toLowerCase() !== 'vip user') return false;
+    if (userData.vipType !== 'trial' || !userData.vipExpiry) return false;
+    return Date.now() > userData.vipExpiry;
+  };
+
+  window.showVipExpiredModal = function(userData) {
+    const prevRole = userData.previousRole || 'user';
+    const modal = document.createElement('div');
+    modal.className = 'modal-confirm open';
+    modal.id = 'vipExpiredModal';
+    modal.style.zIndex = '100010';
+    modal.innerHTML = `<div class="modal-box" style="max-width:380px; text-align:center;">
+      <h3 style="margin:0 0 10px 0; color:var(--red);">ROLE VIP USER TRIAL ANDA TELAH EXPIRED</h3>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Masa trial sudah habis. Order VIP atau lanjutkan dengan role sebelumnya.</p>
+      <a href="https://wa.me/628976335689?text=${encodeURIComponent('halo min, aku mau order role VIP USER')}" target="_blank" class="btn" style="display:block; width:100%; margin-bottom:10px; background:var(--mint); color:#14151a; text-decoration:none; text-align:center;">Order VIP User via WA</a>
+      <button class="btn secondary" style="width:100%; margin:0;" onclick="continueAsPreviousRole('${userData.username}', '${prevRole}')">Lanjutkan sebagai ${prevRole}</button>
+    </div>`;
+    document.body.appendChild(modal);
+  };
+
+  window.continueAsPreviousRole = function(username, prevRole) {
+    update(ref(db, 'users/' + username), { role: prevRole, vipType: null, vipExpiry: null, previousRole: null })
+      .then(() => {
+        document.getElementById('vipExpiredModal')?.remove();
+        showGlassNotif(`Role dikembalikan ke ${prevRole}. Login ulang ya.`);
+        if (typeof doLogout === 'function') doLogout();
+      }).catch(e => showGlassNotif('Gagal: ' + e.message));
+  };
+
 
   let selectedStars = 0; let currentEditKey = null; let currentEditType = ''; let modalStars = 0;
   window.openGlassModal = function(title, type, key, text, stars = 0, showStars = false) { document.getElementById('glassModalTitle').innerText = title; document.getElementById('glassModalInput').value = text; currentEditKey = key; currentEditType = type; modalStars = stars; const starBox = document.getElementById('glassModalStars'); if(showStars) { starBox.style.display = 'flex'; window.setModalRating(stars); } else { starBox.style.display = 'none'; } document.getElementById('glassModal').classList.add('open'); }
@@ -1512,5 +1817,110 @@ window.showVIPModal = function() {
 
   window.showUserProfile = function(username) { const dbRef = window.db || (typeof db !== 'undefined' ? db : null); const refFn = window.ref || (typeof ref !== 'undefined' ? ref : null); const onValueFn = window.onValue || (typeof onValue !== 'undefined' ? onValue : null); if(!dbRef || !refFn || !onValueFn) { showGlassNotif('Sistem database belum siap.'); return; } const userRef = refFn(dbRef, 'users/' + username); onValueFn(userRef, (snap) => { const userData = snap.val(); if(!userData) { showGlassNotif('Data user tidak ditemukan.'); return; } const roleLower = (userData.role || 'user').toLowerCase(); const roleColor = roleLower === 'developer' ? 'var(--violet)' : roleLower === 'owner' ? 'var(--yellow)' : roleLower === 'moderator' ? '#ffb86c' : roleLower === 'partner' ? '#7cc6fe' : roleLower === 'vip user' ? '#c9a6ff' : 'var(--mint)'; const isBanned = userData.status === 'banned'; const letter = username.charAt(0).toUpperCase(); const modal = document.createElement('div'); modal.className = 'modal-confirm open'; modal.style.zIndex = '100001'; modal.innerHTML = `<div class="modal-box" style="max-width:340px; padding:25px; text-align:center;"><div style="width:80px; height:80px; border-radius:50%; margin:0 auto 15px; background:${roleColor}; border:3px solid var(--ink); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; color:#14151a; box-shadow:var(--shadow-sm); background-size:cover; background-position:center; ${userData.photo ? `background-image:url('${userData.photo}'); color:transparent;` : ''}">${userData.photo ? '' : letter}</div><h3 style="margin:0 0 5px 0; font-size:20px;">${username}</h3><span style="display:inline-block; padding:4px 12px; border-radius:999px; background:${roleColor}; border:2px solid var(--ink); font-size:12px; font-weight:800; color:#14151a; margin-bottom:15px;">${userData.role || 'User'}</span>${isBanned ? '<p style="font-size:12px; color:var(--red); font-weight:800; margin:5px 0;">AKUN DIBANNED</p>' : ''}<p style="font-size:12px; color:var(--muted); margin:10px 0 20px 0;">Status: ${isBanned ? 'Banned' : 'Aktif'}</p><button class="btn secondary" style="width:100%; margin:0;" onclick="this.closest('.modal-confirm').remove()">Tutup</button></div>`; modal.onclick = (e) => { if(e.target === modal) modal.remove(); }; document.body.appendChild(modal); }, { onlyOnce: true }); };
 </script>
+
+<script>
+// ============================================
+// BACKGROUND BOLA SEL 3D (THREE.JS) — SINGLE CLEAN
+// ============================================
+let scene, camera, renderer, sphere, particlesMesh;
+
+function init3DBackground() {
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas || scene) return;
+
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 3.5;
+
+  renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+
+  // Bola Wireframe Kuning (Terlihat jelas di tema gelap)
+  const geometry = new THREE.IcosahedronGeometry(1.6, 1);
+  const material = new THREE.MeshBasicMaterial({ 
+    color: 0xffd43b, 
+    wireframe: true,
+    transparent: true,
+    opacity: 0.45 
+  });
+  sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
+
+  // Partikel Jaringan
+  const particlesGeo = new THREE.BufferGeometry();
+  const particlesCount = 450;
+  const posArray = new Float32Array(particlesCount * 3);
+  for(let i = 0; i < particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 6;
+  }
+  particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  const particlesMat = new THREE.PointsMaterial({
+    size: 0.04,
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.75
+  });
+  particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+  scene.add(particlesMesh);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (sphere) {
+      sphere.rotation.x += 0.002;
+      sphere.rotation.y += 0.003;
+    }
+    if (particlesMesh) {
+      particlesMesh.rotation.x -= 0.001;
+      particlesMesh.rotation.y -= 0.001;
+    }
+    if (renderer && scene && camera) {
+      renderer.render(scene, camera);
+    }
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    if (camera && renderer) {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+  });
+}
+
+function check3DTheme() {
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas) return;
+  const isDark = document.body.classList.contains('dark');
+  const homePage = document.getElementById('page-home');
+  const isHome = homePage && homePage.style.display !== 'none';
+  const overlay = document.getElementById('overlay');
+  const isOverlayOpen = overlay && overlay.classList.contains('open');
+  const splash = document.getElementById('splashScreen');
+  const isSplashVisible = splash && !splash.classList.contains('hide') && splash.style.display !== 'none';
+
+  if (isDark && isHome && !isOverlayOpen && !isSplashVisible) {
+    canvas.style.display = 'block';
+    if (!scene) init3DBackground();
+  } else {
+    canvas.style.display = 'none';
+  }
+}
+
+window.addEventListener('load', () => {
+  setTimeout(check3DTheme, 300);
+});
+
+const originalToggleTheme = typeof toggleTheme === 'function' ? toggleTheme : null;
+window.toggleTheme = function() {
+  if (originalToggleTheme) originalToggleTheme();
+  check3DTheme();
+};
+</script>
+
+<!-- Wadah bola sel 3D (z-index: 0 agar terlihat jelas di tema gelap tanpa nutupin tombol) -->
+<canvas id="bg-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></canvas>
+
 </body>
 </html>
