@@ -794,6 +794,7 @@ const TOOLS = [
   {id:'osint', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', color:'sky', title:'OSINT', desc:'Dapat melacak rumah / lokasi target secara akurat dengan umpan / phising.'},
   {id:'img2pdf', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>', color:'sky', title:'Gambar ke PDF', desc:'Kumpulan gambar jadi 1 PDF, bisa atur posisi, ukuran & orientasi.'},
   {id:'img2url', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>', color:'violet', title:'Gambar ke URL', desc:'Upload gambar, dapatkan link URL langsung yang bisa di-share.'},
+  {id:'codinglab', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>', color:'mint', title:'Latihan Coding', desc:'Misi selesaikan program dari level Mudah sampai Sulit lengkap dengan Clue.'},
 ];
 const COLORS = {violet:'var(--violet)', mint:'var(--mint)', sky:'#7cc6fe', pink:'var(--pink)'};
 const gridEl = document.getElementById('grid');
@@ -840,7 +841,22 @@ const TEMPLATES = {
   </div>
   <a id="img2urlOpen" href="#" target="_blank" class="btn" style="margin-top:10px; display:inline-block; background:var(--mint); text-decoration:none;">Buka di Tab Baru</a>
 </div>
-<p id="img2urlStatus" style="font-size:12px; color:var(--muted); margin-top:10px; min-height:18px;"></p>`
+<p id="img2urlStatus" style="font-size:12px; color:var(--muted); margin-top:10px; min-height:18px;"></p>`,
+  codinglab: `<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+  <span id="clBadge" style="background:var(--mint); color:#14151a; border:2px solid var(--ink); padding:4px 12px; border-radius:999px; font-size:12px; font-weight:800;">Level 1 • Mudah</span>
+  <span id="clProgress" style="font-size:12px; font-weight:700; color:var(--muted);">Misi 1 / 6</span>
+</div>
+<h3 id="clTitle" style="margin:0 0 6px 0; font-size:17px;"></h3>
+<p id="clDesc" style="font-size:13px; color:var(--muted); margin:0 0 12px 0; line-height:1.5;"></p>
+<label>Tulis / Lengkapi Kode (JavaScript)</label>
+<textarea id="clCode" spellcheck="false" style="font-family:monospace; font-size:13px; min-height:130px; background:#0f1115; color:#faf7ef;"></textarea>
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+  <button class="btn" onclick="checkCodingMission()" style="margin:0; background:var(--mint);">Jalankan & Cek</button>
+  <button class="btn secondary" onclick="toggleCodingClue()" style="margin:0;">Lihat Clue</button>
+  <button class="btn secondary" id="clNextBtn" onclick="nextCodingMission()" style="margin:0; display:none; background:var(--yellow); color:#14151a;">Misi Berikutnya →</button>
+</div>
+<div id="clClueBox" style="display:none; margin-top:12px; padding:10px 12px; background:#fff8e1; color:#14151a; border:2px dashed var(--ink); border-radius:10px; font-size:12.5px;"></div>
+<div id="clResult" style="margin-top:12px; font-size:13px; font-weight:700; min-height:20px;"></div>`
 };
 
 function updateCoverPreview() { const text = document.getElementById('pptxTitle').value.trim() || 'Judul Presentasi'; const align = document.getElementById('pptxTitleAlign').value; const previewText = document.getElementById('coverPreviewText'); previewText.innerText = text; previewText.style.textAlign = align; }
@@ -855,7 +871,119 @@ function openPanel(id){
   if(id === 'pptx') { slides = []; addSlide(); updateCoverPreview(); selectThemeColor('#FFD43B', document.querySelector('.swatch')); }
   if(id === 'ai') { renderChat(); aiImageData = null; setAIMode('belajar'); }
   if(id === 'img2url') { img2urlFile = null; }
+  if(id === 'codinglab') { loadCodingMission(0); }
 }
+
+const CODING_MISSIONS = [
+  {
+    level: 'Mudah',
+    color: 'var(--mint)',
+    title: 'Misi 1: Penjumlahan Sederhana',
+    desc: 'Lengkapi fungsi tambah(a, b) agar mengembalikan hasil penjumlahan a + b.',
+    starter: 'function tambah(a, b) {\n  // tulis kode kamu di sini\n  \n}',
+    clue: 'Gunakan kata kunci "return a + b;" di dalam fungsi.',
+    test: (fn) => fn(2, 3) === 5 && fn(10, -2) === 8
+  },
+  {
+    level: 'Mudah',
+    color: 'var(--mint)',
+    title: 'Misi 2: Cek Genap atau Ganjil',
+    desc: 'Buat fungsi cekGenap(n) yang mengembalikan true jika n genap, dan false jika ganjil.',
+    starter: 'function cekGenap(n) {\n  // kembalikan true atau false\n  \n}',
+    clue: 'Gunakan operator modulo (%): return n % 2 === 0;',
+    test: (fn) => fn(4) === true && fn(7) === false && fn(0) === true
+  },
+  {
+    level: 'Menengah',
+    color: 'var(--yellow)',
+    title: 'Misi 3: Balik Kata',
+    desc: 'Buat fungsi balikKata(str) untuk membalikkan teks. Contoh: "halo" menjadi "olah".',
+    starter: 'function balikKata(str) {\n  // ubah str jadi terbalik\n  \n}',
+    clue: 'Pecah string jadi array, balikkan, lalu gabung lagi: str.split("").reverse().join("")',
+    test: (fn) => fn('halo') === 'olah' && fn('extools') === 'slootxe'
+  },
+  {
+    level: 'Menengah',
+    color: 'var(--yellow)',
+    title: 'Misi 4: Cari Nilai Terbesar',
+    desc: 'Buat fungsi nilaiMax(arr) yang mengembalikan angka paling besar dari sebuah array.',
+    starter: 'function nilaiMax(arr) {\n  // contoh: [3, 9, 2] -> 9\n  \n}',
+    clue: 'Bisa pakai Math.max(...arr) atau loop for untuk membandingkan tiap elemen.',
+    test: (fn) => fn([3, 9, 2]) === 9 && fn([-5, -1, -10]) === -1
+  },
+  {
+    level: 'Sulit',
+    color: 'var(--pink)',
+    title: 'Misi 5: Cek Palindrom',
+    desc: 'Buat fungsi isPalindrom(str) yang mengembalikan true jika kata dibaca sama dari depan & belakang (abaikan huruf besar/kecil).',
+    starter: 'function isPalindrom(str) {\n  // contoh: "Katak" -> true\n  \n}',
+    clue: 'Ubah ke huruf kecil dulu (str.toLowerCase()), lalu bandingkan dengan versi terbaliknya.',
+    test: (fn) => fn('Katak') === true && fn('kode') === false && fn('Level') === true
+  },
+  {
+    level: 'Sulit',
+    color: 'var(--pink)',
+    title: 'Misi 6: Hitung Faktorial',
+    desc: 'Buat fungsi faktorial(n) untuk menghitung n! (contoh: faktorial(5) = 120, faktorial(0) = 1).',
+    starter: 'function faktorial(n) {\n  // 5! = 5 * 4 * 3 * 2 * 1\n  \n}',
+    clue: 'Jika n <= 1 return 1; selain itu kalikan n * faktorial(n - 1) atau pakai loop for.',
+    test: (fn) => fn(5) === 120 && fn(0) === 1 && fn(3) === 6
+  }
+];
+
+let currentCodingIdx = 0;
+
+window.loadCodingMission = function(idx) {
+  currentCodingIdx = idx;
+  const m = CODING_MISSIONS[idx];
+  const badge = document.getElementById('clBadge');
+  badge.textContent = `Level ${idx + 1} • ${m.level}`;
+  badge.style.background = m.color;
+  document.getElementById('clProgress').textContent = `Misi ${idx + 1} / ${CODING_MISSIONS.length}`;
+  document.getElementById('clTitle').textContent = m.title;
+  document.getElementById('clDesc').textContent = m.desc;
+  document.getElementById('clCode').value = m.starter;
+  document.getElementById('clClueBox').style.display = 'none';
+  document.getElementById('clClueBox').textContent = '💡 Clue: ' + m.clue;
+  document.getElementById('clResult').textContent = '';
+  document.getElementById('clNextBtn').style.display = 'none';
+};
+
+window.toggleCodingClue = function() {
+  const box = document.getElementById('clClueBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+};
+
+window.checkCodingMission = function() {
+  const m = CODING_MISSIONS[currentCodingIdx];
+  const code = document.getElementById('clCode').value;
+  const resEl = document.getElementById('clResult');
+  try {
+    const fnName = m.starter.match(/function\s+([a-zA-Z0-9_]+)/)[1];
+    const userFn = new Function(code + `; return ${fnName};`)();
+    if (m.test(userFn)) {
+      resEl.style.color = 'var(--mint)';
+      resEl.textContent = '✅ Benar! Misi selesai.';
+      if (currentCodingIdx < CODING_MISSIONS.length - 1) {
+        document.getElementById('clNextBtn').style.display = 'inline-block';
+      } else {
+        resEl.textContent = '🎉 Selamat! Semua misi dari Mudah sampai Sulit sudah selesai!';
+      }
+    } else {
+      resEl.style.color = 'var(--red)';
+      resEl.textContent = '❌ Output belum sesuai. Coba cek lagi atau klik Lihat Clue.';
+    }
+  } catch (err) {
+    resEl.style.color = 'var(--red)';
+    resEl.textContent = '❌ Error sintaks: ' + err.message;
+  }
+};
+
+window.nextCodingMission = function() {
+  if (currentCodingIdx < CODING_MISSIONS.length - 1) {
+    loadCodingMission(currentCodingIdx + 1);
+  }
+};
 function closePanel(){ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow = ''; if (typeof check3DTheme === 'function') check3DTheme(); }
 document.getElementById('overlay').addEventListener('click', e => { if(e.target.id === 'overlay') closePanel(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
@@ -1183,49 +1311,59 @@ window.uploadImg2Url = async function() {
   try {
     let finalUrl = '';
 
-    // Helper: kirim FormData, kembalikan respons teks; lempar error jika gagal
-    const postForm = async (url, fill) => {
-      const form = new FormData();
-      fill(form);
-      const res = await fetch(url, { method: 'POST', body: form });
-      const text = await res.text();
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return text;
+    // Helper: kirim FormData dengan timeout 10 detik biar gak nyangkut
+    const postForm = async (url, fill, timeoutMs = 10000) => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const form = new FormData();
+        fill(form);
+        const res = await fetch(url, { method: 'POST', body: form, signal: controller.signal });
+        const text = await res.text();
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return text;
+      } finally {
+        clearTimeout(timer);
+      }
     };
 
-    // 1) Litterbox (CDN catbox) — link gambar langsung & dukung CORS
+    // 1) ImgBB — 100% dukung CORS browser & direct image URL
+    status.textContent = 'Mengunggah ke ImgBB...';
     try {
-      const text = (await postForm('https://litterbox.catbox.moe/resources/internals/api.php', f => {
-        f.append('reqtype', 'fileupload');
-        f.append('time', '72h');
-        f.append('fileToUpload', img2urlFile);
-      })).trim();
-      if (text.startsWith('http')) finalUrl = text;
-    } catch (e1) { console.warn('Upload litterbox gagal:', e1); }
+      const text = await postForm('https://api.imgbb.com/1/upload?key=API_KEY_KAMU', f => {
+        f.append('image', img2urlFile);
+      });
+      const data = JSON.parse(text);
+      if (data && data.success && data.data && data.data.url) {
+        finalUrl = data.data.url;
+      }
+    } catch (e1) { console.warn('Upload ImgBB gagal:', e1); }
 
-    // 2) Filebin — fallback, dukung CORS
+    // 2) Uguu.se — dukung CORS & langsung kasih direct image URL
     if (!finalUrl) {
+      status.textContent = 'Mencoba server Uguu...';
       try {
-        const bin = 'img' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-        const fname = encodeURIComponent(img2urlFile.name || 'gambar.png');
-        const text = await postForm(`https://filebin.net/${bin}/${fname}`, f => {
-          f.append('file', img2urlFile);
+        const text = await postForm('https://uguu.se/upload', f => {
+          f.append('files[]', img2urlFile);
         });
         const data = JSON.parse(text);
-        if (data && data.bin && data.file) {
-          finalUrl = `https://filebin.net/${data.bin.id}/${encodeURIComponent(data.file.filename)}`;
+        if (data && data.success && data.files && data.files[0] && data.files[0].url) {
+          finalUrl = data.files[0].url;
         }
-      } catch (e2) { console.warn('Upload filebin gagal:', e2); }
+      } catch (e2) { console.warn('Upload uguu gagal:', e2); }
     }
 
-    // 3) tmpfiles.org — fallback terakhir, dukung CORS
+    // 3) tmpfiles.org — diubah ke /dl/ biar langsung buka gambar (direct link)
     if (!finalUrl) {
+      status.textContent = 'Mencoba server Tmpfiles...';
       try {
         const text = await postForm('https://tmpfiles.org/api/v1/upload', f => {
           f.append('file', img2urlFile);
         });
         const data = JSON.parse(text);
-        if (data && data.status === 'success' && data.data && data.data.url) finalUrl = data.data.url;
+        if (data && data.status === 'success' && data.data && data.data.url) {
+          finalUrl = data.data.url.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/');
+        }
       } catch (e3) { console.warn('Upload tmpfiles gagal:', e3); }
     }
 
